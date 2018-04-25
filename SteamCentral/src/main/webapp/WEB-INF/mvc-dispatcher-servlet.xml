@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"	
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+	<!-- Component Scan -->
+	
+	<context:component-scan base-package="com.steamcentral.core" />
+	<context:component-scan base-package="com.steamcentral.core.service" />	
+	<context:component-scan base-package="com.steamcentral.rest.controller" />
+    
+    <mvc:annotation-driven></mvc:annotation-driven>
+    
+    <!-- Mapping -->
+    
+    <mvc:resources mapping="/resources/**" location="/resources/" cache-period="31556926"/>
+   
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix" value="/WEB-INF/jsp/"/>
+	    <property name="suffix" value=".jsp"/>
+	</bean>
+	
+	<!-- 
+	<bean id="arqService" class="com.sparqlprotograph.core.service.ARQService" />
+	<bean id="owl2jsonldService" class="com.sparqlprotograph.core.service.OWL2JSONLDService" /> 
+	-->
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+	
+</beans>
