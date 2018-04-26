@@ -1,0 +1,59 @@
+@font-face {
+    font-family:'kremlin';
+    src:url('../../font/kremlin.woff');
+}
+
+@font-face {
+    font-family:'Skarpa Regular';
+    src:url('../../font/Skarpa-regular.woff');
+}
+
+@font-face {
+    font-family:'Roboto Condensed Light';
+    src:url('../../font/RobotoCondensed-Light.woff');
+}
+
+@font-face {
+    font-family:'Roboto Condensed Light Italic';
+    src:url('../../font/RobotoCondensed-LightItalic.woff');
+}
+
+@font-face {
+    font-family:'Roboto Condensed Regular';
+    src:url('../../font/RobotoCondensed-Regular.woff');
+}
+
+@font-face {
+    font-family:'Roboto Light';
+    src:url('../../font/Roboto-Light.woff');
+}
+
+@font-face {
+    font-family:'Roboto Thin';
+    src:url('../../font/Roboto-Thin.woff');
+}
+
+@font-face {
+    font-family:'Roboto Thin Italic';
+    src:url('../../font/Roboto-ThinItalic.woff');
+}
+
+@font-face {
+    font-family:'Roboto Light';
+    src:url('../../font/Roboto-Light.woff');
+}
+
+@font-face {
+    font-family:'Roboto Condensed Bold';
+    src:url('../../font/RobotoCondensed-Bold.woff');
+}
+
+@font-face {
+    font-family:'Roboto Medium';
+    src:url('../../font/Roboto-Medium.woff');
+}
+
+@font-face {
+	font-family:'Oswald ExtraLight';
+	src:url('../../font/Oswald-ExtraLight.woff');
+}
