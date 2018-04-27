@@ -67,7 +67,7 @@
 		            <div class="col-md-8 col-md-offset-2">
 		               <p class="intro-text wow fadeInDown" data-wow-duration="2s">Discover new features.</p>
 		               <h1 class="brand-heading wow fadeIn" data-wow-duration="3s" data-wow-delay="1.5s">Welcome to SteamCentral</h1>
-		               <button id="singInThroughSteam" class="btn btn-xl wow fadeIn" data-wow-duration="3s" data-wow-delay="2s" onclick="this.blur();">
+		               <button type="reset" onclick="location.href='/SteamCentral/'" id="singInThroughSteam" class="btn btn-xl wow fadeIn" data-wow-duration="3s" data-wow-delay="2s" onclick="this.blur();">
 		                  <img class="header-button-img sign-steam" src="${steamwhiteiconPng}"/>Sign in through STEAM
 		               </button>
 		               <br>

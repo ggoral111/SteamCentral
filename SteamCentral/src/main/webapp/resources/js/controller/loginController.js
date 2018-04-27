@@ -13,13 +13,7 @@ $(document).ready(function(){
 var loginController = angular.module('loginController',[]);
 
 loginController.controller('loginCtrl', ['$scope', '$http', '$filter', '$compile', function($scope, $http, $filter, $compile) {
-	$scope.dateCreation = '2018';
-	
-	
-	
-	
-	
-	
+	$scope.dateCreation = '2018';	
 }]);
 
 indexController.config( [
