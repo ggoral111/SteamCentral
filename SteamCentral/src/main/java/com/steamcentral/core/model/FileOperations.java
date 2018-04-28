@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
@@ -39,11 +38,10 @@ public interface FileOperations {
 	}
 	
 	default void writeFileWithLock(String path, String content) {
-        ByteBuffer buffer = ByteBuffer.wrap(content.getBytes(Charset.forName("UTF-8")));        
-        Path pathToWrite = Paths.get(path);
+        ByteBuffer buffer = ByteBuffer.wrap(content.getBytes(Charset.forName("UTF-8")));
         
         try {
-	        FileChannel fileChannel = FileChannel.open(pathToWrite, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+	        FileChannel fileChannel = FileChannel.open(Paths.get(path), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 	        fileChannel.lock();
 	        fileChannel.write(buffer);
 	        fileChannel.close();

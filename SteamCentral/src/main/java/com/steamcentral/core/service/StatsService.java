@@ -30,15 +30,16 @@ public class StatsService implements HttpConnection, FileOperations {
 	private final static int PROCESSORS_NUMBER;
 	
 	static {
-		TIMESTAMP_PATH = "../../../../../resources/timestamp.date";
-		PRICES_FILE_PATH = "../../../../../resources/marketPrices.json";
-		DEFAULT_WEAPONS_FILE_PATH = "../../../../../resources/defaultWeapons.json";
+		TIMESTAMP_PATH = "src/main/resources/timestamp.date";
+		PRICES_FILE_PATH = "src/main/resources/marketPrices.json";
+		DEFAULT_WEAPONS_FILE_PATH = "src/main/resources/defaultWeapons.json";
 		CSGO_BACKPACK_URL = "https://csgobackpack.net/api/GetItemsList/v2/?currency=USD&no_details=true";
 		CSGO_STATS_URL = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_FRIENDLIST_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_GAME_OWNED_URL = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&format=json&steamid=";
 		STEAM_PLAYER_SUMMARIES_URL = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamids=";
-		PROCESSORS_NUMBER = Runtime.getRuntime().availableProcessors();
+		// PROCESSORS_NUMBER = Runtime.getRuntime().availableProcessors();
+		PROCESSORS_NUMBER = 32;
 	}
 
 	private int csgoBackpackTimebreakInMinutes;
@@ -84,6 +85,16 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	public String getUserInventory(String steamId) {
+		String csgoInventory = getHttpContent("https://steamcommunity.com/profiles/" + steamId + "/inventory/json/730/2");
+		
+		if(isValidJSON(csgoInventory)) {
+			return csgoInventory;
+		}
+		
+		return null;
+	}
+	
 	public String getUserStats(String steamId) {				
 		String csgoStats = getHttpContent(CSGO_STATS_URL + steamId);
 		
@@ -102,8 +113,11 @@ public class StatsService implements HttpConnection, FileOperations {
 			
 			if(responseObject.has("game_count")) {
 				if(responseObject.getInt("game_count") == 1) {
-					JSONObject playtimeObject = responseObject.getJSONArray("games").getJSONObject(0);								
-					return new SteamUserInfo(steamId, playtimeObject.getLong("playtime_2weeks"), playtimeObject.getLong("playtime_forever"));
+					JSONObject playtimeObject = responseObject.getJSONArray("games").getJSONObject(0);
+					long playtimeTwoWeeks = playtimeObject.has("playtime_2weeks") ? playtimeObject.getLong("playtime_2weeks") : 0L;
+					long playtimeForever = playtimeObject.has("playtime_forever") ? playtimeObject.getLong("playtime_forever") : 0L;
+					
+					return new SteamUserInfo(steamId, playtimeTwoWeeks, playtimeForever);
 				}
 			}	
 		}
@@ -130,7 +144,7 @@ public class StatsService implements HttpConnection, FileOperations {
 			int queriesAmount = (friendListSet.size() / 100) + (friendListSet.size() % 100 == 0 ? 0 : 1);
 			
 			for(int i=0; i<queriesAmount; i++) {
-				urlsDividedList.add(urlsDividedList.stream().skip(i*100).limit(100).collect(Collectors.joining(",")));
+				urlsDividedList.add(friendListSet.stream().skip(i*100).limit(100).map(x -> x.getSteamId()).collect(Collectors.joining(",")));
 			}
 			
 			ExecutorService friendsFullInfoThreadPool = Executors.newFixedThreadPool(PROCESSORS_NUMBER);
@@ -185,7 +199,11 @@ public class StatsService implements HttpConnection, FileOperations {
 				String friendSteamId = friendListArray.getJSONObject(i).getString("steamid");
 				
 				friendsThreadPool.execute(() -> {	
-					friendListSet.add(getGameOwnedInfo(friendSteamId));							
+					SteamUserInfo sui = getGameOwnedInfo(friendSteamId);
+					
+					if(sui != null) {
+						friendListSet.add(sui);		
+					}
 				});
 			}
 			
@@ -227,14 +245,14 @@ public class StatsService implements HttpConnection, FileOperations {
 		} else {
 			timestampExpired = checkTimestamp(marketPricesTimestamp);
 		}
-				
+						
 		if(timestampExpired) {
 			String tempMarketPrices = getHttpContent(CSGO_BACKPACK_URL);
 			marketPricesTimestamp = new Date();
-			writeFileWithLock(marketPricesTimestamp.toString(), TIMESTAMP_PATH);
+			writeFileWithLock(TIMESTAMP_PATH, marketPricesTimestamp.toString());
 						
 			if(isValidJSON(tempMarketPrices)) {
-				writeFileWithLock(tempMarketPrices, PRICES_FILE_PATH);
+				writeFileWithLock(PRICES_FILE_PATH, tempMarketPrices);
 				marketPrices = tempMarketPrices;
 				csgoBackpackTimebreakInMinutes = 240;
 			} else {

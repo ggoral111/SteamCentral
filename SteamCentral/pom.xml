@@ -38,32 +38,25 @@
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 		    <groupId>com.fasterxml.jackson</groupId>
 		    <artifactId>jackson-bom</artifactId>
 		    <version>${jackson-faster-xml-version}</version>
 		    <type>pom</type>
 		    <scope>import</scope>
-		</dependency>
+		</dependency> -->
 	</dependencies>
   </dependencyManagement>
   
   <dependencies>
   
   	<!-- Faster XML -->
- 
+ 	
 	<dependency>
-		<groupId>com.fasterxml.jackson.core</groupId>
-		<artifactId>jackson-core</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>com.fasterxml.jackson.core</groupId>
-		<artifactId>jackson-annotations</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>com.fasterxml.jackson.core</groupId>
-		<artifactId>jackson-databind</artifactId>
-	</dependency>  
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>${jackson-faster-xml-version}</version>
+	</dependency> 
   
  	<!-- Spring MVC -->
  	

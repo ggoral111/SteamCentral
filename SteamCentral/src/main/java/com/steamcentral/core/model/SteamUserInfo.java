@@ -64,8 +64,8 @@ public class SteamUserInfo {
 		}
 		
 		if (obj == null) {
-            return false;
-        }
+			return false;
+		}
 			
 		if(!(obj instanceof SteamUserInfo)) {
 			return false;

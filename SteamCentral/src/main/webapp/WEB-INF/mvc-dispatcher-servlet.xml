@@ -28,11 +28,7 @@
 	    <property name="suffix" value=".jsp"/>
 	</bean>
 	
-	<!-- 
-	<bean id="arqService" class="com.sparqlprotograph.core.service.ARQService" />
-	<bean id="owl2jsonldService" class="com.sparqlprotograph.core.service.OWL2JSONLDService" /> 
-	-->
-	
+	<bean id="statsService" class="com.steamcentral.core.service.StatsService" />	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 	
 </beans>
