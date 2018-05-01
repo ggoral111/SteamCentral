@@ -26,8 +26,8 @@ import com.steamcentral.core.model.SteamUserInfo;
 
 public class StatsService implements HttpConnection, FileOperations {
 	
-	private final static String TIMESTAMP_PATH, PRICES_FILE_PATH, DEFAULT_WEAPONS_FILE_PATH, CSGO_BACKPACK_URL, CSGO_STATS_URL, STEAM_FRIENDLIST_URL, STEAM_GAME_OWNED_URL, STEAM_PLAYER_SUMMARIES_URL;
-	private final static int PROCESSORS_NUMBER;
+	private final static String TIMESTAMP_PATH, PRICES_FILE_PATH, DEFAULT_WEAPONS_FILE_PATH, CSGO_BACKPACK_URL, CSGO_STATS_URL, STEAM_FRIENDLIST_URL, STEAM_GAME_OWNED_URL, STEAM_PLAYER_SUMMARIES_URL, STEAM_RESOLVE_VANITY_URL;
+	private final static int PROCESSORS_NUMBER, CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES, CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES;
 	
 	static {
 		TIMESTAMP_PATH = "src/main/resources/timestamp.date";
@@ -38,8 +38,11 @@ public class StatsService implements HttpConnection, FileOperations {
 		STEAM_FRIENDLIST_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_GAME_OWNED_URL = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&format=json&steamid=";
 		STEAM_PLAYER_SUMMARIES_URL = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamids=";
+		STEAM_RESOLVE_VANITY_URL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&vanityurl=";
 		// PROCESSORS_NUMBER = Runtime.getRuntime().availableProcessors();
 		PROCESSORS_NUMBER = 32;
+		CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES = 240;
+		CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES = 5;
 	}
 
 	private int csgoBackpackTimebreakInMinutes;
@@ -49,7 +52,7 @@ public class StatsService implements HttpConnection, FileOperations {
 	private String marketPrices, defaultWeapons;
 
 	public StatsService() {
-		this.csgoBackpackTimebreakInMinutes = 240;
+		this.csgoBackpackTimebreakInMinutes = CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES;
 		this.firstTimePricesLoad = true;
 		this.firstTimeDefaultWeaponsLoad = true;
 		this.marketPricesTimestamp = null;
@@ -67,7 +70,28 @@ public class StatsService implements HttpConnection, FileOperations {
 		return defaultWeapons;
 	}
 	
-	public Object[] getStrangerUserStats(String steamId) {
+	public Object[] getStrangerUserStats(String userInfo) {
+		JSONObject userInfoObject = new JSONObject(userInfo);
+		String steamId = userInfoObject.getString("steamId");
+		
+		if(userInfoObject.getBoolean("checkVanityUrl")) {
+			String vanityResponse = getHttpContent(STEAM_RESOLVE_VANITY_URL + steamId);
+			
+			if(isJSON(vanityResponse)) {
+				JSONObject vanityResponseObject = new JSONObject(vanityResponse);
+				
+				if(vanityResponseObject.getJSONObject("response").getInt("success") == 1) {
+					steamId = vanityResponseObject.getJSONObject("response").getString("steamid");
+				} else if(vanityResponseObject.getJSONObject("response").getInt("success") != 1 && userInfoObject.getBoolean("checkDigits")) {
+					
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
+		}
+		
 		SteamUserInfo sui = getGameOwnedInfo(steamId);
 		
 		if(sui != null) {
@@ -254,13 +278,13 @@ public class StatsService implements HttpConnection, FileOperations {
 			if(isValidJSON(tempMarketPrices)) {
 				writeFileWithLock(PRICES_FILE_PATH, tempMarketPrices);
 				marketPrices = tempMarketPrices;
-				csgoBackpackTimebreakInMinutes = 240;
+				csgoBackpackTimebreakInMinutes = CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES;
 			} else {
 				if(marketPrices == null) {
 					marketPrices = readFileWithLock(PRICES_FILE_PATH);
 				}
 				
-				csgoBackpackTimebreakInMinutes = 5;
+				csgoBackpackTimebreakInMinutes = CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES;
 			}								
 		} else {
 			if(marketPrices == null) {

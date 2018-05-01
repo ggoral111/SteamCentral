@@ -42,7 +42,7 @@
 		<p>Main User Stats:</p>
 		<p>{{ mainUserStats }}</p>
 		
-		<button type="button" data-ng-click="loadStrangerUserStats(76561198799925814)" class="btn btn-primary">Load</button>
+		<!-- <button type="button" data-ng-click="loadStrangerUserStats(76561198799925814)" class="btn btn-primary">Load</button>
 		<p>Stranger User Stats:</p>
 		<p>{{ strangerUserStats }}</p>
 		
@@ -56,16 +56,24 @@
 		
 		<button type="button" data-ng-click="loadSkinsPrices()" class="btn btn-primary">Load</button>
 		<p>Skin Prices:</p>
-		<p>{{ skinsPrices }}</p>
+		<p>{{ skinsPrices }}</p> -->
 		
-		<button type="button" data-ng-click="loadMainUserInventory()" class="btn btn-primary">Load</button>
+		<!-- <button type="button" data-ng-click="loadMainUserInventory()" class="btn btn-primary">Load</button>
 		<p>Main User Inventory:</p>
-		<p>{{ mainUserInventory }}</p>
+		<p>{{ mainUserInventory }}</p> -->
 		
-		<button type="button" data-ng-click="loadSecondUserInventory(76561198799925814)" class="btn btn-primary">Load</button>
+		<!-- <button type="button" data-ng-click="loadSecondUserInventory(76561198799925814)" class="btn btn-primary">Load</button>
 		<p>Second User Inventory:</p>
-		<p>{{ secondUserInventory }}</p>
-						
+		<p>{{ secondUserInventory }}</p> -->
+		
+		<!-- <p>Main User Weapons Stats:</p>
+		<p>{{ mainUserWeaponsStats }}</p> -->
+		
+		<button type="button" data-ng-click="loadStrangerData()" class="btn btn-primary">Load</button>
+		<p>Stranger User Weapons Stats:</p>
+		<p>{{ friendUserWeaponsStats }}</p>
+		<!-- <p>{{ mainUserWeaponsStats }}</p> -->
+								
 	    <spring:url value="/resources/js/jquery-3.3.1.min.js" var="jqueryJs" />	
 		<spring:url value="/resources/js/angular.js" var="angularJs" />
 		<spring:url value="/resources/js/controller/indexController.js" var="indexControllerJs" />
