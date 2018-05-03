@@ -278,10 +278,39 @@ img.img-steam-central-icon.img-steam {
 
 p.media-heading.text {
 	padding-top: 15px;
+	/* padding-right: 20px; */
 	font-family: 'Roboto Light';
 	font-size: 16px;
 	text-align: justify;  
     text-justify: auto;
+}
+
+@media (min-width: 1200px) { 
+	
+	p.media-heading.text {
+		padding-right: 0px;
+	}	
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+	
+	p.media-heading.text {
+		padding-right: 10px;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+
+	p.media-heading.text {
+		padding-right: 20px;
+	}
+}
+
+@media (max-width: 768px) { 
+
+	p.media-heading.text {
+		padding-right: 0px;
+	}
 }
 
 .header-section.text {
@@ -512,3 +541,19 @@ img::selection {
 img::-moz-selection {
     background: 0 0;
 }
+
+/* ------------------------------REMOVE JS BLINKING--------------------------------- */
+
+/* .no-js {
+  display:none;
+}
+
+#removeBlinking {
+  display: block;
+}
+
+#removeBlinking.no-js {
+  display: none;
+} */
+
+/* ---------------------------------------------------------------------------------- */
