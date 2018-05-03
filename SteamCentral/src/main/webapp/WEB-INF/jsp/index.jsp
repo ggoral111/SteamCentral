@@ -2,7 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
-	<head>			
+	<head>		
+		<title>SteamCentral</title>
+		<spring:url value="/resources/media/steamcentralicon.ico" var="steamCentralIcon" />
+		<link href="${steamCentralIcon}" rel="icon" />
+			
 		<spring:url value="/resources/css/app-css/fonts.css" var="fontsCss" />
 		<link href="${fontsCss}" rel="stylesheet"/>			
 		<spring:url value="/resources/js/webfontloader.js" var="webFontLoaderJs" />	
@@ -182,7 +186,7 @@
 														<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank" class="csgostats-overall-user-name-formatter-center">{{ mainUserStats.userInfo.personaname }}</a>
 													</div>
 												</div>
-												<p>TODO: main stats, avatar poprawic, za duzy i nie skaluje sie, filtrowanie weapons CT, TT, both sides</p>
+												<p style="font-size: 11px;">TODO: main stats, avatar poprawic, za duzy i nie skaluje sie, filtrowanie weapons CT, TT, both sides, login page - 720p height zmniejsz nieco welcome to steamcentral i przyciski, bo wychodzi poza kadr, madia query, przycisk get float przy skinie o ile CORS pozwoli</p>
 											</div>
 										</div>
 										<div class="col-sm-3 col-md-4 col-xl-4">
@@ -253,15 +257,15 @@
 								</div>
 								<div class="row center-block">
 									<div data-ng-if="weaponStats.weaponSkin.souvenir" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ weaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ weaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName) | unsafe"></div>								
+										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
 										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 									<div data-ng-if="weaponStats.weaponSkin.statTrak" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ weaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ weaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName) | unsafe"></div>								
+										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
 										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 									<div data-ng-if="!weaponStats.weaponSkin.souvenir && !weaponStats.weaponSkin.statTrak" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: rgba({{ weaponStats.weaponSkin.color }}, 0.4);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName) | unsafe"></div>								
+										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, false) | unsafe"></div>								
 										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 								</div>

@@ -2,7 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
-	<head>			
+	<head>
+		<title>SteamCentral</title>
+		<spring:url value="/resources/media/steamcentralicon.ico" var="steamCentralIcon" />
+		<link href="${steamCentralIcon}" rel="icon" />
+						
 		<spring:url value="/resources/css/app-css/fonts.css" var="fontsCss" />
 		<link href="${fontsCss}" rel="stylesheet"/>			
 		<spring:url value="/resources/js/webfontloader.js" var="webFontLoaderJs" />	

@@ -77,10 +77,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Split marketHashName into two paragraphs
 	 */
-	$scope.splitMarketHashName = function(marketHashName) {
+	$scope.splitMarketHashName = function(marketHashName, specialWeapon) {
 		var marketHashNameArray = marketHashName.split('(');
+		var lineHeightProperty = specialWeapon ? 18 : 20;
 		
-		return '<p class="csgostats-weapon-name-formatter-center" style="line-height: 20px;">' + marketHashNameArray[0].substring(0, marketHashNameArray[0].length - 1) + '</p><p class="csgostats-weapon-name-formatter-center" style="line-height: 20px;">(' + marketHashNameArray[1] + '</p>';
+		return '<p class="csgostats-weapon-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">' + marketHashNameArray[0].substring(0, marketHashNameArray[0].length - 1) + '</p><p class="csgostats-weapon-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">(' + marketHashNameArray[1] + '</p>';
 	}
 	
 	/*

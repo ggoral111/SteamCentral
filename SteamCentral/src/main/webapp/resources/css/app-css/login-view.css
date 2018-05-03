@@ -10,7 +10,7 @@ body {
 
 header .intro-text {
     padding-top: 100px;
-    padding-bottom: 20px
+    padding-bottom: 20px;
 }
 
 header .intro-text .intro-heading {
@@ -310,6 +310,60 @@ p.media-heading.text {
 
 	p.media-heading.text {
 		padding-right: 0px;
+	}
+}
+
+@media (max-height: 720px) { 
+
+	.intro .intro-body .brand-heading {
+	    font-size: 75px !important;
+	}
+	
+	.intro .intro-body .intro-text {
+	    font-size: 20px !important;
+	}
+	
+	header .intro-text {
+	    padding-bottom: 10px !important;
+	}	
+	
+	.btn-xl {
+	    font-size: 14px !important;
+	}
+	
+	.btn-circle {
+	    width: 55px !important;
+	    height: 55px !important;
+	    margin-top: 10px !important;
+	    padding: 14px 12px !important;
+	    font-size: 26px !important;
+	}
+}
+
+@media (min-height: 720px) { 
+
+	.intro .intro-body .brand-heading {
+	    font-size: 100px !important;
+	}
+	
+	.intro .intro-body .intro-text {
+	    font-size: 26px !important;
+	}
+	
+	header .intro-text {
+	    padding-bottom: 20px !important;
+	}
+	
+	.btn-xl {
+	    font-size: 18px !important;
+	}
+	
+	.btn-circle {
+	    width: 70px !important;
+	    height: 70px !important;
+	    margin-top: 40px !important;
+	    padding: 18px 16px !important;
+	    font-size: 32px !important;
 	}
 }
 
