@@ -55,7 +55,7 @@ public class DataController {
 			try {
 				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 				String userInfoJSON = ow.writeValueAsString(strangerUserStats[0]);
-				String strangerUserStatsJSON = "{ \"userInfo\": " + userInfoJSON + ", \"userStats\": " + strangerUserStats[1] + " }";
+				String strangerUserStatsJSON = "{ \"userInfo\": " + userInfoJSON + ", \"userBansInfo\": " + strangerUserStats[1] + ", \"userStats\": " + strangerUserStats[2] + " }";
 				HttpHeaders responseHeaders = new HttpHeaders();
 				responseHeaders.add("Content-Type", "application/json; charset=utf-8");
 				

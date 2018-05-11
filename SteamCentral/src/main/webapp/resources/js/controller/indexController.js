@@ -24,6 +24,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.skinsPrices = null;
 	
 	$scope.mainUserStats = null;
+	$scope.mainUserStatsOverall = null;
+	$scope.mainUserStatsLastMatch = null;
 	$scope.mainUserInventory = null;
 	$scope.mainUserWeaponsStats = null;
 	 
@@ -46,14 +48,14 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Watch mainUserWeaponsStats scope
 	 */
-	$scope.$watch("mainUserWeaponsStats", function(newValue, oldValue) {
+	/*$scope.$watch("mainUserWeaponsStats", function(newValue, oldValue) {
 		if(newValue != null) {
 			console.log('Watch: ' + $(".col-csgostats-grid-weapon-name").width());
 		}
-	});
+	});*/
 	
 	/*
-	 * Add footer css properties
+	 * Add footer CSS properties
 	 */
 	$scope.addFooterCssProperties = function() {
 		$('footer').css({
@@ -64,15 +66,20 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Check marketHashName length
+	 * Obtain text width in pixels
 	 */
-	$scope.marketHashNameLength = function(marketHashName) {
-		if(marketHashName.length > 40) {
+	$scope.measureTextLengthInPixels = function(marketHashName, fontProperties) {		
+		var canvas = $scope.measureTextLengthInPixels.canvas || ($scope.measureTextLengthInPixels.canvas = document.createElement("canvas"));
+	    var context = canvas.getContext("2d");
+	    context.font = fontProperties;
+	    var metrics = context.measureText(marketHashName);
+	    
+	    if(metrics.width > 190) {
 			return true;
 		}
 		
 		return false;
-	}
+	};
 	
 	/*
 	 * Split marketHashName into two paragraphs
@@ -158,6 +165,283 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		}).catch(function(response) {
 			console.log("Server encountered some error while downloading data. Please try again later.");
 		});
+	};
+	
+	/*
+	 * Create overall & last match stats array
+	 */
+	$scope.createLastMatchStats = function(statsResponse) {
+		var statsArray = statsResponse.userStats.playerstats.stats;		
+		
+		var overallStats = [
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/total_playtime.png',
+				statsName: '',
+				name: 'Total playtime:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/playtime_2weeks.png',
+				statsName: '',
+				name: 'Last two weeks playtime:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/kill.png',
+				statsName: 'total_kills',
+				name: 'Total kills:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/death.png',
+				statsName: 'total_deaths',
+				name: 'Total deaths:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/kdr.png',
+				statsName: '',
+				name: 'Kill Death Ratio:',
+				value: null
+			},						
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/shots_hit.png',
+				statsName: 'total_shots_hit',
+				name: 'Total shots hit:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/shots_fired.png',
+				statsName: 'total_shots_fired',
+				name: 'Total shots fired:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/accuracy.png',
+				statsName: '',
+				name: 'Accuracy:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/spk.png',
+				statsName: '',
+				name: 'Shots per kill:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/damage.png',
+				statsName: 'total_damage_done',
+				name: 'Total damage done:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/bombs_planted.png',
+				statsName: 'total_planted_bombs',
+				name: 'Total bombs planted:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/bombs_defused.png',
+				statsName: 'total_defused_bombs',
+				name: 'Total bombs defused:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/mvp.png',
+				statsName: 'total_mvps',
+				name: 'Total MVPs:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/revenge.png',
+				statsName: 'total_revenges',
+				name: 'Total revenges:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/zoomed_sniper.png',
+				statsName: 'total_kills_against_zoomed_sniper',
+				name: 'Kills against zoomed sniper:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/knife_fights.png',
+				statsName: 'total_kills_knife_fight',
+				name: 'Knife fights won:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/money.png',
+				statsName: 'total_money_earned',
+				name: 'Total money earned:',
+				value: null
+			},
+		];
+		
+		var lastMatchStats = [
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/ct_wins.png',
+				statsName: 'last_match_ct_wins',
+				name: 'CT rounds win:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/tt_wins.png',
+				statsName: 'last_match_t_wins',
+				name: 'TT rounds win:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/round_wins.png',
+				statsName: 'last_match_wins',
+				name: 'Match result:',
+				value: null,
+				color: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/max_players.png',
+				statsName: 'last_match_max_players',
+				name: 'Match max players:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/kill.png',
+				statsName: 'last_match_kills',
+				name: 'Kills:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/death.png',
+				statsName: 'last_match_deaths',
+				name: 'Deaths:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/kdr.png',
+				statsName: '',
+				name: 'Kill Death Ratio:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/damage.png',
+				statsName: 'last_match_damage',
+				name: 'Total damage given:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/mvp.png',
+				statsName: 'last_match_mvps',
+				name: 'MVPs:',
+				value: null
+			},
+			{
+				iconVariable: '/SteamCentral/resources/media/stats-img/score.png',
+				statsName: 'last_match_contribution_score',
+				name: 'Score point result:',
+				value: null
+			}
+		];
+		
+		var totalKills = null;
+		var totalDeaths = null;
+		var totalShotsHit = null;
+		var totalShotsFired = null;
+		
+		var lastMatchKills = null;
+		var lastMatchDeaths = null;
+		var lastMatchCTWins = null;
+		var lastMatchTWins = null;		
+		
+		for(var i=0; i<statsArray.length; i++) {	
+			for(var j=0; j<overallStats.length; j++) {
+				if(overallStats[j].statsName == '') {
+					continue;
+				} else {
+					if(statsArray[i].name == overallStats[j].statsName) {
+						overallStats[j].value = statsArray[i].value.toLocaleString();
+						
+						if(statsArray[i].name == 'total_kills') {
+							totalKills = statsArray[i].value;
+						} else if(statsArray[i].name == 'total_deaths') {
+							totalDeaths = statsArray[i].value;
+						} else if(statsArray[i].name == 'total_shots_hit') {
+							totalShotsHit = statsArray[i].value;
+						} else if(statsArray[i].name == 'total_shots_fired') {
+							totalShotsFired = statsArray[i].value;
+						}
+						
+						break;
+					}
+				}
+			}
+						
+			for(var j=0; j<lastMatchStats.length; j++) {
+				if(lastMatchStats[j].statsName == '') {
+					continue;
+				} else {
+					if(statsArray[i].name == lastMatchStats[j].statsName) {
+						lastMatchStats[j].value = statsArray[i].value.toLocaleString();
+						
+						if(statsArray[i].name == 'last_match_kills') {
+							lastMatchKills = statsArray[i].value;
+						} else if(statsArray[i].name == 'last_match_deaths') {
+							lastMatchDeaths = statsArray[i].value;
+						} else if(statsArray[i].name == 'last_match_ct_wins') {
+							lastMatchCTWins = statsArray[i].value;
+						} else if(statsArray[i].name == 'last_match_t_wins') {
+							lastMatchTWins = statsArray[i].value;
+						}
+						
+						break;
+					}										
+				}								
+			}
+		}
+		
+		for(var i=0; i<overallStats.length; i++) {
+			if(overallStats[i].name == 'Kill Death Ratio:') {
+				overallStats[i].value = totalKills == 0 ? 0 : (totalKills / totalDeaths).toFixed(2);
+			} else if(overallStats[i].name == 'Accuracy:') {
+				overallStats[i].value = totalShotsFired == 0 ? 0 : ((totalShotsHit / totalShotsFired) * 100.0).toFixed(2) + '%';
+			} else if(overallStats[i].name == 'Shots per kill:') {
+				overallStats[i].value = totalKills == 0 ? 0 : (totalShotsHit / totalKills).toFixed(2);
+			} else if(overallStats[i].name == 'Total playtime:') {
+				overallStats[i].value = (statsResponse.userInfo.playtimeForever / 60).toFixed(1) + 'h';
+			} else if(overallStats[i].name == 'Last two weeks playtime:') {
+				overallStats[i].value = (statsResponse.userInfo.playtimeTwoWeeks / 60).toFixed(1) + 'h';
+			} else if(overallStats[i].statsName == 'total_money_earned') {
+				overallStats[i].value += '$';
+			}
+		}
+		
+		for(var i=0; i<lastMatchStats.length; i++) {
+			if(lastMatchStats[i].name == 'Kill Death Ratio:') {
+				lastMatchStats[i].value = lastMatchKills == 0 ? 0 : (lastMatchKills / lastMatchDeaths).toFixed(2);
+			} else if(lastMatchStats[i].statsName == 'last_match_wins') {
+				if(lastMatchCTWins == lastMatchTWins) {
+					lastMatchStats[i].value = 'TIE';
+					lastMatchStats[i].color = '#8686d5'
+				} else {
+					var matchWin = true;
+					
+					if(lastMatchCTWins > lastMatchStats[i].value) {
+						matchWin = false;
+					} else if(lastMatchTWins > lastMatchStats[i].value) {
+						matchWin = false;
+					}
+					
+					if(matchWin) {
+						lastMatchStats[i].value = 'WIN';
+						lastMatchStats[i].color = '#a1dc03'
+					} else {
+						lastMatchStats[i].value = 'LOSS';
+						lastMatchStats[i].color = '#fd3535'
+					}
+				}
+			}
+		}
+		
+		return [overallStats, lastMatchStats];
 	};
 							
 	/*
@@ -455,7 +739,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						weaponsStatsList[j].totalShots = statsArray[i].value;
 						break;
 					} else if(statsArray[i].name.includes('total_hits')) {
-						weaponsStatsList[j].totalHits = statsArray[i].value;
+						weaponsStatsList[j].totalHits = statsArray[i].value;						
 						break;
 					}
 				}			
@@ -593,6 +877,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.mainUserStats = response.data;
+					var overallStatsArray = $scope.createLastMatchStats($scope.mainUserStats);
+					$scope.mainUserStatsOverall = overallStatsArray[0];
+					$scope.mainUserStatsLastMatch = overallStatsArray[1];
 					$scope.showMainUserStatsGeneral();
 					$scope.showMainUserStatsWeaponsLoading();
 					return $http.post($scope.url + '/stats/userInventory', $scope.steamId);

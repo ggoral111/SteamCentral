@@ -34,7 +34,7 @@
 		<link href="${animateCss}" rel="stylesheet" />
 		
 		<spring:url value="/resources/media/steamcentralicon_large.png" var="steamcentral_iconPng" />
-		<spring:url value="/resources/media/steamwhiteicon.png" var="steamwhiteiconPng" />
+		<spring:url value="/resources/media/steamwhiteicon.png" var="steamwhiteiconPng" />		
 	</head>
 	<body data-ng-app="indexController" data-ng-controller="indexCtrl" class="no-js" id="removeBlinking">
 	
@@ -61,7 +61,7 @@
 	        </div>
 	    </nav>
 		
-		<div data-ng-hide="hideMainUserStats" data-ng-cloak class="main-user-stats">		
+		<div class="main-user-stats">		
 			<div class="container main-user-stats-container">
 				
 				<div class="row">
@@ -121,7 +121,33 @@
 											</span>
 										</div>
 									</div>
-								</div>			        	        			        	
+								</div>	
+								<div class="row">
+									<div class="col-sm-4 col-md-4 col-lg-4">
+										<div class="custom-checkbox">
+											<div class="custom-checkbox-default">
+									            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox1"/>
+									            <label for="checkbox1">Show TT weapons only</label>
+									        </div>
+								        </div>
+									</div>
+									<div class="col-sm-4 col-md-4 col-lg-4">
+										<div class="custom-checkbox">
+											<div class="custom-checkbox-default">
+									            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox2"/>
+									            <label for="checkbox2">Show CT weapons only</label>
+									        </div>
+								        </div>
+									</div>
+									<div class="col-sm-4 col-md-4 col-lg-4">
+										<div class="custom-checkbox">
+											<div class="custom-checkbox-default">
+									            <input type="checkbox" data-ng-true-value="2" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox3"/>
+									            <label for="checkbox3">Show both sides weapons only</label>
+									        </div>
+								        </div>
+									</div>
+								</div>	        	        			        	
 							</div>
 						</div>							      
 					</div>     
@@ -146,6 +172,8 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- <p style="font-size: 11px;">TODO: footer przy filtrowaniu jak nie ma elementow to ucieka na gore, ma byc sztywno na dole jak wysokosc contentu jest mniejsza niz wysokosc okna, steam login, user compare</p>	 -->	
 								
 				<div data-ng-hide="hideFailStatsDownloadingError" data-ng-cloak class="alert alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
 					<strong>Error:</strong> failed downloading user statistics.
@@ -164,40 +192,146 @@
 											<p class="csgostats-overall-title-formatter-center">Overall statistics</p>
 										</div>
 									</div>
-									<div class="row center-block">
-										<div class="col-sm-4 col-md-3 col-xl-3" align="center">
-											<div class="csgostats-overall-user-avatar-cell">
-												<div class="row">
-													<div class="col-md-12 csgostats-overall-user-avatar-image">
-														<img data-ng-src="{{ mainUserStats.userInfo.avatarFullURL }}" class="img-responsive full-width">
+									<div class="row center-block">									
+										<div class="col-xs-12 col-sm-12 col-md-6 col-xl-6 col-csgostats-overall-section-outer">										
+											<div class="row">
+												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-user-info-section-outer">
+													<div class="row">
+														<div class="col-xs-12 col-sm-4 col-md-6 col-lg-5 col-xl-5 col-csgostats-avatar-section-inner">
+															<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">
+																<img data-ng-src="{{ mainUserStats.userInfo.avatarFullURL }}" class="img-rounded img-responsive csgostats-avatar-img">
+															</a>
+														</div>
+														<div class="col-xs-12 col-sm-8 col-md-6 col-lg-7 col-xl-7 col-csgostats-overall-section-user-info">
+															<div class="row">
+																<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+																	<p class="csgostats-overall-info-formatter-center">User & bans info</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-section"></div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">Username:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																	<p class="csgostats-overall-user-info-text-right">
+																		<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
+																	</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">SteamID:</p>
+																</div>
+																<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userInfo.steamId }}</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																	<p data-ng-if="!mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0 && mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
+																	<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans != 0 || mainUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userBansInfo.DaysSinceLastBan }}</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">Community banned:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																	<p data-ng-if="!mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-entry">
+																<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
+																</div>
+																<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<p data-ng-if="mainUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																	<p data-ng-if="mainUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																</div>
+															</div>
+															<div class="row row-csgostats-overall-section-end"></div>
+														</div>
 													</div>
 												</div>
-												<div class="row">
-													<div class="col-md-12 col-csgostats-overall-grid-user-name">
-														<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank" class="csgostats-overall-user-name-formatter-center">{{ mainUserStats.userInfo.personaname }}</a>
+											</div>												
+											<div class="row">
+												<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section">
+													<div class="row">
+														<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+															<p class="csgostats-overall-info-formatter-center">Last match</p>
+														</div>
+													</div>	
+													<div class="row row-csgostats-overall-section"></div>
+													<div class="row row-csgostats-overall-entry" data-ng-repeat="lastMatchStats in mainUserStatsLastMatch" data-ng-if="lastMatchStats.value !== null">
+														<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
+															<img data-ng-src="{{ lastMatchStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
+														</div>
+														<div class="col-xs-7 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<p class="csgostats-overall-stats-text-left">{{ lastMatchStats.name }}</p>
+														</div>
+														<div class="col-xs-3 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<p data-ng-if="lastMatchStats.statsName == 'last_match_wins'" class="csgostats-overall-stats-text-right" style="color: {{ lastMatchStats.color }};">{{ lastMatchStats.value }}</p>
+															<p data-ng-if="lastMatchStats.statsName != 'last_match_wins'" class="csgostats-overall-stats-text-right">{{ lastMatchStats.value }}</p>
+														</div>
 													</div>
+												</div>
+											</div>																	
+										</div>										
+										<div class="col-xs-12 col-sm-12 col-md-6 col-xl-6 col-csgostats-overall-section-outer-overall-stats">	
+											<div class="row">
+												<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section">								
+													<div class="row">
+														<div class="col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+															<p class="csgostats-overall-info-formatter-center">Overall</p>
+														</div>
+													</div>
+													<div class="row row-csgostats-overall-section"></div>
+													<div class="row row-csgostats-overall-entry" data-ng-repeat="overallStats in mainUserStatsOverall" data-ng-if="overallStats.value !== null">
+														<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
+															<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
+														</div>
+														<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
+														</div>
+														<div class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<p class="csgostats-overall-stats-text-right">{{ overallStats.value }}</p>
+														</div>
+													</div>																					
 												</div>
 											</div>
-										</div>
-										<div class="col-sm-5 col-md-5 col-xl-5">
-											<div class="csgostats-overall-all-stats-cell">
-												<div class="row">
-													<div class="col-md-12 col-csgostats-grid-weapon-name">
-														<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank" class="csgostats-overall-user-name-formatter-center">{{ mainUserStats.userInfo.personaname }}</a>
-													</div>
-												</div>
-												<p style="font-size: 11px;">TODO: main stats, avatar poprawic, za duzy i nie skaluje sie, filtrowanie weapons CT, TT, both sides, login page - 720p height zmniejsz nieco welcome to steamcentral i przyciski, bo wychodzi poza kadr, madia query, przycisk get float przy skinie o ile CORS pozwoli</p>
-											</div>
-										</div>
-										<div class="col-sm-3 col-md-4 col-xl-4">
-											<div class="csgostats-overall-all-stats-cell">
-												<div class="row">
-													<div class="col-md-12 col-csgostats-grid-weapon-name">
-														<p class="csgostats-overall-user-name-formatter-center">Last match:</p>
-													</div>
-												</div>
-											</div>
-										</div>
+										</div>																			
 									</div>
 								</div>
 							</div>
@@ -248,7 +382,7 @@
 								
 				<div data-ng-hide="hideMainUserStatsWeapons" data-ng-cloak class="main-user-stats-weapons">
 					<div class="row center-block csgostats-row">
-						<div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 csgostats-grid" data-ng-repeat="weaponStats in mainUserWeaponsStats | filter:{filterHashName:searchMainUserStatsPhrase} | orderBy:selectedItemMainUserStats" data-ng-if="weaponStats !== null">
+						<div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 csgostats-grid" data-ng-repeat="weaponStats in mainUserWeaponsStats | filter:{filterHashName: searchMainUserStatsPhrase, side: mainUserWeaponsStats.side} | orderBy:selectedItemMainUserStats" data-ng-if="weaponStats !== null">
 							<div class="csgostats-grid-cell wow fadeInDown">											
 								<div class="row center-block">
 									<div class="col-md-12 col-csgostats-grid-weapon-title">
@@ -257,16 +391,16 @@
 								</div>
 								<div class="row center-block">
 									<div data-ng-if="weaponStats.weaponSkin.souvenir" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ weaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ weaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
-										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
+										<div data-ng-if="measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
+										<p data-ng-if="!measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 									<div data-ng-if="weaponStats.weaponSkin.statTrak" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ weaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ weaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
-										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
+										<div data-ng-if="measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
+										<p data-ng-if="!measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 									<div data-ng-if="!weaponStats.weaponSkin.souvenir && !weaponStats.weaponSkin.statTrak" class="col-md-12 col-csgostats-grid-weapon-name" style="background: rgb({{ weaponStats.weaponSkin.color }}); background: rgba({{ weaponStats.weaponSkin.color }}, 0.4);">
-										<div data-ng-if="marketHashNameLength(weaponStats.weaponSkin.marketHashName)" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, false) | unsafe"></div>								
-										<p data-ng-if="!marketHashNameLength(weaponStats.weaponSkin.marketHashName)" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
+										<div data-ng-if="measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(weaponStats.weaponSkin.marketHashName, false) | unsafe"></div>								
+										<p data-ng-if="!measureTextLengthInPixels(weaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ weaponStats.weaponSkin.marketHashName }}</p>
 									</div>
 								</div>
 								<div class="row center-block">
@@ -277,13 +411,13 @@
 									</div>
 								</div>
 								<div class="row center-block">
-									<div class="col-sm-6 col-md-6 col-xl-6 csgostats-grid-padding-left">
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-left">
 										<a href="http://steamcommunity.com/market/listings/730/{{ weaponStats.weaponSkin.marketHashName }}" target="_blank">
 											<button data-ng-if="weaponStats.weaponSkin.price != 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: {{ weaponStats.weaponSkin.price }}$</button>
 											<button data-ng-if="weaponStats.weaponSkin.price == 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: N/A</button>
 										</a>									
 									</div>
-									<div class="col-sm-6 col-md-6 col-xl-6 csgostats-grid-padding-right">
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-right">
 										<a href="{{ weaponStats.weaponSkin.inspectInGame }}">
 											<button class="btn csgostats-inspect-button" type="button" onclick="this.blur();">Inspect in-game</button>		
 										</a>
@@ -303,11 +437,11 @@
 								         <p class="modal-text-formatter-left p-games-list">Shots per kill:</p>
 									</div>
 								    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
-										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ weaponStats.totalKills }}</p>
+										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ weaponStats.totalKills.toLocaleString() }}</p>
 										<p data-ng-if="weaponStats.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>
-										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves' && weaponStats.weaponSkin.type != 'Knife' && weaponStats.weaponSkin.type != 'High Explosive Grenade' && weaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ weaponStats.totalShots }}</p>
+										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves' && weaponStats.weaponSkin.type != 'Knife' && weaponStats.weaponSkin.type != 'High Explosive Grenade' && weaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ weaponStats.totalShots.toLocaleString() }}</p>
 										<p data-ng-if="weaponStats.weaponSkin.type == 'Gloves' || weaponStats.weaponSkin.type == 'Knife' || weaponStats.weaponSkin.type == 'High Explosive Grenade' || weaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'"class="modal-text-formatter p-games-list">N/A</p>
-										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves' && weaponStats.weaponSkin.type != 'Knife' && weaponStats.weaponSkin.type != 'High Explosive Grenade' && weaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ weaponStats.totalHits }}</p>
+										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves' && weaponStats.weaponSkin.type != 'Knife' && weaponStats.weaponSkin.type != 'High Explosive Grenade' && weaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ weaponStats.totalHits.toLocaleString() }}</p>
 										<p data-ng-if="weaponStats.weaponSkin.type == 'Gloves' || weaponStats.weaponSkin.type == 'Knife' || weaponStats.weaponSkin.type == 'High Explosive Grenade' || weaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>				            		   
 										<p data-ng-if="weaponStats.weaponSkin.type != 'Gloves' && weaponStats.weaponSkin.type != 'Knife' && weaponStats.weaponSkin.type != 'High Explosive Grenade' && weaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ weaponStats.accuracy }}%</p>
 										<p data-ng-if="weaponStats.weaponSkin.type == 'Gloves' || weaponStats.weaponSkin.type == 'Knife' || weaponStats.weaponSkin.type == 'High Explosive Grenade' || weaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>
@@ -364,7 +498,7 @@
 		</footer>
 								
 	    <spring:url value="/resources/js/jquery-3.3.1.min.js" var="jqueryJs" />	
-		<spring:url value="/resources/js/angular.js" var="angularJs" />
+		<spring:url value="/resources/js/angular.js" var="angularJs" />	
 		<spring:url value="/resources/js/controller/indexController.js" var="indexControllerJs" />
 		<spring:url value="/resources/js/bootstrap.js" var="bootstrapJs" />
 		<%-- <spring:url value="/resources/js/bootstrap-select.min.js" var="bootstrapSelectJs" /> --%>
@@ -375,7 +509,7 @@
 		<spring:url value="/resources/js/common.js" var="commonJs" />
 		
 		<script src="${jqueryJs}"></script>		
-		<script src="${angularJs}"></script>
+		<script src="${angularJs}"></script>		
 		<script src="${indexControllerJs}"></script>
 		<script src="${bootstrapJs}"></script>
 		<%-- <script src="${bootstrapSelectJs}"></script> --%>

@@ -595,19 +595,3 @@ img::selection {
 img::-moz-selection {
     background: 0 0;
 }
-
-/* ------------------------------REMOVE JS BLINKING--------------------------------- */
-
-/* .no-js {
-  display:none;
-}
-
-#removeBlinking {
-  display: block;
-}
-
-#removeBlinking.no-js {
-  display: none;
-} */
-
-/* ---------------------------------------------------------------------------------- */

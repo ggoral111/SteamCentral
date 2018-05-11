@@ -26,19 +26,20 @@ import com.steamcentral.core.model.SteamUserInfo;
 
 public class StatsService implements HttpConnection, FileOperations {
 	
-	private final static String TIMESTAMP_PATH, PRICES_FILE_PATH, DEFAULT_WEAPONS_FILE_PATH, CSGO_BACKPACK_URL, CSGO_STATS_URL, STEAM_FRIENDLIST_URL, STEAM_GAME_OWNED_URL, STEAM_PLAYER_SUMMARIES_URL, STEAM_RESOLVE_VANITY_URL;
+	private final static String TIMESTAMP_PATH, PRICES_FILE_PATH, DEFAULT_WEAPONS_FILE_PATH, CSGO_BACKPACK_URL, CSGO_STATS_URL, STEAM_FRIENDLIST_URL, STEAM_GAME_OWNED_URL, STEAM_PLAYER_SUMMARIES_URL, STEAM_RESOLVE_VANITY_URL, STEAM_PLAYER_BANS_URL;
 	private final static int PROCESSORS_NUMBER, CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES, CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES;
 	
 	static {
 		TIMESTAMP_PATH = "src/main/resources/timestamp.date";
 		PRICES_FILE_PATH = "src/main/resources/marketPrices.json";
 		DEFAULT_WEAPONS_FILE_PATH = "src/main/resources/defaultWeapons.json";
-		CSGO_BACKPACK_URL = "https://csgobackpack.net/api/GetItemsList/v2/?currency=USD&no_details=true";
+		CSGO_BACKPACK_URL = "https://csgobackpack.net/api/GetItemsList/v2/?no_details=true";
 		CSGO_STATS_URL = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_FRIENDLIST_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_GAME_OWNED_URL = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&format=json&steamid=";
 		STEAM_PLAYER_SUMMARIES_URL = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamids=";
 		STEAM_RESOLVE_VANITY_URL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&vanityurl=";
+		STEAM_PLAYER_BANS_URL = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamids=";
 		// PROCESSORS_NUMBER = Runtime.getRuntime().availableProcessors();
 		PROCESSORS_NUMBER = 32;
 		CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES = 240;
@@ -101,7 +102,15 @@ public class StatsService implements HttpConnection, FileOperations {
 				String csgoStats = getUserStats(sui.getSteamId());
 				
 				if(csgoStats != null) {
-					return new Object[] {sui, csgoStats};
+					String steamBansInfo = getHttpContent(STEAM_PLAYER_BANS_URL + sui.getSteamId()); 
+					
+					if(isJSON(steamBansInfo)) {
+						JSONArray playersArray = new JSONObject(steamBansInfo).getJSONArray("players");
+						
+						if(playersArray.length() > 0) {
+							return new Object[] {sui, playersArray.getJSONObject(0).toString(), csgoStats};
+						}	
+					}					
 				}
 			}
 		}
