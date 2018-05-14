@@ -5,6 +5,9 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.steamcentral.core.model.SteamUserInfo;
 import com.steamcentral.core.service.StatsService;
 
@@ -17,29 +20,25 @@ public class StatsServiceTest {
 		ss = new StatsService();
 	}
 	
+	@Ignore
 	@AfterClass
 	public static void tearDownClass() {
 		System.out.println("Testing ended!");
 	}
 	
-	@Ignore
 	@Test
 	public void loadFriendListTest() {
 		Set<SteamUserInfo> friendList = ss.getFriendListFullInfo("76561198078305233");		
 		//assertNotNull(friendList);
 		
-		if(friendList != null) {
-			System.out.println("friendList size(): " + friendList.size());
-			System.out.println("===================================");
-			
-			for(SteamUserInfo sui : friendList) {
-				System.out.println(sui.getSteamId());
-				System.out.println(sui.getPersonaname());
-				System.out.println(sui.getAvatarFullURL());
-				System.out.println(sui.getPlaytimeTwoWeeks());
-				System.out.println(sui.getPlaytimeForever());
-				System.out.println("===================================");
-			}
+		if(friendList != null) {			
+			try {
+				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String friendListJSON = ow.writeValueAsString(friendList);
+				System.out.print(friendListJSON);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}	
 		}
 	}
 	
@@ -69,6 +68,7 @@ public class StatsServiceTest {
 		}
 	}
 	
+	@Ignore
 	@Test
 	public void getSkinsPricesTest() {
 		ss.getSkinsPrices();

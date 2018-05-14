@@ -15,11 +15,13 @@ var indexController = angular.module('indexController',[]);
 
 indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile', function($scope, $http, $filter, $compile) {
 	$scope.dateCreation = '2018';
-	$scope.steamId = '76561198078305233';
+	/*$scope.steamId = '76561198078305233';*/
+	$scope.steamId = '76561198138283796';
 	$scope.url = "/SteamCentral/data";
 	$scope.imageUrl = 'https://steamcommunity-a.akamaihd.net/economy/image/';
 	
 	$scope.friendList = null;
+	$scope.friendListRequest = false;
 	$scope.defaultWeapons = null;
 	$scope.skinsPrices = null;
 	
@@ -33,35 +35,92 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.friendUserInventory = null;
 	$scope.friendUserWeaponsStats = null;
 	
+	$scope.hideMainUserStats = false;
+	$scope.hideMainUserStatsPanel = false;
 	$scope.hideMainUserStatsGeneralLoading = false;
+	$scope.hideNavTabCompareOption = true;
 	$scope.hideMainUserStatsGeneral = true;
 	$scope.hideMainUserStatsWeaponsLoading = true;
 	$scope.hideMainUserStatsWeapons = true;
+	$scope.cleanBlinkingMainUserStats = true;
+	
+	$scope.hideFriendUserStats = true;
+	
+	$scope.hideFriendUserStatsPanel = true;
+	$scope.hideFriendUserStatsPanelFriendCombobox = true;
+	$scope.hideFriendUserStatsPanelLoadingPoints = true;
+	$scope.hideFriendUserStatsPanelFailButton = true;
+	$scope.hideFriendUserStatsPanelLoading = true;
+	
+	$scope.hideFriendUserStatsGeneralLoading = true;
+	
+	$scope.hideFriendUserStatsWeaponsLoading = true;
+	$scope.hideFriendUserStatsWeapons = true;
+	$scope.cleanBlinkingFriendUserStats = true;
 	
 	$scope.hideFailStatsDownloadingError = true;
 	$scope.hideFailUserInventoryDownloadingWarning = true;
 	$scope.hideFailSkinsPricesDownloadingWarning = true;
 	$scope.hideFailDefaultWeaponsDownloadingError = true;
 	
+	$scope.hideFailFriendListDownloadingError = true;
+	$scope.failFriendListDownloadingErrorPopedUp = false;
+	$scope.hideFailFriendStatsDownloadingError = true;
+	$scope.hideFailFriendUserInventoryDownloadingWarning = true;
+	
 	$scope.hideFooter = true;
+	$scope.hideFooterCompare = true;
 	
 	/*
 	 * Watch mainUserWeaponsStats scope
 	 */
-	/*$scope.$watch("mainUserWeaponsStats", function(newValue, oldValue) {
+	$scope.$watch("friendUserWeaponsStats", function(newValue, oldValue) {
 		if(newValue != null) {
-			console.log('Watch: ' + $(".col-csgostats-grid-weapon-name").width());
+			console.log($scope.friendUserWeaponsStats);
 		}
-	});*/
+	});
 	
 	/*
-	 * Add footer CSS properties
+	 * Add main user footer CSS properties
 	 */
 	$scope.addFooterCssProperties = function() {
-		$('footer').css({
+		$('.main-user-footer').css({
 			'position' : 'fixed',
 			'width' : '100%',
 			'bottom' : '0'
+		});
+	};
+	
+	/*
+	 * Remove main user footer CSS properties
+	 */
+	$scope.removeFooterCssProperties = function() {
+		$('.main-user-footer').css({
+			'position' : '',
+			'width' : '',
+			'bottom' : ''
+		});
+	};
+	
+	/*
+	 * Add friend user footer CSS properties
+	 */
+	$scope.addFriendUserFooterCssProperties = function() {
+		$('.friend-user-footer').css({
+			'position' : 'fixed',
+			'width' : '100%',
+			'bottom' : '0'
+		});
+	};
+	
+	/*
+	 * Remove friend user footer CSS properties
+	 */
+	$scope.removeFriendUserFooterCssProperties = function() {
+		$('.friend-user-footer').css({
+			'position' : '',
+			'width' : '',
+			'bottom' : ''
 		});
 	};
 	
@@ -92,6 +151,133 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	}
 	
 	/*
+	 * Show friend user stats panel loading
+	 */
+	$scope.showFriendUserStatsPanelLoading = function() {
+		if($scope.friendList == null) {
+			$scope.hideFriendUserStatsPanelLoading = false;
+		}
+	}
+	
+	/*
+	 * Show friend user stats panel
+	 */
+	$scope.showFriendUserStatsPanel = function() {
+		$scope.hideFriendUserStatsPanel = false;
+	}
+	
+	/*
+	 * Show friend combobox in friend user stats panel
+	 */
+	$scope.showFriendUserStatsPanelFriendCombobox = function() {
+		$scope.hideFriendUserStatsPanelFriendCombobox = false;
+	};
+	
+	/*
+	 * Show fail button in friend user stats panel
+	 */
+	$scope.showFriendUserStatsPanelFailButton = function() {
+		$scope.hideFriendUserStatsPanelFailButton = false;				
+	};
+	
+	/*
+	 * Show loading points in friend user stats panel
+	 */
+	$scope.showFriendUserStatsPanelLoadingPoints = function() {
+		$scope.hideFriendUserStatsPanelLoadingPoints = false;
+		
+		if($scope.failFriendListDownloadingErrorPopedUp == false) {
+			$('#failFriendListDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+			$('#failFriendListDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });			
+			$scope.failFriendListDownloadingErrorPopedUp = true;
+		}
+	};
+	
+	/*
+	 * Show friend user stats module
+	 */
+	$scope.showFriendUserStats = function() {
+		$scope.hideMainUserStats = true;
+		$scope.hideFooter = true;
+		$scope.hideFooterCompare = false;
+		$scope.hideFriendUserStats = false;
+		
+		if($scope.friendUserStats == null) {
+			$scope.addFriendUserFooterCssProperties();
+		}
+		
+		if($scope.cleanBlinkingMainUserStats == true) {
+			if($scope.hideMainUserStatsGeneral == false) {
+				$('#mainUserStatsPanelBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');		
+				$('#mainUserStatsPanelBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });		
+				$('#mainUserStatsGeneralBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#mainUserStatsGeneralBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailStatsDownloadingError == false) {
+				$('#failStatsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failStatsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailUserInventoryDownloadingWarning == false) {
+				$('#failUserInventoryDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failUserInventoryDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailSkinsPricesDownloadingWarning == false) {
+				$('#failSkinsPricesDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failSkinsPricesDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailDefaultWeaponsDownloadingError == false) {
+				$('#failDefaultWeaponsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failDefaultWeaponsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			$scope.cleanBlinkingMainUserStats = false;
+		}
+	}
+	
+	/*
+	 * Show main user stats module
+	 */
+	$scope.showMainUserStats = function() {
+		$scope.hideFriendUserStats = true;
+		$scope.hideFooterCompare = true;
+		$scope.hideFooter = false;		
+		$scope.hideMainUserStats = false;
+		
+		if($scope.cleanBlinkingFriendUserStats == true) {
+			if($scope.hideFriendUserStatsPanel == false) {
+				$('#friendUserStatsPanelBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#friendUserStatsPanelBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFriendUserStatsPanelFriendCombobox == false) {
+				$('#friendUserStatsPanelFriendComboboxBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration');
+				$('#friendUserStatsPanelFriendComboboxBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailFriendListDownloadingError == false) {
+				$('#failFriendListDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failFriendListDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailFriendStatsDownloadingError == false) {
+				$('#failFriendStatsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failFriendStatsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			if($scope.hideFailFriendUserInventoryDownloadingWarning == false) {
+				$('#failFriendUserInventoryDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
+				$('#failFriendUserInventoryDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			}
+			
+			$scope.cleanBlinkingFriendUserStats = false;
+		}
+	}
+	
+	/*
 	 * Show main user weapons stats loading
 	 */
 	$scope.showMainUserStatsWeaponsLoading = function() {
@@ -102,8 +288,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Show overall stats module
 	 */
 	$scope.showMainUserStatsGeneral = function() {
-		$scope.hideMainUserStatsGeneralLoading = true;
-		$scope.hideMainUserStatsGeneral = false;
+		$scope.hideMainUserStatsGeneralLoading = true;		
+		$scope.hideMainUserStatsGeneral = false;		
 	};
 	
 	/*
@@ -120,21 +306,37 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.showFailStatsDownloadingError = function() {
 		$scope.hideMainUserStatsGeneralLoading = true;
 		$scope.hideMainUserStatsWeaponsLoading = true;
-		$scope.hideFailStatsDownloadingError = false;
+		$scope.hideFailStatsDownloadingError = false;	
+	};
+	
+	/*
+	 * Show failed downloading friend user stats error
+	 */
+	$scope.showFailFriendStatsDownloadingError = function() {
+		$scope.hideFriendUserStatsGeneralLoading = true;
+		$scope.hideFriendUserStatsWeaponsLoading = true;
+		$scope.hideFailFriendStatsDownloadingError = false;	
 	};
 	
 	/*
 	 * Show failed downloading user inventory warning
 	 */
 	$scope.showFailUserInventoryDownloadingWarning = function() {
-		$scope.hideFailUserInventoryDownloadingWarning = false;
+		$scope.hideFailUserInventoryDownloadingWarning = false;		
+	};
+	
+	/*
+	 * Show failed downloading selected user inventory warning
+	 */
+	$scope.showFailFriendUserInventoryDownloadingWarning = function() {
+		$scope.hideFailFriendUserInventoryDownloadingWarning = false;		
 	};
 	
 	/*
 	 * Show failed downloading skins prices warning
 	 */
 	$scope.showFailSkinsPricesDownloadingWarning = function() {
-		$scope.hideFailSkinsPricesDownloadingWarning = false;
+		$scope.hideFailSkinsPricesDownloadingWarning = false;		
 	};
 	
 	/*
@@ -142,8 +344,15 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.showFailDefaultWeaponsDownloadingError = function() {
 		$scope.hideMainUserStatsWeaponsLoading = true;
-		$scope.hideFailDefaultWeaponsDownloadingError = false;
+		$scope.hideFailDefaultWeaponsDownloadingError = false;		
 	};
+	
+	/*
+	 * Show failed downloading friend list error
+	 */
+	$scope.showFailFriendListDownloadingError = function() {
+		$scope.hideFailFriendListDownloadingError = false;		
+	}
 	
 	/*
 	 * Show footer
@@ -153,18 +362,66 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
+	 * Reload friend list with details
+	 */
+	$scope.reloadFriendList = function() {
+		$scope.friendListRequest = false;
+
+		if($scope.friendList == null && !$scope.friendListRequest) {
+			$scope.friendListRequest = true;
+			$scope.hideFriendUserStatsPanelFailButton = true;
+			$scope.hideFailFriendListDownloadingError = true;
+			$scope.showFriendUserStatsPanelLoadingPoints();
+			
+			$http.post($scope.url + '/stats/friendList', $scope.steamId).then(function(response) {
+				if(response.data != "" && response.data != null) {
+					$scope.friendList = response.data;
+					$scope.hideFriendUserStatsPanelLoadingPoints = true;
+					$scope.showFriendUserStatsPanelFriendCombobox();
+				} else {
+					$scope.hideFriendUserStatsPanelLoadingPoints = true;
+					$scope.showFriendUserStatsPanelFailButton();
+					$scope.showFailFriendListDownloadingError();
+					console.log('error: failed downloading friend list.');
+				}
+			}).catch(function(response) {
+				$scope.hideFriendUserStatsPanelLoadingPoints = true;
+				$scope.showFriendUserStatsPanelFailButton();
+				$scope.showFailFriendListDownloadingError();
+				console.log('error: failed downloading friend list.');
+			});
+		}
+	};
+	
+	/*
 	 * Load friend list with details
 	 */
-	$scope.loadFriendList = function() {	
-		$http.post($scope.url + '/stats/friendList', $scope.steamId).then(function(response) {
-			if(response.data != "" && response.data != null) {
-				$scope.friendList = response.data;
-			} else {
-				console.log("Server encountered some error while downloading data. Please try again later.");
-			}
-		}).catch(function(response) {
-			console.log("Server encountered some error while downloading data. Please try again later.");
-		});
+	$scope.loadFriendList = function() {		
+		if($scope.friendList == null && !$scope.friendListRequest) {
+			$scope.friendListRequest = true;
+			$scope.showFriendUserStatsPanelLoading();
+			
+			$http.post($scope.url + '/stats/friendList', $scope.steamId).then(function(response) {
+				if(response.data != "" && response.data != null) {
+					$scope.friendList = response.data;	
+					$scope.showFriendUserStatsPanelFriendCombobox();
+					$scope.hideFriendUserStatsPanelLoading = true;
+					$scope.showFriendUserStatsPanel();
+				} else {
+					$scope.hideFriendUserStatsPanelLoading = true;
+					$scope.showFriendUserStatsPanelFailButton();
+					$scope.showFriendUserStatsPanel();
+					$scope.showFailFriendListDownloadingError();
+					console.log('error: failed downloading friend list.');
+				}
+			}).catch(function(response) {
+				$scope.hideFriendUserStatsPanelLoading = true;
+				$scope.showFriendUserStatsPanelFailButton();
+				$scope.showFriendUserStatsPanel();
+				$scope.showFailFriendListDownloadingError();
+				console.log('error: failed downloading friend list.');
+			});
+		}
 	};
 	
 	/*
@@ -453,6 +710,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		for(var i=0; i<statsArray.length; i++) {
 			var skinObject = null;
 			var filterHashName = null;
+			var filterType = null;
 			
 			for(var j=0; j<skinsArray.length; j++) {
 				if(skinsArray[j].type == statsArray[i].name) {
@@ -460,11 +718,13 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						skinsArray[j].color = $scope.convertHexToRgb('#' + skinsArray[j].color);
 						skinObject = skinsArray[j];
 						filterHashName = skinsArray[j].marketHashName;
+						filterType = skinsArray[j].type;
 					} else {
 						if(skinsArray[j].price > skinObject.price) {
 							skinsArray[j].color = $scope.convertHexToRgb('#' + skinsArray[j].color);
 							skinObject = skinsArray[j];
 							filterHashName = skinsArray[j].marketHashName;
+							filterType = skinsArray[j].type;
 						}
 					}
 				}
@@ -476,6 +736,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						defaultWeaponsArray[j].color = $scope.convertHexToRgb('#' + defaultWeaponsArray[j].color);
 						skinObject = defaultWeaponsArray[j];
 						filterHashName = defaultWeaponsArray[j].marketHashName;
+						filterType = defaultWeaponsArray[j].type;
 						break;
 					}
 				}
@@ -483,6 +744,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			
 			statsArray[i].weaponSkin = skinObject;
 			statsArray[i]['filterHashName'] = filterHashName;
+			statsArray[i]['filterType'] = filterType;
 		}
 		
 		// statsArray.sort((a, b) => parseInt(b.totalKills) - parseInt(a.totalKills));
@@ -589,10 +851,10 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Get skins list from inventory
 	 */
-	$scope.getSkinsFromInventory = function(steamId) {
+	$scope.getSkinsFromInventory = function(steamId, userInventory) {
 		var inventorySkinsSet = new Set();
-		var rgDescriptions = $scope.mainUserInventory.rgDescriptions;
-		var rgInventory = $scope.mainUserInventory.rgInventory;
+		var rgDescriptions = userInventory.rgDescriptions;
+		var rgInventory = userInventory.rgInventory;
 		
 		for(var item in rgDescriptions) {
 			if(rgDescriptions.hasOwnProperty(item)) {
@@ -828,7 +1090,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserInventory = response.data;
 				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);										
-				var skinsFromInventory = $scope.getSkinsFromInventory($scope.friendUserStats.userInfo.steamId);				
+				var skinsFromInventory = $scope.getSkinsFromInventory($scope.friendUserStats.userInfo.steamId, $scope.friendUserInventory);				
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
 				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
 			} else {
@@ -844,25 +1106,48 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Load friend stats for comparison
 	 */
 	$scope.loadFriendStatsToCompare = function(steamId) {
+		$scope.hideFailFriendStatsDownloadingError = true;
+		$scope.hideFooterCompare = true;
+		$scope.removeFriendUserFooterCssProperties();
+				
 		$http.post($scope.url + '/stats/userStats', steamId)
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserStats = response.data;
+					
+					// TODO: add operations for general stats like in main user view					
+					
+					$scope.hideFriendUserStatsWeaponsLoading = false;
 					return $http.post($scope.url + '/stats/userInventory', steamId);
 				} else {
+					$scope.showFailFriendStatsDownloadingError();
+					$scope.addFriendUserFooterCssProperties();
+					$scope.hideFooterCompare = false;
 					throw "failed downloading friend user stats.";
 				}
 			})
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
-					$scope.friendUserInventory = response.data;
-					var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);										
-					var skinsFromInventory = $scope.getSkinsFromInventory(steamId);					
-					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
-					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
+					$scope.friendUserInventory = response.data;					
 				} else {
-					throw "failed downloading friend user inventory.";
+					$scope.showFailFriendUserInventoryDownloadingWarning();
+					console.log('error: failed downloading user inventory.');
 				}
+				
+				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
+				
+				if($scope.friendUserInventory != null) {
+					var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);					
+					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
+					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);	
+				} else {
+					var skinsFromInventoryWithPrices = [];
+					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
+				}
+				
+				$scope.hideFriendUserStatsWeaponsLoading = true;	
+				$scope.hideFriendUserStatsWeapons = false;
+				$scope.hideFooterCompare = false;
 			})
 			.catch(function(error) {
 				console.log('error: ' + error);
@@ -913,10 +1198,12 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.defaultWeapons = response.data;
+					$scope.hideNavTabCompareOption = false;
+					
 					var weaponsStats = $scope.createWeaponsStats($scope.mainUserStats.userStats.playerstats.stats);		
 					
 					if($scope.mainUserInventory != null) {
-						var skinsFromInventory = $scope.getSkinsFromInventory($scope.steamId);					
+						var skinsFromInventory = $scope.getSkinsFromInventory($scope.steamId, $scope.mainUserInventory);					
 						var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
 						$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
 					} else {
@@ -930,7 +1217,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.showFailDefaultWeaponsDownloadingError();
 					$scope.addFooterCssProperties();
 					$scope.showFooter();
-					throw "Failed downloading default weapons.";
+					throw "failed downloading default weapons.";
 				}
 			})
 			.catch(function(error) {

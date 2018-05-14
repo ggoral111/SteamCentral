@@ -33,7 +33,7 @@ public class StatsService implements HttpConnection, FileOperations {
 		TIMESTAMP_PATH = "src/main/resources/timestamp.date";
 		PRICES_FILE_PATH = "src/main/resources/marketPrices.json";
 		DEFAULT_WEAPONS_FILE_PATH = "src/main/resources/defaultWeapons.json";
-		CSGO_BACKPACK_URL = "https://csgobackpack.net/api/GetItemsList/v2/?no_details=true";
+		CSGO_BACKPACK_URL = "https://csgobackpack.net/api/GetItemsList/v2/?currency=USD&no_details=1";
 		CSGO_STATS_URL = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_FRIENDLIST_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&steamid=";
 		STEAM_GAME_OWNED_URL = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=" + SteamHelper.STEAM_WEB_API_KEY + "&format=json&steamid=";
@@ -133,6 +133,24 @@ public class StatsService implements HttpConnection, FileOperations {
 		
 		if(isJSON(csgoStats)) {
 			return csgoStats;
+		}
+		
+		return null;
+	}
+	
+	public Object[] getUserStatsWithBans(String steamId) {				
+		String csgoStats = getUserStats(steamId);
+		
+		if(csgoStats != null) {
+			String steamBansInfo = getHttpContent(STEAM_PLAYER_BANS_URL + steamId); 
+			
+			if(isJSON(steamBansInfo)) {
+				JSONArray playersArray = new JSONObject(steamBansInfo).getJSONArray("players");
+				
+				if(playersArray.length() > 0) {
+					return new Object[] {playersArray.getJSONObject(0).toString(), csgoStats};
+				}	
+			}					
 		}
 		
 		return null;
@@ -308,7 +326,7 @@ public class StatsService implements HttpConnection, FileOperations {
 		try {
 			Date tenMinutes = new Date(System.currentTimeMillis() - 1000 * 60 * csgoBackpackTimebreakInMinutes);
 			return lastUpdate.before(tenMinutes);
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 

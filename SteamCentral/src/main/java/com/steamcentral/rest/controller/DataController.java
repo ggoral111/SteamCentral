@@ -33,12 +33,12 @@ public class DataController {
 					
 		if(friendList != null) {
 			try {
-				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				ObjectWriter ow = new ObjectMapper().writer();
 				String friendListJSON = ow.writeValueAsString(friendList);				
 				HttpHeaders responseHeaders = new HttpHeaders();
 				responseHeaders.add("Content-Type", "application/json; charset=utf-8");
 				
-				return new ResponseEntity<String>(ow.writeValueAsString(friendListJSON), responseHeaders, HttpStatus.OK);
+				return new ResponseEntity<String>(friendListJSON, responseHeaders, HttpStatus.OK);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -53,7 +53,7 @@ public class DataController {
 		
 		if(strangerUserStats != null) {
 			try {
-				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				ObjectWriter ow = new ObjectMapper().writer();
 				String userInfoJSON = ow.writeValueAsString(strangerUserStats[0]);
 				String strangerUserStatsJSON = "{ \"userInfo\": " + userInfoJSON + ", \"userBansInfo\": " + strangerUserStats[1] + ", \"userStats\": " + strangerUserStats[2] + " }";
 				HttpHeaders responseHeaders = new HttpHeaders();
@@ -70,9 +70,10 @@ public class DataController {
 	
 	@RequestMapping(value = "/stats/userStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
-		String userStatsJSON = ss.getUserStats(steamId);
+		Object[] userStatsWithBans = ss.getUserStatsWithBans(steamId);
 		
-		if(userStatsJSON != null) {
+		if(userStatsWithBans != null) {
+			String userStatsJSON = "{ \"userBansInfo\": " + userStatsWithBans[0] + ", \"userStats\": " + userStatsWithBans[1] + " }";	
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.add("Content-Type", "application/json; charset=utf-8");
 			
