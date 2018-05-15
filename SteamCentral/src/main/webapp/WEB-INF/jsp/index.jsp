@@ -127,7 +127,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox1"/>
+										            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="" data-ng-model="mainUserWeaponsStatsSideFilter" name="checkbox" id="checkbox1"/>
 										            <label for="checkbox1">Show TT weapons only</label>
 										        </div>
 									        </div>
@@ -135,7 +135,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox2"/>
+										            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="" data-ng-model="mainUserWeaponsStatsSideFilter" name="checkbox" id="checkbox2"/>
 										            <label for="checkbox2">Show CT weapons only</label>
 										        </div>
 									        </div>
@@ -143,7 +143,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="2" data-ng-false-value="" data-ng-model="mainUserWeaponsStats.side" name="checkbox" id="checkbox3"/>
+										            <input type="checkbox" data-ng-true-value="2" data-ng-false-value="" data-ng-model="mainUserWeaponsStatsSideFilter" name="checkbox" id="checkbox3"/>
 										            <label for="checkbox3">Show both sides weapons only</label>
 										        </div>
 									        </div>
@@ -302,8 +302,8 @@
 																<p class="csgostats-overall-stats-text-left">{{ lastMatchStats.name }}</p>
 															</div>
 															<div class="col-xs-3 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
-																<p data-ng-if="lastMatchStats.statsName == 'last_match_wins'" class="csgostats-overall-stats-text-right" style="color: {{ lastMatchStats.color }};">{{ lastMatchStats.value }}</p>
-																<p data-ng-if="lastMatchStats.statsName != 'last_match_wins'" class="csgostats-overall-stats-text-right">{{ lastMatchStats.value }}</p>
+																<p data-ng-if="lastMatchStats.statsName == 'last_match_wins'" class="csgostats-overall-stats-text-right" style="color: {{ lastMatchStats.color }};">{{ lastMatchStats.value.toLocaleString() }}</p>
+																<p data-ng-if="lastMatchStats.statsName != 'last_match_wins'" class="csgostats-overall-stats-text-right">{{ lastMatchStats.value.toLocaleString() }}</p>
 															</div>
 														</div>
 													</div>
@@ -326,7 +326,7 @@
 																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
 															</div>
 															<div class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
-																<p class="csgostats-overall-stats-text-right">{{ overallStats.value }}</p>
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
 														</div>																					
 													</div>
@@ -364,7 +364,6 @@
 						<div class="container">
 							<div class="row loading-content-row">
 								<div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
-									<!-- <p class="loading-content-p wow fadeIn" data-wow-duration="2s" data-wow-delay="1.5s">Loading...</p> -->
 									<div id="loading">
 										<div id="loading-center">
 											<div id="loading-center-absolute">
@@ -382,7 +381,7 @@
 									
 					<div data-ng-hide="hideMainUserStatsWeapons" data-ng-cloak>
 						<div class="row center-block csgostats-row">
-							<div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 csgostats-grid" data-ng-repeat="weaponStats in mainUserWeaponsStats | filter:{filterHashName: searchMainUserStatsPhrase, side: mainUserWeaponsStats.side} | orderBy:selectedItemMainUserStats" data-ng-if="weaponStats !== null">
+							<div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 csgostats-grid" data-ng-repeat="weaponStats in mainUserWeaponsStats | filter:{filterHashName: searchMainUserStatsPhrase, side: mainUserWeaponsStatsSideFilter} | orderBy:selectedItemMainUserStats" data-ng-if="weaponStats !== null">
 								<div class="csgostats-grid-cell wow fadeInDown">											
 									<div class="row center-block">
 										<div class="col-md-12 col-csgostats-grid-weapon-title">
@@ -516,7 +515,7 @@
 											<div class="input-group">
 												<input type="text" data-ng-model="compareFriendUserStrangerProfileData" class="form-control search-stats" placeholder="Find user to compare by username or Steam profile URL...">
 												<span class="input-group-btn">
-													<button data-ng-click="compareFriendUserStrangerProfileData = ''; TUTAJ_WYWOLEJ_METODE_CO_ZACZYNA_SCIAGAC_DANE_DO_POROWNYWANIA(compareFriendUserStrangerProfileData)" onclick="this.blur();" class="btn btn-default compare-button" type="button">Compare</button>
+													<button data-ng-click="loadStrangerStatsToCompare(compareFriendUserStrangerProfileData); compareFriendUserStrangerProfileData = ''" onclick="this.blur();" class="btn btn-default compare-button" type="button">Compare</button>
 												</span>
 											</div>
 										</div>										
@@ -537,7 +536,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="" data-ng-model="friendUserWeaponsStats.side" name="checkbox" id="checkbox4"/>
+										            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="" data-ng-model="friendUserWeaponsStatsSideFilter" name="checkbox" id="checkbox4"/>
 										            <label for="checkbox4">Show TT weapons only</label>
 										        </div>
 									        </div>
@@ -545,7 +544,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="" data-ng-model="friendUserWeaponsStats.side" name="checkbox" id="checkbox5"/>
+										            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="" data-ng-model="friendUserWeaponsStatsSideFilter" name="checkbox" id="checkbox5"/>
 										            <label for="checkbox5">Show CT weapons only</label>
 										        </div>
 									        </div>
@@ -553,7 +552,7 @@
 										<div class="col-sm-4 col-md-4 col-lg-4">
 											<div class="custom-checkbox">
 												<div class="custom-checkbox-default">
-										            <input type="checkbox" data-ng-true-value="2" data-ng-false-value="" data-ng-model="friendUserWeaponsStats.side" name="checkbox" id="checkbox6"/>
+										            <input type="checkbox" data-ng-true-value="2" data-ng-false-value="" data-ng-model="friendUserWeaponsStatsSideFilter" name="checkbox" id="checkbox6"/>
 										            <label for="checkbox6">Show both sides weapons only</label>
 										        </div>
 									        </div>
@@ -602,6 +601,306 @@
 						</div>
 					</div>
 					
+					<div data-ng-hide="hideFriendUserStatsGeneral" data-ng-cloak id="mainUserStatsGeneralBlinking" class="main-user-stats-general wow fadeIn" data-wow-duration="1.5s" data-wow-delay="1s">
+						<div class="container">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 csgostats-overall-grid">
+									<div class="csgostats-overall-grid-cell">
+										<div class="row center-block">
+											<div class="col-md-12 col-csgostats-overall-grid-title">
+												<p class="csgostats-overall-title-formatter-center">Overall statistics</p>
+											</div>
+										</div>
+										<div class="row center-block">									
+											<div class="col-xs-12 col-sm-12 col-md-6 col-xl-6 col-csgostats-overall-section-outer">										
+												<div class="row">
+													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-user-info-section-outer">
+														<div class="row">
+															<div class="col-xs-12 col-sm-4 col-md-6 col-lg-5 col-xl-5 col-csgostats-avatar-section-inner">
+																<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">
+																	<img data-ng-src="{{ mainUserStats.userInfo.avatarFullURL }}" class="img-rounded img-responsive csgostats-avatar-img">
+																</a>
+															</div>
+															<div class="col-xs-12 col-sm-8 col-md-6 col-lg-7 col-xl-7 col-csgostats-overall-section-user-info">
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+																		<p class="csgostats-overall-info-formatter-center">User info</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-section"></div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Username:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																		<p class="csgostats-overall-user-info-text-right">
+																			<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
+																		</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">SteamID:</p>
+																	</div>
+																	<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userInfo.steamId }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="!mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0 && mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
+																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans != 0 || mainUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userBansInfo.DaysSinceLastBan }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Community banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="!mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-section-end"></div>
+															</div>
+														</div>
+													</div>
+												</div>												
+												<div class="row">
+													<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section">								
+														<div class="row">
+															<div class="col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+																<p class="csgostats-overall-info-formatter-center">Overall user info</p>
+															</div>
+														</div>
+														<div class="row row-csgostats-overall-section">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-green-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-red-stats">
+															</div>
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-red-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-green-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-gray-stats">
+															</div>
+														</div>
+														<div class="row row-csgostats-overall-entry" data-ng-repeat="overallStats in mainUserStatsOverall" data-ng-if="overallStats.value !== null">
+															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
+																<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
+															</div>
+															<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && !overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && !overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.value == friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="!overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+														</div>																					
+													</div>
+												</div>																	
+											</div>								
+											<div class="col-xs-12 col-sm-12 col-md-6 col-xl-6 col-csgostats-overall-section-outer-overall-stats">	
+												<div class="row">
+													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-user-info-section-outer">
+														<div class="row">
+															<div class="col-xs-12 col-sm-4 col-md-6 col-lg-5 col-xl-5 col-csgostats-avatar-section-inner">
+																<a href="http://steamcommunity.com/profiles/{{ friendUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">
+																	<img data-ng-src="{{ friendUserStats.userInfo.avatarFullURL }}" class="img-rounded img-responsive csgostats-avatar-img">
+																</a>
+															</div>
+															<div class="col-xs-12 col-sm-8 col-md-6 col-lg-7 col-xl-7 col-csgostats-overall-section-user-info">
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+																		<p class="csgostats-overall-info-formatter-center">Friend / Stranger info</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-section"></div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Username:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																		<p class="csgostats-overall-user-info-text-right">
+																			<a href="http://steamcommunity.com/profiles/{{ friendUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ friendUserStats.userInfo.personaname }}</a>
+																		</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">SteamID:</p>
+																	</div>
+																	<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-right">{{ friendUserStats.userInfo.steamId }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="!friendUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ friendUserStats.userBansInfo.NumberOfVACBans }}</p>
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ friendUserStats.userBansInfo.NumberOfVACBans }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ friendUserStats.userBansInfo.NumberOfGameBans }}</p>
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ friendUserStats.userBansInfo.NumberOfGameBans }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans == 0 && friendUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
+																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans != 0 || friendUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-right">{{ friendUserStats.userBansInfo.DaysSinceLastBan }}</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Community banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="!friendUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-entry">
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																		<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
+																	</div>
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																		<p data-ng-if="friendUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
+																		<p data-ng-if="friendUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
+																	</div>
+																</div>
+																<div class="row row-csgostats-overall-section-end"></div>
+															</div>
+														</div>
+													</div>
+												</div>												
+												<div class="row">
+													<div class="col-xs-12 col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section">								
+														<div class="row">
+															<div class="col-sm-12 col-md-12 col-xl-12 col-csgostats-overall-section-name">
+																<p class="csgostats-overall-info-formatter-center">Overall friend / stranger info</p>
+															</div>
+														</div>
+														<div class="row row-csgostats-overall-section">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-green-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-red-stats">
+															</div>
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-red-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-green-stats">
+															</div>
+															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 background-color-gray-stats">
+															</div>
+														</div>
+														<div class="row row-csgostats-overall-entry" data-ng-repeat="overallStats in friendUserStatsOverall" data-ng-if="overallStats.value !== null">
+															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
+																<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
+															</div>
+															<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && !overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && !overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="overallStats.comparable && overallStats.value == mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+															<div data-ng-if="!overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
+															</div>
+														</div>																					
+													</div>
+												</div>
+											</div>																			
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+					
 					<div data-ng-hide="hideFriendUserStatsWeaponsLoading" data-ng-cloak>
 						<div class="container">
 							<div class="row loading-content-row">
@@ -623,49 +922,48 @@
 					
 					<div data-ng-hide="hideFriendUserStatsWeapons" data-ng-cloak>
 						<div class="row center-block csgostats-row">
-							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 csgostats-grid" data-ng-repeat="friendWeaponStats in friendUserWeaponsStats | filter:{filterType: searchFriendUserStatsPhrase, side: friendUserWeaponsStats.side}" data-ng-if="friendWeaponStats !== null">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 csgostats-grid" data-ng-repeat="friendWeaponStats in mainAndFriendUserWeaponsStats | filter:{filterMarketHashName: searchFriendUserStatsPhrase, weaponSide: friendUserWeaponsStatsSideFilter}" data-ng-if="friendWeaponStats !== null">
 								<div class="csgostats-grid-cell wow fadeInDown">
 									
 									<div class="row center-block">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-title">
-											<p class="csgostats-weapon-title-formatter-center">{{ friendWeaponStats.weaponSkin.type }}</p>
+											<p class="csgostats-weapon-title-formatter-center">{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.type }}</p>
 										</div>
 									</div>
-									
 									
 									<div class="row center-block">
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 									
 											<div class="row">										
-												<div data-ng-if="mainUserWeaponsStats[$index].weaponSkin.souvenir" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ mainUserWeaponsStats[$index].weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ mainUserWeaponsStats[$index].weaponSkin.color }}, 0.4) 0%,rgba({{ mainUserWeaponsStats[$index].weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
-													<div data-ng-if="measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(mainUserWeaponsStats[$index].weaponSkin.marketHashName, true) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ mainUserWeaponsStats[$index].weaponSkin.marketHashName }}</p>
+												<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.souvenir" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, true) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>
-												<div data-ng-if="mainUserWeaponsStats[$index].weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ mainUserWeaponsStats[$index].weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ mainUserWeaponsStats[$index].weaponSkin.color }}, 0.4) 0%,rgba({{ mainUserWeaponsStats[$index].weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
-													<div data-ng-if="measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(mainUserWeaponsStats[$index].weaponSkin.marketHashName, true) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ mainUserWeaponsStats[$index].weaponSkin.marketHashName }}</p>
+												<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, true) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>
-												<div data-ng-if="!mainUserWeaponsStats[$index].weaponSkin.souvenir && !mainUserWeaponsStats[$index].weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ mainUserWeaponsStats[$index].weaponSkin.color }}); background: rgba({{ mainUserWeaponsStats[$index].weaponSkin.color }}, 0.4);">
-													<div data-ng-if="measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(mainUserWeaponsStats[$index].weaponSkin.marketHashName, false) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(mainUserWeaponsStats[$index].weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ mainUserWeaponsStats[$index].weaponSkin.marketHashName }}</p>
+												<div data-ng-if="!friendWeaponStats.mainUserWeaponSkin.weaponSkin.souvenir && !friendWeaponStats.mainUserWeaponSkin.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}); background: rgba({{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.color }}, 0.4);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, false) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>																						
 											</div>
 											<div class="row">
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-compare-image-background">
 													<div class="csgostats-weapon-image">
-														<img data-ng-src="{{ mainUserWeaponsStats[$index].weaponSkin.iconUrl }}" class="img-responsive full-width">	
+														<img data-ng-src="{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.iconUrl }}" class="img-responsive full-width">	
 													</div>
 												</div>																					
 											</div>
 											<div class="row">
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-left">
-													<a href="http://steamcommunity.com/market/listings/730/{{ mainUserWeaponsStats[$index].weaponSkin.marketHashName }}" target="_blank">
-														<button data-ng-if="mainUserWeaponsStats[$index].weaponSkin.price != 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: {{ mainUserWeaponsStats[$index].weaponSkin.price }}$</button>
-														<button data-ng-if="mainUserWeaponsStats[$index].weaponSkin.price == 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: N/A</button>
+													<a href="http://steamcommunity.com/market/listings/730/{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.marketHashName }}" target="_blank">
+														<button data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.price != 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: {{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.price }}$</button>
+														<button data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.price == 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: N/A</button>
 													</a>								
 												</div>
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-right">
-													<a href="{{ mainUserWeaponsStats[$index].weaponSkin.inspectInGame }}">
+													<a href="{{ friendWeaponStats.mainUserWeaponSkin.weaponSkin.inspectInGame }}">
 														<button class="btn csgostats-inspect-button" type="button" onclick="this.blur();">Inspect in-game</button>		
 													</a>
 												</div>												
@@ -674,35 +972,35 @@
 										</div>
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 											<div class="row">
-												<div data-ng-if="friendWeaponStats.weaponSkin.souvenir" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
-													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.weaponSkin.marketHashName }}</p>
+												<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.souvenir" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(255, 215, 0, 0.8) 95%,rgba(255, 215, 0, 0.8) 100%);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, true) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>
-												<div data-ng-if="friendWeaponStats.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
-													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.weaponSkin.marketHashName, true) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.weaponSkin.marketHashName }}</p>
+												<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}); background: linear-gradient(to bottom, rgba({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}, 0.4) 0%,rgba({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}, 0.4) 95%,#000000 95%,rgba(207, 106, 50, 0.8) 95%,rgba(207, 106, 50, 0.8) 100%);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, true) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>
-												<div data-ng-if="!friendWeaponStats.weaponSkin.souvenir && !friendWeaponStats.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.weaponSkin.color }}); background: rgba({{ friendWeaponStats.weaponSkin.color }}, 0.4);">
-													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.weaponSkin.marketHashName, false) | unsafe"></div>								
-													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.weaponSkin.marketHashName }}</p>
+												<div data-ng-if="!friendWeaponStats.friendUserWeaponSkin.weaponSkin.souvenir && !friendWeaponStats.friendUserWeaponSkin.weaponSkin.statTrak" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-weapon-name" style="background: rgb({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}); background: rgba({{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.color }}, 0.4);">
+													<div data-ng-if="measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" data-ng-bind-html="splitMarketHashName(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, false) | unsafe"></div>								
+													<p data-ng-if="!measureTextLengthInPixels(friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName, '13px Roboto Condensed Regular')" class="csgostats-weapon-name-formatter-center">{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName }}</p>
 												</div>
 											</div>
 											<div class="row">
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-csgostats-grid-compare-image-background-right">
 													<div class="csgostats-weapon-image">
-														<img data-ng-src="{{ friendWeaponStats.weaponSkin.iconUrl }}" class="img-responsive full-width">	
+														<img data-ng-src="{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.iconUrl }}" class="img-responsive full-width">	
 													</div>
 												</div>
 											</div>
 											<div class="row">
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-left">
-													<a href="http://steamcommunity.com/market/listings/730/{{ friendWeaponStats.weaponSkin.marketHashName }}" target="_blank">
-														<button data-ng-if="friendWeaponStats.weaponSkin.price != 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: {{ friendWeaponStats.weaponSkin.price }}$</button>
-														<button data-ng-if="friendWeaponStats.weaponSkin.price == 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: N/A</button>
+													<a href="http://steamcommunity.com/market/listings/730/{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.marketHashName }}" target="_blank">
+														<button data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.price != 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: {{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.price }}$</button>
+														<button data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.price == 0" class="btn csgostats-price-button" type="button" onclick="this.blur();">Price: N/A</button>
 													</a>									
 												</div>
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 csgostats-grid-padding-right">
-													<a href="{{ friendWeaponStats.weaponSkin.inspectInGame }}">
+													<a href="{{ friendWeaponStats.friendUserWeaponSkin.weaponSkin.inspectInGame }}">
 														<button class="btn csgostats-inspect-button" type="button" onclick="this.blur();">Inspect in-game</button>		
 													</a>
 												</div>
@@ -720,29 +1018,29 @@
 									    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 									         <p class="modal-text-formatter-left p-games-list">Total kills:</p>				         
 										</div>
-									    <div data-ng-if="mainUserWeaponsStats[$index].totalKills > friendWeaponStats.totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].totalKills.toLocaleString() }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>							          
+									    <div data-ng-if="friendWeaponStats.mainUserWeaponSkin.totalKills > friendWeaponStats.friendUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>							          
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].totalKills < friendWeaponStats.totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].totalKills.toLocaleString() }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.totalKills < friendWeaponStats.friendUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
 									    </div>
-									    <div data-ng-if="mainUserWeaponsStats[$index].totalKills == friendWeaponStats.totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].totalKills.toLocaleString() }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>
+									    <div data-ng-if="friendWeaponStats.mainUserWeaponSkin.totalKills == friendWeaponStats.friendUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>
 									    </div>
-									    <div data-ng-if="friendWeaponStats.totalKills > mainUserWeaponsStats[$index].totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.totalKills.toLocaleString() }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>																	             
+									    <div data-ng-if="friendWeaponStats.friendUserWeaponSkin.totalKills > friendWeaponStats.mainUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>																	             
 										</div>
-										<div data-ng-if="friendWeaponStats.totalKills < mainUserWeaponsStats[$index].totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.totalKills.toLocaleString() }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.totalKills < friendWeaponStats.mainUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
-										<div data-ng-if="friendWeaponStats.totalKills == mainUserWeaponsStats[$index].totalKills" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.totalKills.toLocaleString() }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.totalKills == friendWeaponStats.mainUserWeaponSkin.totalKills" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.totalKills.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
 									</div>	
 									<div class="row center-block">
@@ -750,12 +1048,12 @@
 											<p class="modal-text-formatter-left p-games-list">Total shots:</p>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].totalShots.toLocaleString() }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'"class="modal-text-formatter p-games-list">N/A</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.totalShots.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'"class="modal-text-formatter p-games-list">N/A</p>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.totalShots.toLocaleString() }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'"class="modal-text-formatter p-games-list">N/A</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.totalShots.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'"class="modal-text-formatter p-games-list">N/A</p>
 										</div>
 									</div>
 									<div class="row center-block">
@@ -763,70 +1061,70 @@
 											<p class="modal-text-formatter-left p-games-list">Total hits:</p>
 										</div>										
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].totalHits.toLocaleString() }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.totalHits.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.totalHits.toLocaleString() }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.totalHits.toLocaleString() }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
 									</div>
 									<div class="row center-block">
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 											<p class="modal-text-formatter-left p-games-list">Accuracy:</p>
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].accuracy > friendWeaponStats.accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].accuracy }}%</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>					
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.accuracy > friendWeaponStats.friendUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>					
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].accuracy < friendWeaponStats.accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].accuracy }}%</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>		
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.accuracy < friendWeaponStats.friendUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>		
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].accuracy == friendWeaponStats.accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].accuracy }}%</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.accuracy == friendWeaponStats.friendUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
-										<div data-ng-if="friendWeaponStats.accuracy > mainUserWeaponsStats[$index].accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.accuracy }}%</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>							
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.accuracy > friendWeaponStats.mainUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>							
 										</div>
-										<div data-ng-if="friendWeaponStats.accuracy < mainUserWeaponsStats[$index].accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.accuracy }}%</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.accuracy < friendWeaponStats.mainUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
-										<div data-ng-if="friendWeaponStats.accuracy == mainUserWeaponsStats[$index].accuracy" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.accuracy }}%</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.accuracy == friendWeaponStats.mainUserWeaponSkin.accuracy" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.accuracy }}%</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>	
 										</div>
 									</div>
 									<div class="row center-block csgostats-stats-margin-before-separator">
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 											<p class="modal-text-formatter-left p-games-list">Shots per kill:</p>
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].shotsPerKill < friendWeaponStats.shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].shotsPerKill }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>    								
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.shotsPerKill < friendWeaponStats.friendUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>    								
 										</div>
-										<div data-ng-if="mainUserWeaponsStats[$index].shotsPerKill > friendWeaponStats.shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].shotsPerKill }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>   
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.shotsPerKill > friendWeaponStats.friendUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>   
 										</div>	
-										<div data-ng-if="mainUserWeaponsStats[$index].shotsPerKill == friendWeaponStats.shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type != 'Gloves' && mainUserWeaponsStats[$index].weaponSkin.type != 'Knife' && mainUserWeaponsStats[$index].weaponSkin.type != 'High Explosive Grenade' && mainUserWeaponsStats[$index].weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ mainUserWeaponsStats[$index].shotsPerKill }}</p>
-											<p data-ng-if="mainUserWeaponsStats[$index].weaponSkin.type == 'Gloves' || mainUserWeaponsStats[$index].weaponSkin.type == 'Knife' || mainUserWeaponsStats[$index].weaponSkin.type == 'High Explosive Grenade' || mainUserWeaponsStats[$index].weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>   
+										<div data-ng-if="friendWeaponStats.mainUserWeaponSkin.shotsPerKill == friendWeaponStats.friendUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.mainUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.mainUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.mainUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>   
 										</div>						
-										<div data-ng-if="friendWeaponStats.shotsPerKill < mainUserWeaponsStats[$index].shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-green-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.shotsPerKill }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  		
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.shotsPerKill < friendWeaponStats.mainUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-green-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  		
 										</div>
-										<div data-ng-if="friendWeaponStats.shotsPerKill > mainUserWeaponsStats[$index].shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-red-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.shotsPerKill }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.shotsPerKill > friendWeaponStats.mainUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-red-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  
 										</div>
-										<div data-ng-if="friendWeaponStats.shotsPerKill == mainUserWeaponsStats[$index].shotsPerKill" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3 background-color-gray-stats">
-											<p data-ng-if="friendWeaponStats.weaponSkin.type != 'Gloves' && friendWeaponStats.weaponSkin.type != 'Knife' && friendWeaponStats.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.shotsPerKill }}</p>
-											<p data-ng-if="friendWeaponStats.weaponSkin.type == 'Gloves' || friendWeaponStats.weaponSkin.type == 'Knife' || friendWeaponStats.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  
+										<div data-ng-if="friendWeaponStats.friendUserWeaponSkin.shotsPerKill == friendWeaponStats.mainUserWeaponSkin.shotsPerKill" data-ng-class="{true: 'background-color-gray-stats'}[friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov']" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-3">
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Gloves' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Knife' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'High Explosive Grenade' && friendWeaponStats.friendUserWeaponSkin.weaponSkin.type != 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">{{ friendWeaponStats.friendUserWeaponSkin.shotsPerKill }}</p>
+											<p data-ng-if="friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Gloves' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Knife' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'High Explosive Grenade' || friendWeaponStats.friendUserWeaponSkin.weaponSkin.type == 'Incendiary Grenade / Molotov'" class="modal-text-formatter p-games-list">N/A</p>  
 										</div>
 									</div>	
 									<hr class="csgostats-stats-separator">

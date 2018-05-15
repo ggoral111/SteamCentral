@@ -32,8 +32,12 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.mainUserWeaponsStats = null;
 	 
 	$scope.friendUserStats = null;
+	$scope.friendUserStatsOverall = null;
+	$scope.friendUserStatsLastMatch = null;
 	$scope.friendUserInventory = null;
 	$scope.friendUserWeaponsStats = null;
+	
+	$scope.mainAndFriendUserWeaponsStats = null;
 	
 	$scope.hideMainUserStats = false;
 	$scope.hideMainUserStatsPanel = false;
@@ -53,7 +57,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.hideFriendUserStatsPanelLoading = true;
 	
 	$scope.hideFriendUserStatsGeneralLoading = true;
-	
+	$scope.hideFriendUserStatsGeneral = true;
 	$scope.hideFriendUserStatsWeaponsLoading = true;
 	$scope.hideFriendUserStatsWeapons = true;
 	$scope.cleanBlinkingFriendUserStats = true;
@@ -74,11 +78,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Watch mainUserWeaponsStats scope
 	 */
-	$scope.$watch("friendUserWeaponsStats", function(newValue, oldValue) {
+	/*$scope.$watch("friendUserWeaponsStats", function(newValue, oldValue) {
 		if(newValue != null) {
 			console.log($scope.friendUserWeaponsStats);
 		}
-	});
+	});*/
 	
 	/*
 	 * Add main user footer CSS properties
@@ -435,103 +439,137 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				iconVariable: '/SteamCentral/resources/media/stats-img/total_playtime.png',
 				statsName: '',
 				name: 'Total playtime:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/playtime_2weeks.png',
 				statsName: '',
 				name: 'Last two weeks playtime:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/kill.png',
 				statsName: 'total_kills',
 				name: 'Total kills:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/death.png',
 				statsName: 'total_deaths',
 				name: 'Total deaths:',
-				value: null
+				value: null,
+				comparable: false,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/kdr.png',
 				statsName: '',
 				name: 'Kill Death Ratio:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},						
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/shots_hit.png',
 				statsName: 'total_shots_hit',
 				name: 'Total shots hit:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/shots_fired.png',
 				statsName: 'total_shots_fired',
 				name: 'Total shots fired:',
-				value: null
+				value: null,
+				comparable: false,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/accuracy.png',
 				statsName: '',
 				name: 'Accuracy:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/spk.png',
 				statsName: '',
 				name: 'Shots per kill:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: true
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/damage.png',
 				statsName: 'total_damage_done',
 				name: 'Total damage done:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/bombs_planted.png',
 				statsName: 'total_planted_bombs',
 				name: 'Total bombs planted:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/bombs_defused.png',
 				statsName: 'total_defused_bombs',
 				name: 'Total bombs defused:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/mvp.png',
 				statsName: 'total_mvps',
 				name: 'Total MVPs:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/revenge.png',
 				statsName: 'total_revenges',
 				name: 'Total revenges:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/zoomed_sniper.png',
 				statsName: 'total_kills_against_zoomed_sniper',
 				name: 'Kills against zoomed sniper:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/knife_fights.png',
 				statsName: 'total_kills_knife_fight',
 				name: 'Knife fights won:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 			{
 				iconVariable: '/SteamCentral/resources/media/stats-img/money.png',
 				statsName: 'total_money_earned',
 				name: 'Total money earned:',
-				value: null
+				value: null,
+				comparable: true,
+				reverse: false
 			},
 		];
 		
@@ -615,7 +653,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					continue;
 				} else {
 					if(statsArray[i].name == overallStats[j].statsName) {
-						overallStats[j].value = statsArray[i].value.toLocaleString();
+						overallStats[j].value = statsArray[i].value;
 						
 						if(statsArray[i].name == 'total_kills') {
 							totalKills = statsArray[i].value;
@@ -637,7 +675,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					continue;
 				} else {
 					if(statsArray[i].name == lastMatchStats[j].statsName) {
-						lastMatchStats[j].value = statsArray[i].value.toLocaleString();
+						lastMatchStats[j].value = statsArray[i].value;
 						
 						if(statsArray[i].name == 'last_match_kills') {
 							lastMatchKills = statsArray[i].value;
@@ -710,7 +748,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		for(var i=0; i<statsArray.length; i++) {
 			var skinObject = null;
 			var filterHashName = null;
-			var filterType = null;
 			
 			for(var j=0; j<skinsArray.length; j++) {
 				if(skinsArray[j].type == statsArray[i].name) {
@@ -718,13 +755,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						skinsArray[j].color = $scope.convertHexToRgb('#' + skinsArray[j].color);
 						skinObject = skinsArray[j];
 						filterHashName = skinsArray[j].marketHashName;
-						filterType = skinsArray[j].type;
 					} else {
 						if(skinsArray[j].price > skinObject.price) {
 							skinsArray[j].color = $scope.convertHexToRgb('#' + skinsArray[j].color);
 							skinObject = skinsArray[j];
 							filterHashName = skinsArray[j].marketHashName;
-							filterType = skinsArray[j].type;
 						}
 					}
 				}
@@ -736,7 +771,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						defaultWeaponsArray[j].color = $scope.convertHexToRgb('#' + defaultWeaponsArray[j].color);
 						skinObject = defaultWeaponsArray[j];
 						filterHashName = defaultWeaponsArray[j].marketHashName;
-						filterType = defaultWeaponsArray[j].type;
 						break;
 					}
 				}
@@ -744,7 +778,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			
 			statsArray[i].weaponSkin = skinObject;
 			statsArray[i]['filterHashName'] = filterHashName;
-			statsArray[i]['filterType'] = filterType;
 		}
 		
 		// statsArray.sort((a, b) => parseInt(b.totalKills) - parseInt(a.totalKills));
@@ -1072,30 +1105,97 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
+	 * Concat two arrays in alternate order
+	 */
+	$scope.concatWeaponsSkinsArrays = function(mainUserWeaponsStatsArray, friendUserWeaponsStatsArray) {
+		var mergedWeaponsSkinsArray = new Array();
+		
+		for(var i=0; i<mainUserWeaponsStatsArray.length; i++) {
+			var weaponSkinsObject = {};
+			
+			weaponSkinsObject['mainUserWeaponSkin'] = mainUserWeaponsStatsArray[i];
+			weaponSkinsObject['friendUserWeaponSkin'] = friendUserWeaponsStatsArray[i];
+			weaponSkinsObject['weaponSide'] = mainUserWeaponsStatsArray[i].side;
+			weaponSkinsObject['filterMarketHashName'] = mainUserWeaponsStatsArray[i].weaponSkin.marketHashName + ' ' + friendUserWeaponsStatsArray[i].weaponSkin.marketHashName;
+			mergedWeaponsSkinsArray.push(weaponSkinsObject);			
+		}
+		
+		return mergedWeaponsSkinsArray;
+	}
+	
+	/*
+	 * Append userInfo to friendUserStats
+	 */
+	$scope.appendUserinfoToFriendStats = function(steamId) {
+		var userInfoObject = null;
+		
+		for(var i=0; i<$scope.friendList.length; i++) {
+			if($scope.friendList[i].steamId == steamId) {
+				userInfoObject = $scope.friendList[i];
+				break;
+			}
+		}
+		
+		if(userInfoObject != null) {
+			$scope.friendUserStats['userInfo'] = userInfoObject;
+		}
+	};
+	
+	/*
 	 * Load stranger stats for comparison
 	 */
 	$scope.loadStrangerStatsToCompare = function(strangerProfileData) {
+		$scope.hideFailFriendStatsDownloadingError = true;
+		$scope.hideFooterCompare = true;
+		$scope.removeFriendUserFooterCssProperties();		
+		$scope.hideFriendUserStatsGeneral = true;
+		$scope.hideFriendUserStatsWeapons = true;
+		$scope.hideFriendUserStatsWeaponsLoading = true;
+		$scope.hideFriendUserStatsGeneralLoading = false;				
+		
 		var steamId = $scope.validateEnteredProfile(strangerProfileData);
-
+		
 		$http.post($scope.url + '/stats/strangerUserStats', steamId)
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserStats = response.data;
+				var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
+				$scope.friendUserStatsOverall = overallStatsArray[0];
+				$scope.friendUserStatsLastMatch = overallStatsArray[1];
+				$scope.hideFriendUserStatsGeneralLoading = true;
+				$scope.hideFriendUserStatsGeneral = false;
+				$scope.hideFriendUserStatsWeaponsLoading = false;
 				return $http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId);
 			} else {
+				$scope.showFailFriendStatsDownloadingError();
+				$scope.addFriendUserFooterCssProperties();
+				$scope.hideFooterCompare = false;
 				throw "failed downloading stranger user stats.";
 			}
 		})
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
-				$scope.friendUserInventory = response.data;
-				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);										
-				var skinsFromInventory = $scope.getSkinsFromInventory($scope.friendUserStats.userInfo.steamId, $scope.friendUserInventory);				
+				$scope.friendUserInventory = response.data;									
+			} else {
+				$scope.showFailFriendUserInventoryDownloadingWarning();
+				console.log('error: failed downloading stranger user inventory.');
+			}
+			
+			var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
+			
+			if($scope.friendUserInventory != null) {
+				var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);					
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
 				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
 			} else {
-				throw "failed downloading stranger user inventory.";
+				var skinsFromInventoryWithPrices = [];
+				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
 			}
+			
+			$scope.mainAndFriendUserWeaponsStats = $scope.concatWeaponsSkinsArrays($scope.mainUserWeaponsStats, $scope.friendUserWeaponsStats);
+			$scope.hideFriendUserStatsWeaponsLoading = true;	
+			$scope.hideFriendUserStatsWeapons = false;
+			$scope.hideFooterCompare = false;
 		})
 		.catch(function(error) {
 			console.log('error: ' + error);
@@ -1109,14 +1209,21 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$scope.hideFailFriendStatsDownloadingError = true;
 		$scope.hideFooterCompare = true;
 		$scope.removeFriendUserFooterCssProperties();
-				
+		$scope.hideFriendUserStatsGeneral = true;
+		$scope.hideFriendUserStatsWeapons = true;
+		$scope.hideFriendUserStatsWeaponsLoading = true;
+		$scope.hideFriendUserStatsGeneralLoading = false;						
+		
 		$http.post($scope.url + '/stats/userStats', steamId)
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserStats = response.data;
-					
-					// TODO: add operations for general stats like in main user view					
-					
+					$scope.appendUserinfoToFriendStats($scope.friendUserStats.userStats.playerstats.steamID);
+					var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
+					$scope.friendUserStatsOverall = overallStatsArray[0];
+					$scope.friendUserStatsLastMatch = overallStatsArray[1];
+					$scope.hideFriendUserStatsGeneralLoading = true;
+					$scope.hideFriendUserStatsGeneral = false;
 					$scope.hideFriendUserStatsWeaponsLoading = false;
 					return $http.post($scope.url + '/stats/userInventory', steamId);
 				} else {
@@ -1131,7 +1238,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.friendUserInventory = response.data;					
 				} else {
 					$scope.showFailFriendUserInventoryDownloadingWarning();
-					console.log('error: failed downloading user inventory.');
+					console.log('error: failed downloading friend user inventory.');
 				}
 				
 				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
@@ -1139,12 +1246,13 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				if($scope.friendUserInventory != null) {
 					var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);					
 					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
-					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);	
+					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
 				} else {
 					var skinsFromInventoryWithPrices = [];
 					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
 				}
 				
+				$scope.mainAndFriendUserWeaponsStats = $scope.concatWeaponsSkinsArrays($scope.mainUserWeaponsStats, $scope.friendUserWeaponsStats);
 				$scope.hideFriendUserStatsWeaponsLoading = true;	
 				$scope.hideFriendUserStatsWeapons = false;
 				$scope.hideFooterCompare = false;
@@ -1235,6 +1343,5 @@ indexController.config( [
 ]);
 
 indexController.filter('unsafe', function($sce) { 
-	return $sce.trustAsHtml; 
+	return $sce.trustAsHtml;
 });
-
