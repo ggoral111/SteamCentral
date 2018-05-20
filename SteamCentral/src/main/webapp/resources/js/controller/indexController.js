@@ -15,8 +15,9 @@ var indexController = angular.module('indexController',[]);
 
 indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile', function($scope, $http, $filter, $compile) {
 	$scope.dateCreation = '2018';
+	$scope.steamId = '76561198078305233';
 	/*$scope.steamId = '76561198078305233';*/
-	$scope.steamId = '76561198138283796';
+	/*$scope.steamId = '76561198023414915';*/
 	$scope.url = "/SteamCentral/data";
 	$scope.imageUrl = 'https://steamcommunity-a.akamaihd.net/economy/image/';
 	
@@ -29,12 +30,15 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.mainUserStatsOverall = null;
 	$scope.mainUserStatsLastMatch = null;
 	$scope.mainUserInventory = null;
+	$scope.mainUserCollectibleItems = null;
+	$scope.mainUserWeaponsStatsTemporary = null;
 	$scope.mainUserWeaponsStats = null;
 	 
 	$scope.friendUserStats = null;
 	$scope.friendUserStatsOverall = null;
 	$scope.friendUserStatsLastMatch = null;
 	$scope.friendUserInventory = null;
+	$scope.friendUserCollectibleItems = null;
 	$scope.friendUserWeaponsStats = null;
 	
 	$scope.mainAndFriendUserWeaponsStats = null;
@@ -44,6 +48,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.hideMainUserStatsGeneralLoading = false;
 	$scope.hideNavTabCompareOption = true;
 	$scope.hideMainUserStatsGeneral = true;
+	$scope.hideMainUserCollectibleItemsShowcase = true;
 	$scope.hideMainUserStatsWeaponsLoading = true;
 	$scope.hideMainUserStatsWeapons = true;
 	$scope.cleanBlinkingMainUserStats = true;
@@ -131,13 +136,13 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Obtain text width in pixels
 	 */
-	$scope.measureTextLengthInPixels = function(marketHashName, fontProperties) {		
+	$scope.measureTextLengthInPixels = function(marketHashName, fontProperties, textWidth) {		
 		var canvas = $scope.measureTextLengthInPixels.canvas || ($scope.measureTextLengthInPixels.canvas = document.createElement("canvas"));
 	    var context = canvas.getContext("2d");
 	    context.font = fontProperties;
 	    var metrics = context.measureText(marketHashName);
 	    
-	    if(metrics.width > 190) {
+	    if(metrics.width > textWidth) {
 			return true;
 		}
 		
@@ -152,6 +157,34 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		var lineHeightProperty = specialWeapon ? 18 : 20;
 		
 		return '<p class="csgostats-weapon-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">' + marketHashNameArray[0].substring(0, marketHashNameArray[0].length - 1) + '</p><p class="csgostats-weapon-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">(' + marketHashNameArray[1] + '</p>';
+	};
+	
+	/*
+	 * Split marketHashName into two paragraphs showcase
+	 */
+	$scope.splitMarketHashNameShowcase = function(marketHashName) {
+		var marketHashNameArray = marketHashName.split(' ');
+				
+		if(marketHashNameArray.length > 1) {
+			var lineHeightProperty = 13;
+			var iteration = null;
+			var lengthDifference = Infinity;
+			
+			for(var i=0; i<marketHashNameArray.length; i++) {
+				var firstPartLength = marketHashNameArray.slice(0, i + 1).join(' ').length;
+				var secondPartLength = marketHashNameArray.slice(i + 1, marketHashNameArray.length).join(' ').length;
+				var localLengthDifference = Math.abs(firstPartLength - secondPartLength);
+				
+				if(localLengthDifference < lengthDifference) {
+					lengthDifference = localLengthDifference;
+					iteration = i;
+				}
+			}
+			
+			return '<p class="csgostats-collectible-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">' + marketHashNameArray.slice(0, iteration + 1).join(' ') + '</p><p class="csgostats-collectible-name-formatter-center" style="line-height: ' + lineHeightProperty + 'px;">' + marketHashNameArray.slice(iteration + 1, marketHashNameArray.length).join(' ') + '</p>';
+		} else {
+			return '<p class="csgostats-collectible-name-formatter-center" style="line-height: ' + lineHeightProperty * 2 + 'px;">' + marketHashName + '</p>';
+		}
 	}
 	
 	/*
@@ -161,14 +194,14 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		if($scope.friendList == null) {
 			$scope.hideFriendUserStatsPanelLoading = false;
 		}
-	}
+	};
 	
 	/*
 	 * Show friend user stats panel
 	 */
 	$scope.showFriendUserStatsPanel = function() {
 		$scope.hideFriendUserStatsPanel = false;
-	}
+	};
 	
 	/*
 	 * Show friend combobox in friend user stats panel
@@ -190,9 +223,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.showFriendUserStatsPanelLoadingPoints = function() {
 		$scope.hideFriendUserStatsPanelLoadingPoints = false;
 		
-		if($scope.failFriendListDownloadingErrorPopedUp == false) {
-			$('#failFriendListDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-			$('#failFriendListDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });			
+		if(!$scope.failFriendListDownloadingErrorPopedUp) {		
+			$scope.removeAnimationByElementIdAndAnimationName('#failFriendListDownloadingErrorAlert', 'fadeIn', true);		
 			$scope.failFriendListDownloadingErrorPopedUp = true;
 		}
 	};
@@ -202,45 +234,40 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.showFriendUserStats = function() {
 		$scope.hideMainUserStats = true;
-		$scope.hideFooter = true;
+		$scope.hideFooter = true;		
 		$scope.hideFooterCompare = false;
 		$scope.hideFriendUserStats = false;
 		
 		if($scope.friendUserStats == null) {
 			$scope.addFriendUserFooterCssProperties();
 		}
-		
-		if($scope.cleanBlinkingMainUserStats == true) {
-			if($scope.hideMainUserStatsGeneral == false) {
-				$('#mainUserStatsPanelBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');		
-				$('#mainUserStatsPanelBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });		
-				$('#mainUserStatsGeneralBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#mainUserStatsGeneralBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+
+		if($scope.cleanBlinkingMainUserStats) {
+			if(!$scope.hideMainUserStatsGeneral) {
+				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsPanelBlinking', 'fadeIn', true);
+				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsGeneralBlinking', 'fadeIn', true);
+				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsGeneralCollectibleItemsShowcaseBlinking', 'fadeIn', false);
 			}
 			
-			if($scope.hideFailStatsDownloadingError == false) {
-				$('#failStatsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failStatsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailStatsDownloadingError) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
 			}
 			
-			if($scope.hideFailUserInventoryDownloadingWarning == false) {
-				$('#failUserInventoryDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failUserInventoryDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailUserInventoryDownloadingWarning) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failUserInventoryDownloadingWarningAlert', 'fadeIn', true);
 			}
 			
-			if($scope.hideFailSkinsPricesDownloadingWarning == false) {
-				$('#failSkinsPricesDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failSkinsPricesDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailSkinsPricesDownloadingWarning) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failSkinsPricesDownloadingWarningAlert', 'fadeIn', true);
 			}
 			
-			if($scope.hideFailDefaultWeaponsDownloadingError == false) {
-				$('#failDefaultWeaponsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failDefaultWeaponsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailDefaultWeaponsDownloadingError) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failDefaultWeaponsDownloadingErrorAlert', 'fadeIn', true);
 			}
 			
 			$scope.cleanBlinkingMainUserStats = false;
 		}
-	}
+	};
 	
 	/*
 	 * Show main user stats module
@@ -251,35 +278,72 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$scope.hideFooter = false;		
 		$scope.hideMainUserStats = false;
 		
-		if($scope.cleanBlinkingFriendUserStats == true) {
-			if($scope.hideFriendUserStatsPanel == false) {
-				$('#friendUserStatsPanelBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#friendUserStatsPanelBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+		if(!$scope.hideFriendUserStatsGeneral) {
+			$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsGeneralBlinking', 'fadeIn', true);
+		}
+		
+		if($scope.cleanBlinkingFriendUserStats) {
+			if(!$scope.hideFriendUserStatsPanel) {
+				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelBlinking', 'fadeIn', true);
 			}
 			
-			if($scope.hideFriendUserStatsPanelFriendCombobox == false) {
-				$('#friendUserStatsPanelFriendComboboxBlinking').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration');
-				$('#friendUserStatsPanelFriendComboboxBlinking').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFriendUserStatsPanelFriendCombobox) {
+				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelFriendComboboxBlinking', 'fadeIn', false);
 			}
 			
-			if($scope.hideFailFriendListDownloadingError == false) {
-				$('#failFriendListDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failFriendListDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailFriendListDownloadingError) {				
+				$scope.removeAnimationByElementIdAndAnimationName('#failFriendListDownloadingErrorAlert', 'fadeIn', true);
 			}
 			
-			if($scope.hideFailFriendStatsDownloadingError == false) {
-				$('#failFriendStatsDownloadingErrorAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failFriendStatsDownloadingErrorAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailFriendStatsDownloadingError) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
 			}
 			
-			if($scope.hideFailFriendUserInventoryDownloadingWarning == false) {
-				$('#failFriendUserInventoryDownloadingWarningAlert').removeClass('fadeIn').removeClass('wow').removeClass('animated').removeAttr('data-wow-duration').removeAttr('data-wow-delay');
-				$('#failFriendUserInventoryDownloadingWarningAlert').css({ 'animation-duration' : '', 'animation-delay' : '', 'animation-name' : '' });
+			if(!$scope.hideFailFriendUserInventoryDownloadingWarning) {
+				$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
 			}
 			
 			$scope.cleanBlinkingFriendUserStats = false;
 		}
+	};
+	
+	/*
+	 * Simply switches between two different animations of specified element
+	 */
+	$scope.changeAnimationOfElementById = function(elementId, animationToRemove, animationToAdd) {
+		$(elementId).removeClass(animationToRemove).addClass(animationToAdd);
+		$(elementId).css({ 'animation-name' : animationToAdd });
 	}
+	
+	/*
+	 * Append animation to friendUserStatsGeneralBlinking
+	 */
+	$scope.appendAnimationToFriendUserStatsGeneralBlinking = function() {
+		$('#friendUserStatsGeneralBlinking').addClass('fadeIn').addClass('wow').addClass('animated').attr('data-wow-duration', '1.5s').attr('data-wow-delay', '1s');
+		$('#friendUserStatsGeneralBlinking').css({ 'animation-duration' : '1.5s', 'animation-delay' : '1s', 'animation-name' : 'fadeIn' });
+	};
+	
+	/*
+	 * Simply removes animation given to specified element with optional deletion of animation duration
+	 */
+	$scope.removeAnimationByElementIdAndAnimationName = function(elementId, animationName, deleteDelay) {
+		$(elementId).removeClass(animationName).removeClass('wow').removeClass('animated').removeAttr('data-wow-duration');
+		$(elementId).css({ 'animation-duration' : '', 'animation-name' : '' });
+		
+		if(deleteDelay) {
+			$(elementId).removeAttr('data-wow-delay');
+			$(elementId).css({ 'animation-delay' : '' });
+		}
+	}
+	
+	/*
+	 * Replace failUserInventoryDownloadingWarningAlert alert
+	 */
+	$scope.replaceFailUserInventoryDownloadingWarningAlert = function() {
+		$("#failUserInventoryDownloadingWarningAlertInner").remove();
+		var $textElement = $('<div id="failUserInventoryDownloadingWarningAlertInner"><strong>Warning:</strong> failed downloading user inventory. <a href="https://steamcommunity.com/profiles/' + $scope.steamId + '/edit/settings" onclick="this.blur();" class="warning-alert" target="_blank">Make sure that your Steam inventory privacy settings are set to public</a> and then <a class="warning-alert" data-ng-click="reloadMainUserInventory()" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-warning-alert"></i></a> to try to reload your inventory.</div>').appendTo("#failUserInventoryDownloadingWarningAlert");					
+		$compile($textElement)($scope);
+	};
 	
 	/*
 	 * Show main user weapons stats loading
@@ -310,7 +374,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.showFailStatsDownloadingError = function() {
 		$scope.hideMainUserStatsGeneralLoading = true;
 		$scope.hideMainUserStatsWeaponsLoading = true;
-		$scope.hideFailStatsDownloadingError = false;	
+		$scope.hideFailStatsDownloadingError = false;
 	};
 	
 	/*
@@ -704,9 +768,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				overallStats[i].value = (statsResponse.userInfo.playtimeForever / 60).toFixed(1) + 'h';
 			} else if(overallStats[i].name == 'Last two weeks playtime:') {
 				overallStats[i].value = (statsResponse.userInfo.playtimeTwoWeeks / 60).toFixed(1) + 'h';
-			} else if(overallStats[i].statsName == 'total_money_earned') {
+			} /*else if(overallStats[i].statsName == 'total_money_earned') {
 				overallStats[i].value += '$';
-			}
+			}*/
 		}
 		
 		for(var i=0; i<lastMatchStats.length; i++) {
@@ -804,28 +868,28 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 							}														
 						} 
 						
-						if(skinsPricesList[item].price.hasOwnProperty('7_days') && priceFound == false) {
+						if(skinsPricesList[item].price.hasOwnProperty('7_days') && !priceFound) {
 							if(skinsPricesList[item].price['7_days'].median != 0) {
 								inventorySkinsArray[i].price = skinsPricesList[item].price['7_days'].median;
 								priceFound = true;
 							}																					
 						} 
 						
-						if(skinsPricesList[item].price.hasOwnProperty('opskins_average') && priceFound == false) {
+						if(skinsPricesList[item].price.hasOwnProperty('opskins_average') && !priceFound) {
 							if(skinsPricesList[item].price.opskins_average != 0) {
 								inventorySkinsArray[i].price = skinsPricesList[item].price.opskins_average;
 								priceFound = true;
 							}							
 						}
 						
-						if(skinsPricesList[item].price.hasOwnProperty('30_days') && priceFound == false) {
+						if(skinsPricesList[item].price.hasOwnProperty('30_days') && !priceFound) {
 							if(skinsPricesList[item].price['30_days'].median != 0) {
 								inventorySkinsArray[i].price = skinsPricesList[item].price['30_days'].median;
 								priceFound = true;
 							}																					
 						}
 						
-						if(skinsPricesList[item].price.hasOwnProperty('all_time') && priceFound == false) {
+						if(skinsPricesList[item].price.hasOwnProperty('all_time') && !priceFound) {
 							if(skinsPricesList[item].price['all_time'].median != 0) {
 								inventorySkinsArray[i].price = skinsPricesList[item].price['all_time'].median;
 								priceFound = true;
@@ -864,11 +928,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			rarityInt = 1;
 		} else if (rarity == "Industrial Grade") {
 			rarityInt = 2;
-		} else if (rarity == "Mil-Spec Grade") {
+		} else if (rarity == "Mil-Spec Grade" || rarity == 'High Grade') {
 			rarityInt = 3;
-		} else if (rarity == "Restricted") {
+		} else if (rarity == "Restricted" || rarity == 'Remarkable') {
 			rarityInt = 4;
-		} else if (rarity == "Classified") {
+		} else if (rarity == "Classified" || rarity == 'Exotic') {
 			rarityInt = 5;
 		} else if (rarity == "Covert" || rarity == 'Extraordinary') {
 			rarityInt = 6;
@@ -886,96 +950,125 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.getSkinsFromInventory = function(steamId, userInventory) {
 		var inventorySkinsSet = new Set();
+		var collectibleItemsSet = new Set();
 		var rgDescriptions = userInventory.rgDescriptions;
 		var rgInventory = userInventory.rgInventory;
 		
 		for(var item in rgDescriptions) {
 			if(rgDescriptions.hasOwnProperty(item)) {
-				if(rgDescriptions[item].marketable == 1) {
-					var tagsArray = rgDescriptions[item].tags;
+				var tagsArray = rgDescriptions[item].tags;				
+							
+				if(tagsArray[0].name == 'Knife' || tagsArray[0].name == 'Gloves' || tagsArray[1].category == 'Weapon') {
+					var weaponItem = {};
+					var statTrakWeapon = false;
+					var souvenirWeapon = false;
 					
-					if(tagsArray.length > 3) {
-						if(tagsArray[0].name == 'Knife' || tagsArray[0].name == 'Gloves' || tagsArray[1].category == 'Weapon') {
-							var weaponItem = {};
-							var statTrakWeapon = false;
-							var souvenirWeapon = false;
-							
-							weaponItem['classid'] = rgDescriptions[item].classid;
-							
-							if(rgDescriptions[item].hasOwnProperty('icon_url')){
-								weaponItem['iconUrl'] = $scope.imageUrl + rgDescriptions[item].icon_url;
+					weaponItem['classid'] = rgDescriptions[item].classid;
+					
+					if(rgDescriptions[item].hasOwnProperty('icon_url')){
+						weaponItem['iconUrl'] = $scope.imageUrl + rgDescriptions[item].icon_url;
+					}
+					
+					if(rgDescriptions[item].hasOwnProperty('icon_url_large')){
+						weaponItem['iconUrlLarge'] = $scope.imageUrl + rgDescriptions[item].icon_url_large;
+					}
+												
+					weaponItem['name'] = rgDescriptions[item].name;
+					
+					if(rgDescriptions[item].hasOwnProperty('fraudwarnings')){
+						weaponItem['fraudwarnings'] = rgDescriptions[item].fraudwarnings;
+					}
+					
+					weaponItem['marketHashName'] = rgDescriptions[item].market_hash_name;
+					
+					if(rgDescriptions[item].market_hash_name.includes('StatTrak')) {
+						statTrakWeapon = true;
+					}
+					
+					weaponItem['statTrak'] = statTrakWeapon;
+					
+					if(rgDescriptions[item].market_hash_name.includes('Souvenir')) {
+						souvenirWeapon = true;
+					}
+					
+					weaponItem['souvenir'] = souvenirWeapon;
+												
+					if(tagsArray[0].name == 'Knife' || tagsArray[0].name == 'Gloves') {
+						weaponItem['type'] = tagsArray[0].name;
+						weaponItem['collection'] = '';
+					} else {
+						weaponItem['type'] = tagsArray[1].name;
+						weaponItem['collection'] = tagsArray[2].name;
+					}
+																			
+					for(var i=0; i<tagsArray.length; i++) {
+						if(tagsArray[i].hasOwnProperty('category')) {
+							if(tagsArray[i].category == 'Rarity') {
+								weaponItem['rarity'] = $scope.convertRarityToInt(tagsArray[i].name);
+								weaponItem['color'] = tagsArray[i].color;
 							}
-							
-							if(rgDescriptions[item].hasOwnProperty('icon_url_large')){
-								weaponItem['iconUrlLarge'] = $scope.imageUrl + rgDescriptions[item].icon_url_large;
-							}
-														
-							weaponItem['name'] = rgDescriptions[item].name;
-							
-							if(rgDescriptions[item].hasOwnProperty('fraudwarnings')){
-								weaponItem['fraudwarnings'] = rgDescriptions[item].fraudwarnings;
-							}
-							
-							weaponItem['marketHashName'] = rgDescriptions[item].market_hash_name;
-							
-							if(rgDescriptions[item].market_hash_name.includes('StatTrak')) {
-								statTrakWeapon = true;
-							}
-							
-							weaponItem['statTrak'] = statTrakWeapon;
-							
-							if(rgDescriptions[item].market_hash_name.includes('Souvenir')) {
-								souvenirWeapon = true;
-							}
-							
-							weaponItem['souvenir'] = souvenirWeapon;
-														
-							if(tagsArray[0].name == 'Knife' || tagsArray[0].name == 'Gloves') {
-								weaponItem['type'] = tagsArray[0].name;
-								weaponItem['collection'] = '';
-							} else {
-								weaponItem['type'] = tagsArray[1].name;
-								weaponItem['collection'] = tagsArray[2].name;
-							}
-																					
-							for(var i=0; i<tagsArray.length; i++) {
-								if(tagsArray[i].hasOwnProperty('category')) {
-									if(tagsArray[i].category == 'Rarity') {
-										weaponItem['rarity'] = $scope.convertRarityToInt(tagsArray[i].name);
-									}
-								}
-							}
-							
-							if(rgDescriptions[item].hasOwnProperty('actions')){
-								weaponItem['inspectInGame'] = rgDescriptions[item].actions[0].link;
-							}
-							
-							var descriptionsArray = rgDescriptions[item].descriptions;
-							
-							if(descriptionsArray.length >= 3) {
-								weaponItem['exterior'] = descriptionsArray[0].value.replace('Exterior: ', '');
-							}
-							
-							if(tagsArray[0].name == 'Knife') {
-								if(tagsArray[3].hasOwnProperty('color')){
-									weaponItem['color'] = tagsArray[3].color;
-								}
-							} else if(tagsArray[0].name == 'Gloves') {
-								if(tagsArray[2].hasOwnProperty('color')){
-									weaponItem['color'] = tagsArray[2].color;
-								}
-							} else if(tagsArray[1].category == 'Weapon') {
-								if(tagsArray[4].hasOwnProperty('color')){
-									weaponItem['color'] = tagsArray[4].color;
-								}
-							}
-							
-							weaponItem['price'] = null;
-							
-							inventorySkinsSet.add(weaponItem);
 						}
 					}
-				}
+					
+					if(rgDescriptions[item].hasOwnProperty('actions')){
+						weaponItem['inspectInGame'] = rgDescriptions[item].actions[0].link;
+					}
+					
+					var descriptionsArray = rgDescriptions[item].descriptions;
+					
+					if(descriptionsArray.length >= 3) {
+						weaponItem['exterior'] = descriptionsArray[0].value.replace('Exterior: ', '');
+					}
+					
+					weaponItem['price'] = null;
+					
+					inventorySkinsSet.add(weaponItem);
+				} else if(tagsArray[0].name == 'Collectible') {
+					var collectibleItem = {};
+					var descriptionsArray = rgDescriptions[item].descriptions;
+					
+					collectibleItem['classid'] = rgDescriptions[item].classid;
+					
+					if(rgDescriptions[item].hasOwnProperty('icon_url')){
+						collectibleItem['iconUrl'] = $scope.imageUrl + rgDescriptions[item].icon_url;
+					}
+					
+					if(rgDescriptions[item].hasOwnProperty('icon_url_large')){
+						collectibleItem['iconUrlLarge'] = $scope.imageUrl + rgDescriptions[item].icon_url_large;
+					} else {
+						collectibleItem['iconUrlLarge'] = $scope.imageUrl + rgDescriptions[item].icon_url;
+					}
+												
+					collectibleItem['name'] = rgDescriptions[item].name;
+					collectibleItem['marketHashName'] = rgDescriptions[item].market_hash_name;
+					collectibleItem['nameColor'] = $scope.convertHexToRgb('#' + rgDescriptions[item].name_color);
+					collectibleItem['description'] = descriptionsArray[0].value;
+					
+					for(var i=0; i<descriptionsArray.length; i++) {
+						if(descriptionsArray[i].hasOwnProperty('value')) {
+							if(descriptionsArray[i].value.toLowerCase().includes('date')) {
+								collectibleItem['date'] = descriptionsArray[i].value.split(': ')[1];
+							}
+						}
+					}
+					
+					if(rgDescriptions[item].hasOwnProperty('actions')){
+						collectibleItem['inspectInGame'] = rgDescriptions[item].actions[0].link;
+					}
+					
+					collectibleItem['type'] = tagsArray[0].name;
+										
+					for(var i=0; i<tagsArray.length; i++) {
+						if(tagsArray[i].hasOwnProperty('category')) {
+							if(tagsArray[i].category == 'Rarity') {
+								collectibleItem['rarity'] = $scope.convertRarityToInt(tagsArray[i].name);
+								collectibleItem['color'] = $scope.convertHexToRgb('#' + tagsArray[i].color);
+							}
+						}
+					}
+					
+					collectibleItemsSet.add(collectibleItem);
+				}			
 			}
 		}
 				
@@ -990,9 +1083,23 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			}
 		});
 		
-		var inventorySkinsArray = Array.from(inventorySkinsSet).sort((a, b) => (a.marketHashName > b.marketHashName) - (a.marketHashName < b.marketHashName));
+		collectibleItemsSet.forEach(function(collectibleItem) {
+			for(var item in rgInventory) {
+				if(rgInventory.hasOwnProperty(item)) {
+					if(rgInventory[item].classid == collectibleItem.classid) {
+						collectibleItem.inspectInGame = collectibleItem.inspectInGame.replace('%owner_steamid%', steamId).replace('%assetid%', rgInventory[item].id);
+						break;
+					}
+				}
+			}
+		});
 		
-		return inventorySkinsArray;
+		var inventorySkinsArray = Array.from(inventorySkinsSet).sort((a, b) => (a.marketHashName > b.marketHashName) - (a.marketHashName < b.marketHashName));
+		var collectibleItemsArray = Array.from(collectibleItemsSet).sort(function (a, b) {
+		    return b.rarity - a.rarity || a.marketHashName.localeCompare(b.marketHashName);
+		});
+		
+		return [inventorySkinsArray, collectibleItemsArray];
 	};
 	
 	/*
@@ -1146,9 +1253,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.loadStrangerStatsToCompare = function(strangerProfileData) {
 		$scope.hideFailFriendStatsDownloadingError = true;
-		$scope.hideFooterCompare = true;
-		$scope.removeFriendUserFooterCssProperties();		
+		$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeIn', 'fadeOut');				
 		$scope.hideFriendUserStatsGeneral = true;
+		$scope.appendAnimationToFriendUserStatsGeneralBlinking();
 		$scope.hideFriendUserStatsWeapons = true;
 		$scope.hideFriendUserStatsWeaponsLoading = true;
 		$scope.hideFriendUserStatsGeneralLoading = false;				
@@ -1159,6 +1266,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserStats = response.data;
+				$scope.hideFooterCompare = true;
+				$scope.removeFriendUserFooterCssProperties();
 				var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 				$scope.friendUserStatsOverall = overallStatsArray[0];
 				$scope.friendUserStatsLastMatch = overallStatsArray[1];
@@ -1167,6 +1276,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.hideFriendUserStatsWeaponsLoading = false;
 				return $http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId);
 			} else {
+				$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
 				$scope.showFailFriendStatsDownloadingError();
 				$scope.addFriendUserFooterCssProperties();
 				$scope.hideFooterCompare = false;
@@ -1184,8 +1294,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
 			
 			if($scope.friendUserInventory != null) {
-				var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);					
-				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
+				var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);	
+				$scope.friendUserCollectibleItems = skinsFromInventory[1];
+				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
 				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
 			} else {
 				var skinsFromInventoryWithPrices = [];
@@ -1207,9 +1318,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.loadFriendStatsToCompare = function(steamId) {
 		$scope.hideFailFriendStatsDownloadingError = true;
-		$scope.hideFooterCompare = true;
-		$scope.removeFriendUserFooterCssProperties();
+		$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeIn', 'fadeOut');		
 		$scope.hideFriendUserStatsGeneral = true;
+		$scope.appendAnimationToFriendUserStatsGeneralBlinking();
 		$scope.hideFriendUserStatsWeapons = true;
 		$scope.hideFriendUserStatsWeaponsLoading = true;
 		$scope.hideFriendUserStatsGeneralLoading = false;						
@@ -1218,6 +1329,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserStats = response.data;
+					$scope.hideFooterCompare = true;
+					$scope.removeFriendUserFooterCssProperties();
 					$scope.appendUserinfoToFriendStats($scope.friendUserStats.userStats.playerstats.steamID);
 					var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 					$scope.friendUserStatsOverall = overallStatsArray[0];
@@ -1227,6 +1340,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.hideFriendUserStatsWeaponsLoading = false;
 					return $http.post($scope.url + '/stats/userInventory', steamId);
 				} else {
+					$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
 					$scope.showFailFriendStatsDownloadingError();
 					$scope.addFriendUserFooterCssProperties();
 					$scope.hideFooterCompare = false;
@@ -1244,8 +1358,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
 				
 				if($scope.friendUserInventory != null) {
-					var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);					
-					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
+					var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);
+					$scope.friendUserCollectibleItems = skinsFromInventory[1];
+					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
 					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
 				} else {
 					var skinsFromInventoryWithPrices = [];
@@ -1263,74 +1378,120 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
+	 * Reload Main User inventory.
+	 */
+	$scope.reloadMainUserInventory = function() {
+		$scope.hideFailUserInventoryDownloadingWarning = true;	
+		$scope.removeAnimationByElementIdAndAnimationName('#failUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+		
+		$http.post($scope.url + '/stats/userInventory', $scope.steamId).then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.mainUserInventory = response.data;
+				var skinsFromInventory = $scope.getSkinsFromInventory($scope.steamId, $scope.mainUserInventory);
+				$scope.mainUserCollectibleItems = skinsFromInventory[1];
+				$scope.hideMainUserCollectibleItemsShowcase = false;
+				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
+				$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.mainUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
+			} else {				
+				$scope.showFailUserInventoryDownloadingWarning();
+				throw "failed downloading user inventory.";
+			}
+		}).catch(function(error) {
+			console.log('error: ' + error);
+		});	
+	};
+	
+	/*
+	 * Load main user stats
+	 */
+	$scope.loadMainUserStats = function(statsReload) {
+		if(statsReload) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
+			$scope.removeAnimationByElementIdAndAnimationName('#footerMainUserStatsCompare', 'fadeIn', true);
+			$scope.hideFailStatsDownloadingError = true;
+			$scope.hideMainUserStatsGeneralLoading = false;
+			$scope.hideFooter = true;
+			$scope.removeFooterCssProperties();
+		}
+		
+		$http.post($scope.url + '/stats/strangerUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
+		.then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.mainUserStats = response.data;
+				$scope.removeAnimationByElementIdAndAnimationName('#footerMainUserStatsCompare', 'fadeIn', true);
+				var overallStatsArray = $scope.createLastMatchStats($scope.mainUserStats);
+				$scope.mainUserStatsOverall = overallStatsArray[0];
+				$scope.mainUserStatsLastMatch = overallStatsArray[1];
+				$scope.showMainUserStatsGeneral();
+				$scope.showMainUserStatsWeaponsLoading();
+				return $http.post($scope.url + '/stats/userInventory', $scope.steamId);
+			} else {
+				$scope.showFailStatsDownloadingError();
+				$scope.addFooterCssProperties();
+				$scope.showFooter();
+				throw "failed downloading user stats.";
+			}
+		})
+		.then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.mainUserInventory = response.data;					
+			} else {
+				$scope.showFailUserInventoryDownloadingWarning();
+				console.log('error: failed downloading user inventory.');
+			}
+			
+			return $http.get($scope.url + '/stats/skinsPrices');
+		})
+		.then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.skinsPrices = response.data;					
+			} else {
+				$scope.showFailSkinsPricesDownloadingWarning();
+				console.log('failed downloading skins prices.');
+			}
+			
+			return $http.get($scope.url + '/stats/defaultWeapons');
+		})
+		.then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.defaultWeapons = response.data;
+				$scope.hideNavTabCompareOption = false;				
+				$scope.mainUserWeaponsStatsTemporary = $scope.createWeaponsStats($scope.mainUserStats.userStats.playerstats.stats);		
+				
+				if($scope.mainUserInventory != null) {
+					var skinsFromInventory = $scope.getSkinsFromInventory($scope.steamId, $scope.mainUserInventory);
+					$scope.mainUserCollectibleItems = skinsFromInventory[1];
+					$scope.hideMainUserCollectibleItemsShowcase = false;
+					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
+					$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.mainUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
+				} else {
+					var skinsFromInventoryWithPrices = [];
+					$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.mainUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
+				}
+				
+				$scope.showMainUserStatsWeapons();
+				$scope.showFooter();
+				
+				if($scope.mainUserInventory == null & $scope.skinsPrices != null && $scope.skinsPrices != null) {					
+					$scope.replaceFailUserInventoryDownloadingWarningAlert();
+				}
+			} else {
+				$scope.showFailDefaultWeaponsDownloadingError();
+				$scope.addFooterCssProperties();
+				$scope.showFooter();
+				throw "failed downloading default weapons.";
+			}
+		})
+		.catch(function(error) {
+			console.log('error: ' + error);
+		});	
+	};
+	
+	/*
 	 * Load content after logging in
 	 */	
 	$scope.$watch('$viewContentLoaded', function(){		
-		$http.post($scope.url + '/stats/strangerUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
-			.then(function(response) {
-				if(response.data != "" && response.data != null) {
-					$scope.mainUserStats = response.data;
-					var overallStatsArray = $scope.createLastMatchStats($scope.mainUserStats);
-					$scope.mainUserStatsOverall = overallStatsArray[0];
-					$scope.mainUserStatsLastMatch = overallStatsArray[1];
-					$scope.showMainUserStatsGeneral();
-					$scope.showMainUserStatsWeaponsLoading();
-					return $http.post($scope.url + '/stats/userInventory', $scope.steamId);
-				} else {
-					$scope.showFailStatsDownloadingError();
-					$scope.addFooterCssProperties();
-					$scope.showFooter();
-					throw "failed downloading user stats.";
-				}
-			})
-			.then(function(response) {
-				if(response.data != "" && response.data != null) {
-					$scope.mainUserInventory = response.data;					
-				} else {
-					$scope.showFailUserInventoryDownloadingWarning();
-					console.log('error: failed downloading user inventory.');
-				}
-				
-				return $http.get($scope.url + '/stats/skinsPrices');
-			})
-			.then(function(response) {
-				if(response.data != "" && response.data != null) {
-					$scope.skinsPrices = response.data;					
-				} else {
-					$scope.showFailSkinsPricesDownloadingWarning();
-					console.log('failed downloading skins prices.');
-				}
-				
-				return $http.get($scope.url + '/stats/defaultWeapons');
-			})
-			.then(function(response) {
-				if(response.data != "" && response.data != null) {
-					$scope.defaultWeapons = response.data;
-					$scope.hideNavTabCompareOption = false;
-					
-					var weaponsStats = $scope.createWeaponsStats($scope.mainUserStats.userStats.playerstats.stats);		
-					
-					if($scope.mainUserInventory != null) {
-						var skinsFromInventory = $scope.getSkinsFromInventory($scope.steamId, $scope.mainUserInventory);					
-						var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory);
-						$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
-					} else {
-						var skinsFromInventoryWithPrices = [];
-						$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
-					}
-					
-					$scope.showMainUserStatsWeapons();
-					$scope.showFooter();
-				} else {
-					$scope.showFailDefaultWeaponsDownloadingError();
-					$scope.addFooterCssProperties();
-					$scope.showFooter();
-					throw "failed downloading default weapons.";
-				}
-			})
-			.catch(function(error) {
-				console.log('error: ' + error);
-			});				
+		$scope.loadMainUserStats(false);			
 	});
 	
 }]);

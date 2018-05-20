@@ -546,6 +546,13 @@ div.col-csgostats-grid-weapon-name {
 	text-align: center;
 }
 
+div.col-csgostats-grid-collectible-name {
+	border-radius: 6px 6px 0px 0px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+}
+
 p.csgostats-weapon-name-formatter-center {
     padding: 0 0 0 0px;
     margin: 0 0 0 0px;
@@ -561,12 +568,27 @@ p.csgostats-weapon-name-formatter-center {
 	overflow: hidden;
 }
 
+p.csgostats-collectible-name-formatter-center {
+    padding: 0 0 0 0px;
+    margin: 0 0 0 0px;
+    text-transform: none;
+    font-weight: 0;
+    letter-spacing: 0px;
+    font-family: "Roboto Condensed Regular";
+    font-size: 11px;
+    text-align: center; 
+    vertical-align: middle;
+	line-height: 30px;
+	display: block;
+	overflow: hidden;
+}
+
 div.col-csgostats-grid-weapon-stats-title {
 	background-color: rgba(231, 207, 72, 0.6);
 	height: 30px;
 	line-height: 8px;
 	text-align: center;
-	margin-bottom: 5px;
+	margin-bottom: 4px;
 }
 
 div.col-csgostats-grid-image-background {
@@ -583,6 +605,21 @@ div.col-csgostats-grid-image-background {
       position: absolute;
       max-width: 100%;
       max-height: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+}
+
+.csgostats-collectible-image{	
+    position:relative;
+    overflow:hidden;
+    padding-bottom:100%;
+}
+
+.csgostats-collectible-image img{
+      position: absolute;
+      max-width: 75%;
+      max-height: 75%;
       top: 50%;
       left: 50%;
       transform: translateX(-50%) translateY(-50%);
@@ -640,6 +677,35 @@ div.col-csgostats-grid-image-background {
 }
 
 .btn.csgostats-inspect-button:hover {
+	border: none;
+	color: #2f9e75;
+	background-color: rgba(61, 80, 89, 0.5);
+	border-color: rgba(61, 80, 89, 0.5);
+}
+
+.btn.csgostats-collectible-inspect-button {
+	border: none;
+	border-radius: 0px;
+	margin: 0px 0px 2px 0px;
+	width: 100%;
+	height: 20px;
+	font-family: "Roboto Condensed Regular";
+	font-size: 11px;
+	font-weight: 0;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 4px;
+	display: inline-block;	
+	text-transform: none;
+	letter-spacing: 0px;
+	color: #42dca3;
+	background-color: rgba(255, 255, 255, 0.1);
+	-webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.btn.csgostats-collectible-inspect-button:hover {
 	border: none;
 	color: #2f9e75;
 	background-color: rgba(61, 80, 89, 0.5);
@@ -740,10 +806,6 @@ div.col-csgostats-grid-weapon-summary {
 	line-height: 8px;
 	text-align: center;
 	margin-top: 4px;
-}
-
-div.csgostats-stats-margin-before-separator {
-	margin-bottom: 4px;
 }
 
 div.col-csgostats-grid-weapon-stats-compare-title {
@@ -949,6 +1011,8 @@ p.csgostats-overall-title-formatter-center {
 .alert-custom { 
 	border: 1px solid transparent;
 	border-radius: 4px;
+	font-family: "Roboto Light";
+	font-size: 12px;
 }
 
 .alert-custom h4 {
@@ -1048,6 +1112,12 @@ p.csgostats-overall-title-formatter-center {
 
 .col-csgostats-overall-section-outer-overall-stats {
 	margin: 10px 0px 5px 0px; 
+	padding-left: 20px; 
+	padding-right: 20px;
+}
+
+.col-csgostats-overall-section-collectible-stats {
+	margin: 5px 0px 5px 0px; 
 	padding-left: 20px; 
 	padding-right: 20px;
 }
@@ -1196,6 +1266,10 @@ p.text-green {
 	background-color: rgba(255, 255, 255, 0.05);
 }
 
+.col-csgostats-overall-section-compare-stats {
+	height: 4px;
+}
+
 .row-csgostats-overall-section-end {
 	height: 7px;
 	background-color: rgba(255, 255, 255, 0.05);
@@ -1241,6 +1315,57 @@ p.text-green {
 .reload-icon-margin {
 	margin-left: 5px;
 	color: #797979;
+}
+
+.footer-p-center {
+	text-align: center;
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+a.error-alert {
+	color: #a94442;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+a.error-alert:hover,
+a.error-alert:focus,
+a.error-alert:active,
+a.error-alert.active {
+    text-decoration: underline;
+    color: #474442;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.reload-icon-error-alert {
+	padding-left: 5px;
+	padding-right: 3px;
+}
+
+a.warning-alert {
+	color: #8a6d3b;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+a.warning-alert:hover,
+a.warning-alert:focus,
+a.warning-alert:active,
+a.warning-alert.active {
+    text-decoration: underline;
+    color: #474442;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.reload-icon-warning-alert {
+	padding-left: 5px;
+	padding-right: 3px;
 }
 
 /* ------------------------------LOADING ANIMATION-----------------------------------*/

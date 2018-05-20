@@ -135,11 +135,11 @@
 		   <div class="footer-above">
 		      <div class="container">
 		         <div class="row">
-		            <div class="footer-col col-md-4">
+		            <div class="footer-col col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
 		               <h3 class="footer-above-font header">Web Creator</h3>
 		               <p class="footer-above-font font">Jakub Podgórski</p>
 		            </div>
-		            <div class="footer-col col-md-4">
+		            <div class="footer-col col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
 		               <h3 class="footer-above-font header">Contact</h3>
 		               <ul class="list-inline">
 		                  <li>
@@ -153,7 +153,7 @@
 		                  </li>
 		               </ul>
 		            </div>
-		            <div class="footer-col col-md-3">
+		            <div class="footer-col col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
 		               <h3 class="footer-above-font header">About Project</h3>
 		               <p class="footer-above-font font">This project was made for testing purpose only. Not gonna lie that it was not tested on my girlfriend. Have fun!</p>
 		            </div>
