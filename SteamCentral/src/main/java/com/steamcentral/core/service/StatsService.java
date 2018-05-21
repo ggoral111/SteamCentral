@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -232,7 +233,7 @@ public class StatsService implements HttpConnection, FileOperations {
 				Thread.currentThread().interrupt();
 			}
 			
-			return Collections.unmodifiableSet(friendListSet);
+			return Collections.unmodifiableSet(new TreeSet<SteamUserInfo>(friendListSet));
 		}
 				
 		return null;

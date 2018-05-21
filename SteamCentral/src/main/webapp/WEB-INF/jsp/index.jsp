@@ -195,10 +195,10 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
 																		<p class="csgostats-overall-user-info-text-right">
 																			<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
 																		</p>
@@ -492,7 +492,7 @@
 							</div>
 						</div>
 					</div>					
-					<div data-ng-hide="hideFriendUserStatsPanel" data-ng-cloak id="friendUserStatsPanelBlinking" class="panel-group main-user-stats-sort-panel wow fadeIn" data-wow-duration="2s" data-wow-delay="1s">
+					<div data-ng-hide="hideFriendUserStatsPanel" data-ng-cloak id="friendUserStatsPanelBlinking" class="panel-group main-user-stats-sort-panel wow fadeIn" data-wow-duration="1s">
 					    <div class="panel panel-default main-user-stats-sort-panel">
 							<div class="panel-heading main-user-stats-sort-panel" role="tab" data-toggle="collapse" data-target="#friendUserStatsSortPanelCollapse" aria-expanded="true" aria-controls="friendUserStatsSortPanelCollapse">
 								<h4 class="panel-title main-user-stats-sort-panel">
@@ -504,12 +504,12 @@
 									<div  class="row">
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 											<div data-ng-hide="hideFriendUserStatsPanelFriendCombobox" data-ng-cloak id="friendUserStatsPanelFriendComboboxBlinking" class="input-group wow fadeIn" data-wow-duration="1s">
-												<select class="form-control search-in-stats" data-ng-model="selectedUserFriendSteamId">
-													<option value="" disabled="disabled" selected="selected" hidden="hidden">Select friend to compare...</option>	
+												<select class="form-control search-in-stats" data-ng-model="selectedUserFriendSteamId" data-ng-change="enableFriendStatsCompareButton(selectedUserFriendSteamId)">
+													<option value="" disabled="disabled" selected="selected" hidden="hidden">Select friend to compare...</option>
 												    <option data-ng-repeat="friend in friendList" value="{{ friend.steamId }}">{{ friend.personaname }}</option>
 												</select>	
 												<span class="input-group-btn">
-													<button data-ng-click="loadFriendStatsToCompare(selectedUserFriendSteamId)" onclick="this.blur();" class="btn btn-default compare-button" type="button">Compare</button>
+													<button data-ng-click="loadFriendStatsToCompare(selectedUserFriendSteamId)" onclick="this.blur();" class="btn btn-default compare-button" id="friendStatsCompareButton" type="button" disabled>Compare</button>
 												</span>						
 											</div>
 											<div data-ng-hide="hideFriendUserStatsPanelFailButton" data-ng-cloak>
@@ -529,9 +529,9 @@
 										</div>
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-panel-search-input">
 											<div class="input-group">
-												<input type="text" data-ng-model="compareFriendUserStrangerProfileData" class="form-control search-stats" placeholder="Find user to compare by username or Steam profile URL...">
+												<input type="text" data-ng-model="compareFriendUserStrangerProfileData" data-ng-change='changeCompareButtonState(compareFriendUserStrangerProfileData)' class="form-control search-stats" placeholder="Find user to compare by username or Steam profile URL...">
 												<span class="input-group-btn">
-													<button data-ng-click="loadStrangerStatsToCompare(compareFriendUserStrangerProfileData); compareFriendUserStrangerProfileData = ''" onclick="this.blur();" class="btn btn-default compare-button" type="button">Compare</button>
+													<button data-ng-click="loadStrangerStatsToCompare(compareFriendUserStrangerProfileData); compareFriendUserStrangerProfileData = ''" onclick="this.blur();" class="btn btn-default compare-button" id="strangerStatsCompareButton" type="button" disabled>Compare</button>
 												</span>
 											</div>
 										</div>										
@@ -575,26 +575,15 @@
 								</div>
 							</div>
 						</div>
-					</div>
-					
+					</div>					
 					<div data-ng-hide="hideFailFriendListDownloadingError" id="failFriendListDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<strong>Error:</strong> failed downloading friend list.
-					</div>
-					
+						<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class="fas fa-sync-alt reload-icon-error-alert"></i>' button in 'Select Friend To Compare & Search Options' panel.
+					</div>					
 					<div data-ng-hide="hideFailFriendStatsDownloadingError" id="failFriendStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<strong>Error:</strong> failed downloading selected user statistics.
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<div id="failFriendStatsDownloadingErrorAlertInner">
+							<strong>Error:</strong> failed downloading selected user statistics.						
+						</div>
 					</div>
-					
-					<div data-ng-hide="hideFailFriendUserInventoryDownloadingWarning" id="failFriendUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<strong>Warning:</strong> failed downloading selected user inventory.
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>	
-					
 					<div data-ng-hide="hideFriendUserStatsGeneralLoading" data-ng-cloak>
 						<div class="container">
 							<div class="row loading-content-row">
@@ -641,10 +630,10 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
 																		<p class="csgostats-overall-user-info-text-right">
 																			<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
 																		</p>
@@ -800,10 +789,10 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">																	
+																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
 																		<p class="csgostats-overall-user-info-text-right">
 																			<a href="http://steamcommunity.com/profiles/{{ friendUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ friendUserStats.userInfo.personaname }}</a>
 																		</p>
@@ -947,7 +936,12 @@
 								</div>
 							</div>
 						</div>
-					</div>						
+					</div>		
+					<div data-ng-hide="hideFailFriendUserInventoryDownloadingWarning" id="failFriendUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
+						<div id="failFriendUserInventoryDownloadingWarningAlertInner">
+							<strong>Warning:</strong> failed downloading selected user inventory.
+						</div>
+					</div>		
 					<div data-ng-hide="hideFriendUserStatsWeaponsLoading" data-ng-cloak>
 						<div class="container">
 							<div class="row loading-content-row">
@@ -1170,8 +1164,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
-					
+					</div>					
 				</div>
 			</div>	
 		</div>	

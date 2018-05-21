@@ -2,7 +2,7 @@ package com.steamcentral.core.model;
 
 import java.util.Objects;
 
-public class SteamUserInfo {
+public class SteamUserInfo implements Comparable<SteamUserInfo> {
 	
 	private String steamId, personaname, avatarMediumURL, avatarFullURL;
 	private long playtimeTwoWeeks, playtimeForever;
@@ -74,6 +74,11 @@ public class SteamUserInfo {
 		SteamUserInfo sui = (SteamUserInfo) obj;
 
 		return steamId.equals(sui.getSteamId());
+	}
+
+	@Override
+	public int compareTo(SteamUserInfo sui) {
+		return personaname.toLowerCase().compareTo(sui.getPersonaname().toLowerCase());
 	}
 		
 }

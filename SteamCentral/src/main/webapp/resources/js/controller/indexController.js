@@ -39,6 +39,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.friendUserStatsLastMatch = null;
 	$scope.friendUserInventory = null;
 	$scope.friendUserCollectibleItems = null;
+	$scope.friendUserWeaponsStatsTemporary = null;
 	$scope.friendUserWeaponsStats = null;
 	
 	$scope.mainAndFriendUserWeaponsStats = null;
@@ -75,7 +76,9 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.hideFailFriendListDownloadingError = true;
 	$scope.failFriendListDownloadingErrorPopedUp = false;
 	$scope.hideFailFriendStatsDownloadingError = true;
+	$scope.removeFailFriendStatsDownloadingErrorBlinking = true;
 	$scope.hideFailFriendUserInventoryDownloadingWarning = true;
+	$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = true;
 	
 	$scope.hideFooter = true;
 	$scope.hideFooterCompare = true;
@@ -90,10 +93,32 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	});*/
 	
 	/*
-	 * Add main user footer CSS properties
+	 * Remove friendStatsCompareButton disable state
 	 */
-	$scope.addFooterCssProperties = function() {
-		$('.main-user-footer').css({
+	$scope.enableFriendStatsCompareButton = function(value) {
+		if(value != null) {
+			if($('#friendStatsCompareButton').attr('disabled')) {
+				$('#friendStatsCompareButton').removeAttr('disabled');
+			}
+		}
+	};
+	
+	/*
+	 * Manipulates strangerStatsCompareButton disable state
+	 */
+	$scope.changeCompareButtonState = function(textFieldData) {
+		if(textFieldData.length == 0) {
+        	$('#strangerStatsCompareButton').attr('disabled', '');
+        } else if($('#strangerStatsCompareButton').attr('disabled')) {
+        	$('#strangerStatsCompareButton').removeAttr('disabled');
+        }
+	};
+	
+	/*
+	 * Add footer CSS properties
+	 */
+	$scope.addFooterCssProperties = function(elementName) {
+		$(elementName).css({
 			'position' : 'fixed',
 			'width' : '100%',
 			'bottom' : '0'
@@ -101,32 +126,10 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Remove main user footer CSS properties
+	 * Remove footer CSS properties
 	 */
-	$scope.removeFooterCssProperties = function() {
-		$('.main-user-footer').css({
-			'position' : '',
-			'width' : '',
-			'bottom' : ''
-		});
-	};
-	
-	/*
-	 * Add friend user footer CSS properties
-	 */
-	$scope.addFriendUserFooterCssProperties = function() {
-		$('.friend-user-footer').css({
-			'position' : 'fixed',
-			'width' : '100%',
-			'bottom' : '0'
-		});
-	};
-	
-	/*
-	 * Remove friend user footer CSS properties
-	 */
-	$scope.removeFriendUserFooterCssProperties = function() {
-		$('.friend-user-footer').css({
+	$scope.removeFooterCssProperties = function(elementName) {
+		$(elementName).css({
 			'position' : '',
 			'width' : '',
 			'bottom' : ''
@@ -197,27 +200,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Show friend user stats panel
-	 */
-	$scope.showFriendUserStatsPanel = function() {
-		$scope.hideFriendUserStatsPanel = false;
-	};
-	
-	/*
-	 * Show friend combobox in friend user stats panel
-	 */
-	$scope.showFriendUserStatsPanelFriendCombobox = function() {
-		$scope.hideFriendUserStatsPanelFriendCombobox = false;
-	};
-	
-	/*
-	 * Show fail button in friend user stats panel
-	 */
-	$scope.showFriendUserStatsPanelFailButton = function() {
-		$scope.hideFriendUserStatsPanelFailButton = false;				
-	};
-	
-	/*
 	 * Show loading points in friend user stats panel
 	 */
 	$scope.showFriendUserStatsPanelLoadingPoints = function() {
@@ -239,7 +221,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$scope.hideFriendUserStats = false;
 		
 		if($scope.friendUserStats == null) {
-			$scope.addFriendUserFooterCssProperties();
+			$scope.addFooterCssProperties('.friend-user-footer');
 		}
 
 		if($scope.cleanBlinkingMainUserStats) {
@@ -284,7 +266,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		
 		if($scope.cleanBlinkingFriendUserStats) {
 			if(!$scope.hideFriendUserStatsPanel) {
-				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelBlinking', 'fadeIn', true);
+				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelBlinking', 'fadeIn', false);
 			}
 			
 			if(!$scope.hideFriendUserStatsPanelFriendCombobox) {
@@ -346,11 +328,40 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Show main user weapons stats loading
+	 * Replace failFriendStatsDownloadingErrorAlert alert for friend user
 	 */
-	$scope.showMainUserStatsWeaponsLoading = function() {
-		$scope.hideMainUserStatsWeaponsLoading = false;
+	$scope.replaceFailFriendStatsDownloadingErrorAlertFriend = function(friendSteamId) {
+		$("#failFriendStatsDownloadingErrorAlertInner").remove();
+		var $textElement = $("<div id='failFriendStatsDownloadingErrorAlertInner'><strong>Error:</strong> failed downloading selected user statistics. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='error-alert' target='_blank'>Try to chat to your friend and ask for setting Steam profile and inventory privacy to public</a> (it may take a while when privacy settings will be overridden) and then click 'Compare' button to download friend's statistics again.</div>").appendTo("#failFriendStatsDownloadingErrorAlert");
+		$compile($textElement)($scope);
 	};
+	
+	/*
+	 * Replace failFriendStatsDownloadingErrorAlert alert for stranger user
+	 */
+	$scope.replaceFailFriendStatsDownloadingErrorAlertStranger = function() {
+		$("#failFriendStatsDownloadingErrorAlertInner").remove();
+		var textElement = "<div id='failFriendStatsDownloadingErrorAlertInner'><strong>Error:</strong> failed downloading selected user statistics. It is highly likely that this user not exists or has privacy settings set to other than public. If you think this is a mistake try to download user's statistics again by clicking 'Compare' button.</div>";
+		$(textElement).appendTo("#failFriendStatsDownloadingErrorAlert");
+	};
+	
+	/*
+	 * Replace failFriendUserInventoryDownloadingWarningAlert alert for friend user
+	 */
+	$scope.replaceFailFriendUserInventoryDownloadingWarningAlertFriend = function(friendSteamId) {
+		$("#failFriendUserInventoryDownloadingWarningAlertInner").remove();
+		var $textElement = $("<div id='failFriendUserInventoryDownloadingWarningAlertInner'><strong>Warning:</strong> failed downloading selected user inventory. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='warning-alert' target='_blank'>Try to chat to your friend and ask for setting Steam inventory privacy to public</a> and then <a class='warning-alert' data-ng-click='reloadFriendUserInventory()' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload friend's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlert");
+		$compile($textElement)($scope);
+	}
+	
+	/*
+	 * Replace failFriendUserInventoryDownloadingWarningAlert alert for stranger user
+	 */
+	$scope.replaceFailFriendUserInventoryDownloadingWarningAlertStranger = function() {
+		$("#failFriendUserInventoryDownloadingWarningAlertInner").remove();
+		var $textElement = $("<div id='failFriendUserInventoryDownloadingWarningAlertInner'><strong>Warning:</strong> failed downloading selected user inventory. It is highly likely that this user has inventory privacy settings set to other than public. If you are convinced that everything is fine <a class='warning-alert' data-ng-click='reloadFriendUserInventory()' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload user's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlert");
+		$compile($textElement)($scope);
+	}
 	
 	/*
 	 * Show overall stats module
@@ -387,46 +398,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Show failed downloading user inventory warning
-	 */
-	$scope.showFailUserInventoryDownloadingWarning = function() {
-		$scope.hideFailUserInventoryDownloadingWarning = false;		
-	};
-	
-	/*
-	 * Show failed downloading selected user inventory warning
-	 */
-	$scope.showFailFriendUserInventoryDownloadingWarning = function() {
-		$scope.hideFailFriendUserInventoryDownloadingWarning = false;		
-	};
-	
-	/*
-	 * Show failed downloading skins prices warning
-	 */
-	$scope.showFailSkinsPricesDownloadingWarning = function() {
-		$scope.hideFailSkinsPricesDownloadingWarning = false;		
-	};
-	
-	/*
 	 * Show failed downloading default weapons error
 	 */
 	$scope.showFailDefaultWeaponsDownloadingError = function() {
 		$scope.hideMainUserStatsWeaponsLoading = true;
 		$scope.hideFailDefaultWeaponsDownloadingError = false;		
-	};
-	
-	/*
-	 * Show failed downloading friend list error
-	 */
-	$scope.showFailFriendListDownloadingError = function() {
-		$scope.hideFailFriendListDownloadingError = false;		
-	}
-	
-	/*
-	 * Show footer
-	 */
-	$scope.showFooter = function() {
-		$scope.hideFooter = false;
 	};
 	
 	/*
@@ -445,17 +421,17 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				if(response.data != "" && response.data != null) {
 					$scope.friendList = response.data;
 					$scope.hideFriendUserStatsPanelLoadingPoints = true;
-					$scope.showFriendUserStatsPanelFriendCombobox();
+					$scope.hideFriendUserStatsPanelFriendCombobox = false;
 				} else {
 					$scope.hideFriendUserStatsPanelLoadingPoints = true;
-					$scope.showFriendUserStatsPanelFailButton();
-					$scope.showFailFriendListDownloadingError();
+					$scope.hideFriendUserStatsPanelFailButton = false;
+					$scope.hideFailFriendListDownloadingError = false;
 					console.log('error: failed downloading friend list.');
 				}
 			}).catch(function(response) {
 				$scope.hideFriendUserStatsPanelLoadingPoints = true;
-				$scope.showFriendUserStatsPanelFailButton();
-				$scope.showFailFriendListDownloadingError();
+				$scope.hideFriendUserStatsPanelFailButton = false;
+				$scope.hideFailFriendListDownloadingError = false;
 				console.log('error: failed downloading friend list.');
 			});
 		}
@@ -472,21 +448,21 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$http.post($scope.url + '/stats/friendList', $scope.steamId).then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.friendList = response.data;	
-					$scope.showFriendUserStatsPanelFriendCombobox();
+					$scope.hideFriendUserStatsPanelFriendCombobox = false;
 					$scope.hideFriendUserStatsPanelLoading = true;
-					$scope.showFriendUserStatsPanel();
+					$scope.hideFriendUserStatsPanel = false;
 				} else {
 					$scope.hideFriendUserStatsPanelLoading = true;
-					$scope.showFriendUserStatsPanelFailButton();
-					$scope.showFriendUserStatsPanel();
-					$scope.showFailFriendListDownloadingError();
+					$scope.hideFriendUserStatsPanelFailButton = false;
+					$scope.hideFriendUserStatsPanel = false;
+					$scope.hideFailFriendListDownloadingError = false;
 					console.log('error: failed downloading friend list.');
 				}
 			}).catch(function(response) {
 				$scope.hideFriendUserStatsPanelLoading = true;
-				$scope.showFriendUserStatsPanelFailButton();
-				$scope.showFriendUserStatsPanel();
-				$scope.showFailFriendListDownloadingError();
+				$scope.hideFriendUserStatsPanelFailButton = false;
+				$scope.hideFriendUserStatsPanel = false;
+				$scope.hideFailFriendListDownloadingError = false;
 				console.log('error: failed downloading friend list.');
 			});
 		}
@@ -768,9 +744,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				overallStats[i].value = (statsResponse.userInfo.playtimeForever / 60).toFixed(1) + 'h';
 			} else if(overallStats[i].name == 'Last two weeks playtime:') {
 				overallStats[i].value = (statsResponse.userInfo.playtimeTwoWeeks / 60).toFixed(1) + 'h';
-			} /*else if(overallStats[i].statsName == 'total_money_earned') {
-				overallStats[i].value += '$';
-			}*/
+			}
 		}
 		
 		for(var i=0; i<lastMatchStats.length; i++) {
@@ -892,12 +866,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						if(skinsPricesList[item].price.hasOwnProperty('all_time') && !priceFound) {
 							if(skinsPricesList[item].price['all_time'].median != 0) {
 								inventorySkinsArray[i].price = skinsPricesList[item].price['all_time'].median;
-								priceFound = true;
-							}																					
-						}
-												
-						if(!priceFound) {
-							inventorySkinsArray[i].price = 0;
+							}																				
 						}
 						
 						break;
@@ -1020,7 +989,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 						weaponItem['exterior'] = descriptionsArray[0].value.replace('Exterior: ', '');
 					}
 					
-					weaponItem['price'] = null;
+					weaponItem['price'] = 0;
 					
 					inventorySkinsSet.add(weaponItem);
 				} else if(tagsArray[0].name == 'Collectible') {
@@ -1249,16 +1218,48 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
+	 * Reload Friend / Stranger User inventory.
+	 */
+	$scope.reloadFriendUserInventory = function() {
+		$scope.hideFailFriendUserInventoryDownloadingWarning = true;
+		
+		if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+			$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
+		}
+		
+		$http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId).then(function(response) {
+			if(response.data != "" && response.data != null) {
+				$scope.friendUserInventory = response.data;
+				var skinsFromInventory = $scope.getSkinsFromInventory($scope.friendUserStats.userInfo.steamId, $scope.friendUserInventory);
+				$scope.friendUserCollectibleItems = skinsFromInventory[1];
+				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
+				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
+			} else {				
+				$scope.hideFailFriendUserInventoryDownloadingWarning = false;
+				throw "failed downloading friend / stranger user inventory.";
+			}
+		}).catch(function(error) {
+			console.log('error: ' + error);
+		});	
+	};
+	
+	/*
 	 * Load stranger stats for comparison
 	 */
 	$scope.loadStrangerStatsToCompare = function(strangerProfileData) {
 		$scope.hideFailFriendStatsDownloadingError = true;
-		$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeIn', 'fadeOut');				
+		$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeIn', 'fadeOut');	
+		$('#strangerStatsCompareButton').attr('disabled', '');
 		$scope.hideFriendUserStatsGeneral = true;
 		$scope.appendAnimationToFriendUserStatsGeneralBlinking();
+		$scope.friendUserInventory = null;
+		$scope.friendUserWeaponsStats = null;
+		$scope.hideFailFriendUserInventoryDownloadingWarning = true;
 		$scope.hideFriendUserStatsWeapons = true;
 		$scope.hideFriendUserStatsWeaponsLoading = true;
-		$scope.hideFriendUserStatsGeneralLoading = false;				
+		$scope.hideFooterCompare = true;
+		$scope.hideFriendUserStatsGeneralLoading = false;	
 		
 		var steamId = $scope.validateEnteredProfile(strangerProfileData);
 		
@@ -1266,8 +1267,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserStats = response.data;
-				$scope.hideFooterCompare = true;
-				$scope.removeFriendUserFooterCssProperties();
+				
+				$scope.removeFooterCssProperties('.friend-user-footer');
 				var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 				$scope.friendUserStatsOverall = overallStatsArray[0];
 				$scope.friendUserStatsLastMatch = overallStatsArray[1];
@@ -1276,10 +1277,17 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.hideFriendUserStatsWeaponsLoading = false;
 				return $http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId);
 			} else {
+				$scope.addFooterCssProperties('.friend-user-footer');
+				$scope.replaceFailFriendStatsDownloadingErrorAlertStranger();
 				$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
-				$scope.showFailFriendStatsDownloadingError();
-				$scope.addFriendUserFooterCssProperties();
+				$scope.showFailFriendStatsDownloadingError();				
 				$scope.hideFooterCompare = false;
+				
+				if($scope.removeFailFriendStatsDownloadingErrorBlinking) {
+					$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
+					$scope.removeFailFriendStatsDownloadingErrorBlinking = false;
+				}
+				
 				throw "failed downloading stranger user stats.";
 			}
 		})
@@ -1287,20 +1295,26 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserInventory = response.data;									
 			} else {
-				$scope.showFailFriendUserInventoryDownloadingWarning();
+				$scope.replaceFailFriendUserInventoryDownloadingWarningAlertStranger();
+				$scope.hideFailFriendUserInventoryDownloadingWarning = false;
 				console.log('error: failed downloading stranger user inventory.');
+				
+				if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
+					$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+					$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
+				}
 			}
 			
-			var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
+			$scope.friendUserWeaponsStatsTemporary = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
 			
 			if($scope.friendUserInventory != null) {
 				var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);	
 				$scope.friendUserCollectibleItems = skinsFromInventory[1];
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
-				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
+				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);					
 			} else {
 				var skinsFromInventoryWithPrices = [];
-				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
+				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
 			}
 			
 			$scope.mainAndFriendUserWeaponsStats = $scope.concatWeaponsSkinsArrays($scope.mainUserWeaponsStats, $scope.friendUserWeaponsStats);
@@ -1321,16 +1335,20 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeIn', 'fadeOut');		
 		$scope.hideFriendUserStatsGeneral = true;
 		$scope.appendAnimationToFriendUserStatsGeneralBlinking();
+		$scope.friendUserInventory = null;
+		$scope.friendUserWeaponsStats = null;
+		$scope.hideFailFriendUserInventoryDownloadingWarning = true;
 		$scope.hideFriendUserStatsWeapons = true;
 		$scope.hideFriendUserStatsWeaponsLoading = true;
-		$scope.hideFriendUserStatsGeneralLoading = false;						
+		$scope.hideFooterCompare = true;
+		$scope.hideFriendUserStatsGeneralLoading = false;	
 		
 		$http.post($scope.url + '/stats/userStats', steamId)
 			.then(function(response) {
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserStats = response.data;
-					$scope.hideFooterCompare = true;
-					$scope.removeFriendUserFooterCssProperties();
+					
+					$scope.removeFooterCssProperties('.friend-user-footer');
 					$scope.appendUserinfoToFriendStats($scope.friendUserStats.userStats.playerstats.steamID);
 					var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 					$scope.friendUserStatsOverall = overallStatsArray[0];
@@ -1340,10 +1358,17 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.hideFriendUserStatsWeaponsLoading = false;
 					return $http.post($scope.url + '/stats/userInventory', steamId);
 				} else {
+					$scope.addFooterCssProperties('.friend-user-footer');
+					$scope.replaceFailFriendStatsDownloadingErrorAlertFriend(steamId);
 					$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
-					$scope.showFailFriendStatsDownloadingError();
-					$scope.addFriendUserFooterCssProperties();
+					$scope.showFailFriendStatsDownloadingError();					
 					$scope.hideFooterCompare = false;
+					
+					if($scope.removeFailFriendStatsDownloadingErrorBlinking) {
+						$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
+						$scope.removeFailFriendStatsDownloadingErrorBlinking = false;
+					}
+					
 					throw "failed downloading friend user stats.";
 				}
 			})
@@ -1351,20 +1376,26 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserInventory = response.data;					
 				} else {
-					$scope.showFailFriendUserInventoryDownloadingWarning();
+					$scope.replaceFailFriendUserInventoryDownloadingWarningAlertFriend(steamId);
+					$scope.hideFailFriendUserInventoryDownloadingWarning = false;
 					console.log('error: failed downloading friend user inventory.');
+					
+					if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
+						$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+						$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
+					}
 				}
 				
-				var weaponsStats = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
+				$scope.friendUserWeaponsStatsTemporary = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
 				
 				if($scope.friendUserInventory != null) {
 					var skinsFromInventory = $scope.getSkinsFromInventory(steamId, $scope.friendUserInventory);
 					$scope.friendUserCollectibleItems = skinsFromInventory[1];
 					var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
-					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);					
+					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);					
 				} else {
 					var skinsFromInventoryWithPrices = [];
-					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats(weaponsStats, skinsFromInventoryWithPrices);
+					$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
 				}
 				
 				$scope.mainAndFriendUserWeaponsStats = $scope.concatWeaponsSkinsArrays($scope.mainUserWeaponsStats, $scope.friendUserWeaponsStats);
@@ -1393,7 +1424,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
 				$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.mainUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
 			} else {				
-				$scope.showFailUserInventoryDownloadingWarning();
+				$scope.hideFailUserInventoryDownloadingWarning = false;
 				throw "failed downloading user inventory.";
 			}
 		}).catch(function(error) {
@@ -1411,7 +1442,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$scope.hideFailStatsDownloadingError = true;
 			$scope.hideMainUserStatsGeneralLoading = false;
 			$scope.hideFooter = true;
-			$scope.removeFooterCssProperties();
+			$scope.removeFooterCssProperties('.main-user-footer');
 		}
 		
 		$http.post($scope.url + '/stats/strangerUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
@@ -1423,12 +1454,12 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.mainUserStatsOverall = overallStatsArray[0];
 				$scope.mainUserStatsLastMatch = overallStatsArray[1];
 				$scope.showMainUserStatsGeneral();
-				$scope.showMainUserStatsWeaponsLoading();
+				$scope.hideMainUserStatsWeaponsLoading = false;
 				return $http.post($scope.url + '/stats/userInventory', $scope.steamId);
 			} else {
 				$scope.showFailStatsDownloadingError();
-				$scope.addFooterCssProperties();
-				$scope.showFooter();
+				$scope.addFooterCssProperties('.main-user-footer');
+				$scope.hideFooter = false;
 				throw "failed downloading user stats.";
 			}
 		})
@@ -1436,7 +1467,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.mainUserInventory = response.data;					
 			} else {
-				$scope.showFailUserInventoryDownloadingWarning();
+				$scope.hideFailUserInventoryDownloadingWarning = false;
 				console.log('error: failed downloading user inventory.');
 			}
 			
@@ -1446,7 +1477,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.skinsPrices = response.data;					
 			} else {
-				$scope.showFailSkinsPricesDownloadingWarning();
+				$scope.hideFailSkinsPricesDownloadingWarning = false;
 				console.log('failed downloading skins prices.');
 			}
 			
@@ -1470,15 +1501,15 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				}
 				
 				$scope.showMainUserStatsWeapons();
-				$scope.showFooter();
+				$scope.hideFooter = false;
 				
 				if($scope.mainUserInventory == null & $scope.skinsPrices != null && $scope.skinsPrices != null) {					
 					$scope.replaceFailUserInventoryDownloadingWarningAlert();
 				}
 			} else {
 				$scope.showFailDefaultWeaponsDownloadingError();
-				$scope.addFooterCssProperties();
-				$scope.showFooter();
+				$scope.addFooterCssProperties('.main-user-footer');
+				$scope.hideFooter = false;
 				throw "failed downloading default weapons.";
 			}
 		})

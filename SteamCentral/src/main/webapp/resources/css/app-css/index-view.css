@@ -1368,6 +1368,10 @@ a.warning-alert.active {
 	padding-right: 3px;
 }
 
+.reload-icon-error-alert {
+	padding-left: 5px;
+}
+
 /* ------------------------------LOADING ANIMATION-----------------------------------*/
 
 #loading {
