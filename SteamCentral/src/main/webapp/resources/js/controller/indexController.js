@@ -74,11 +74,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.hideFailDefaultWeaponsDownloadingError = true;
 	
 	$scope.hideFailFriendListDownloadingError = true;
-	$scope.failFriendListDownloadingErrorPopedUp = false;
 	$scope.hideFailFriendStatsDownloadingError = true;
-	$scope.removeFailFriendStatsDownloadingErrorBlinking = true;
 	$scope.hideFailFriendUserInventoryDownloadingWarning = true;
-	$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = true;
 	
 	$scope.hideFooter = true;
 	$scope.hideFooterCompare = true;
@@ -200,18 +197,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	};
 	
 	/*
-	 * Show loading points in friend user stats panel
-	 */
-	$scope.showFriendUserStatsPanelLoadingPoints = function() {
-		$scope.hideFriendUserStatsPanelLoadingPoints = false;
-		
-		if(!$scope.failFriendListDownloadingErrorPopedUp) {		
-			$scope.removeAnimationByElementIdAndAnimationName('#failFriendListDownloadingErrorAlert', 'fadeIn', true);		
-			$scope.failFriendListDownloadingErrorPopedUp = true;
-		}
-	};
-	
-	/*
 	 * Show friend user stats module
 	 */
 	$scope.showFriendUserStats = function() {
@@ -223,20 +208,20 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		if($scope.friendUserStats == null) {
 			$scope.addFooterCssProperties('.friend-user-footer');
 		}
+		
+		if(!$scope.hideFailStatsDownloadingError) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
+		}
+		
+		if(!$scope.hideFailUserInventoryDownloadingWarning) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+		}
 
 		if($scope.cleanBlinkingMainUserStats) {
 			if(!$scope.hideMainUserStatsGeneral) {
 				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsPanelBlinking', 'fadeIn', true);
 				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsGeneralBlinking', 'fadeIn', true);
 				$scope.removeAnimationByElementIdAndAnimationName('#mainUserStatsGeneralCollectibleItemsShowcaseBlinking', 'fadeIn', false);
-			}
-			
-			if(!$scope.hideFailStatsDownloadingError) {
-				$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
-			}
-			
-			if(!$scope.hideFailUserInventoryDownloadingWarning) {
-				$scope.removeAnimationByElementIdAndAnimationName('#failUserInventoryDownloadingWarningAlert', 'fadeIn', true);
 			}
 			
 			if(!$scope.hideFailSkinsPricesDownloadingWarning) {
@@ -264,6 +249,18 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsGeneralBlinking', 'fadeIn', true);
 		}
 		
+		if(!$scope.hideFailFriendUserInventoryDownloadingWarning) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+		}
+		
+		if(!$scope.hideFailFriendStatsDownloadingError) {
+			$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', false);
+		}
+		
+		if(!$scope.hideFailFriendListDownloadingError) {				
+			$scope.removeAnimationByElementIdAndAnimationName('#failFriendListDownloadingErrorAlert', 'fadeIn', false);
+		}
+		
 		if($scope.cleanBlinkingFriendUserStats) {
 			if(!$scope.hideFriendUserStatsPanel) {
 				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelBlinking', 'fadeIn', false);
@@ -271,18 +268,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			
 			if(!$scope.hideFriendUserStatsPanelFriendCombobox) {
 				$scope.removeAnimationByElementIdAndAnimationName('#friendUserStatsPanelFriendComboboxBlinking', 'fadeIn', false);
-			}
-			
-			if(!$scope.hideFailFriendListDownloadingError) {				
-				$scope.removeAnimationByElementIdAndAnimationName('#failFriendListDownloadingErrorAlert', 'fadeIn', true);
-			}
-			
-			if(!$scope.hideFailFriendStatsDownloadingError) {
-				$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
-			}
-			
-			if(!$scope.hideFailFriendUserInventoryDownloadingWarning) {
-				$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
 			}
 			
 			$scope.cleanBlinkingFriendUserStats = false;
@@ -319,11 +304,31 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	}
 	
 	/*
+	 * Replace failStatsDownloadingErrorAlert alert
+	 */
+	$scope.replaceFailStatsDownloadingErrorAlert = function() {
+		$("#failStatsDownloadingErrorAlert").remove();
+		var $textElement = $('<div data-ng-hide="hideFailStatsDownloadingError" id="failStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert"><strong>Error:</strong> failed downloading user statistics. <a href="https://steamcommunity.com/profiles/{{ steamId }}/edit/settings" onclick="this.blur();" class="error-alert" target="_blank">Make sure that your Steam profile and inventory privacy settings are set to public</a> (it may take a while when privacy settings will be overridden) and then <a class="error-alert" data-ng-click="loadMainUserStats(true)" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-error-alert"></i></a> to try to download your statistics again.</div>').appendTo("#failStatsDownloadingErrorAlertOuter");
+		$compile($textElement)($scope);
+	};
+	
+	/*
 	 * Replace failUserInventoryDownloadingWarningAlert alert
 	 */
 	$scope.replaceFailUserInventoryDownloadingWarningAlert = function() {
-		$("#failUserInventoryDownloadingWarningAlertInner").remove();
-		var $textElement = $('<div id="failUserInventoryDownloadingWarningAlertInner"><strong>Warning:</strong> failed downloading user inventory. <a href="https://steamcommunity.com/profiles/' + $scope.steamId + '/edit/settings" onclick="this.blur();" class="warning-alert" target="_blank">Make sure that your Steam inventory privacy settings are set to public</a> and then <a class="warning-alert" data-ng-click="reloadMainUserInventory()" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-warning-alert"></i></a> to try to reload your inventory.</div>').appendTo("#failUserInventoryDownloadingWarningAlert");					
+		$("#failUserInventoryDownloadingWarningAlert").remove();
+		var $textElement = $('<div data-ng-hide="hideFailUserInventoryDownloadingWarning" id="failUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="0.5s" role="alert"><strong>Warning:</strong> failed downloading user inventory. <a href="https://steamcommunity.com/profiles/' + $scope.steamId + '/edit/settings" onclick="this.blur();" class="warning-alert" target="_blank">Make sure that your Steam inventory privacy settings are set to public</a> and then <a class="warning-alert" data-ng-click="reloadMainUserInventory()" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-warning-alert"></i></a> to try to reload your inventory.</div>').appendTo("#failUserInventoryDownloadingWarningAlertOuter");					
+		$compile($textElement)($scope);
+	};
+	
+	/*
+	 * Replace failFriendListDownloadingErrorAlert alert
+	 */
+	$scope.replaceFailFriendListDownloadingErrorAlert = function() {
+		$("#failFriendListDownloadingErrorAlert").remove();	
+		var $textElement = $("<div data-ng-hide='hideFailFriendListDownloadingError' id='failFriendListDownloadingErrorAlert' data-ng-cloak class='alert alert-custom alert-danger alert-dismissible fade in wow fadeIn' data-wow-duration='1s' role='alert'>" +
+		"<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class='fas fa-sync-alt reload-icon-error-alert'></i>' button in 'Select Friend To Compare & Search Options' panel." +
+		"<button type='button' class='close' data-dismiss='alert' aria-label='Close' onclick='this.blur();'><span aria-hidden='true'>&times;</span></button></div>").appendTo("#failFriendListDownloadingErrorAlertOuter");
 		$compile($textElement)($scope);
 	};
 	
@@ -331,8 +336,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Replace failFriendStatsDownloadingErrorAlert alert for friend user
 	 */
 	$scope.replaceFailFriendStatsDownloadingErrorAlertFriend = function(friendSteamId) {
-		$("#failFriendStatsDownloadingErrorAlertInner").remove();
-		var $textElement = $("<div id='failFriendStatsDownloadingErrorAlertInner'><strong>Error:</strong> failed downloading selected user statistics. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='error-alert' target='_blank'>Try to chat to your friend and ask for setting Steam profile and inventory privacy to public</a> (it may take a while when privacy settings will be overridden) and then click 'Compare' button to download friend's statistics again.</div>").appendTo("#failFriendStatsDownloadingErrorAlert");
+		$("#failFriendStatsDownloadingErrorAlert").remove();
+		var $textElement = $("<div data-ng-hide='hideFailFriendStatsDownloadingError' id='failFriendStatsDownloadingErrorAlert' data-ng-cloak class='alert alert-custom alert-danger alert-dismissible fade in wow fadeIn' data-wow-duration='2s' role='alert'><strong>Error:</strong> failed downloading selected user statistics. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='error-alert' target='_blank'>Try to chat to your friend and ask for setting Steam profile and inventory privacy to public</a> (it may take a while when privacy settings will be overridden) and then click 'Compare' button to download friend's statistics again.</div>").appendTo("#failFriendStatsDownloadingErrorAlertOuter");
 		$compile($textElement)($scope);
 	};
 	
@@ -340,17 +345,17 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Replace failFriendStatsDownloadingErrorAlert alert for stranger user
 	 */
 	$scope.replaceFailFriendStatsDownloadingErrorAlertStranger = function() {
-		$("#failFriendStatsDownloadingErrorAlertInner").remove();
-		var textElement = "<div id='failFriendStatsDownloadingErrorAlertInner'><strong>Error:</strong> failed downloading selected user statistics. It is highly likely that this user not exists or has privacy settings set to other than public. If you think this is a mistake try to download user's statistics again by clicking 'Compare' button.</div>";
-		$(textElement).appendTo("#failFriendStatsDownloadingErrorAlert");
+		$("#failFriendStatsDownloadingErrorAlert").remove();
+		var $textElement = $("<div data-ng-hide='hideFailFriendStatsDownloadingError' id='failFriendStatsDownloadingErrorAlert' data-ng-cloak class='alert alert-custom alert-danger alert-dismissible fade in wow fadeIn' data-wow-duration='2s' role='alert'><strong>Error:</strong> failed downloading selected user statistics. It is highly likely that this user not exists or has privacy settings set to other than public. If you think this is a mistake try to download user's statistics again by clicking 'Compare' button.</div>").appendTo("#failFriendStatsDownloadingErrorAlertOuter");
+		$compile($textElement)($scope);
 	};
 	
 	/*
 	 * Replace failFriendUserInventoryDownloadingWarningAlert alert for friend user
 	 */
 	$scope.replaceFailFriendUserInventoryDownloadingWarningAlertFriend = function(friendSteamId) {
-		$("#failFriendUserInventoryDownloadingWarningAlertInner").remove();
-		var $textElement = $("<div id='failFriendUserInventoryDownloadingWarningAlertInner'><strong>Warning:</strong> failed downloading selected user inventory. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='warning-alert' target='_blank'>Try to chat to your friend and ask for setting Steam inventory privacy to public</a> and then <a class='warning-alert' data-ng-click='reloadFriendUserInventory()' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload friend's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlert");
+		$("#failFriendUserInventoryDownloadingWarningAlert").remove();
+		var $textElement = $("<div data-ng-hide='hideFailFriendUserInventoryDownloadingWarning' id='failFriendUserInventoryDownloadingWarningAlert' data-ng-cloak class='alert alert-custom alert-warning alert-dismissible fade in wow fadeIn' data-wow-duration='2s' data-wow-delay='0.5s' role='alert'><strong>Warning:</strong> failed downloading selected user inventory. <a href='https://steamcommunity.com/profiles/" + friendSteamId + "/' onclick='this.blur();' class='warning-alert' target='_blank'>Try to chat to your friend and ask for setting Steam inventory privacy to public</a> and then <a class='warning-alert' data-ng-click='reloadFriendUserInventory(true)' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload friend's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlertOuter");
 		$compile($textElement)($scope);
 	}
 	
@@ -358,8 +363,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Replace failFriendUserInventoryDownloadingWarningAlert alert for stranger user
 	 */
 	$scope.replaceFailFriendUserInventoryDownloadingWarningAlertStranger = function() {
-		$("#failFriendUserInventoryDownloadingWarningAlertInner").remove();
-		var $textElement = $("<div id='failFriendUserInventoryDownloadingWarningAlertInner'><strong>Warning:</strong> failed downloading selected user inventory. It is highly likely that this user has inventory privacy settings set to other than public. If you are convinced that everything is fine <a class='warning-alert' data-ng-click='reloadFriendUserInventory()' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload user's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlert");
+		$("#failFriendUserInventoryDownloadingWarningAlert").remove();
+		var $textElement = $("<div data-ng-hide='hideFailFriendUserInventoryDownloadingWarning' id='failFriendUserInventoryDownloadingWarningAlert' data-ng-cloak class='alert alert-custom alert-warning alert-dismissible fade in wow fadeIn' data-wow-duration='2s' data-wow-delay='0.5s' role='alert'><strong>Warning:</strong> failed downloading selected user inventory. It is highly likely that this user has inventory privacy settings set to other than public. If you are convinced that everything is fine <a class='warning-alert' data-ng-click='reloadFriendUserInventory(false)' onclick='this.blur();'>click here<i class='fas fa-sync-alt reload-icon-warning-alert'></i></a> to try to reload user's inventory.</div>").appendTo("#failFriendUserInventoryDownloadingWarningAlertOuter");
 		$compile($textElement)($scope);
 	}
 	
@@ -385,6 +390,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	$scope.showFailStatsDownloadingError = function() {
 		$scope.hideMainUserStatsGeneralLoading = true;
 		$scope.hideMainUserStatsWeaponsLoading = true;
+		$scope.replaceFailStatsDownloadingErrorAlert();
 		$scope.hideFailStatsDownloadingError = false;
 	};
 	
@@ -415,7 +421,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$scope.friendListRequest = true;
 			$scope.hideFriendUserStatsPanelFailButton = true;
 			$scope.hideFailFriendListDownloadingError = true;
-			$scope.showFriendUserStatsPanelLoadingPoints();
+			$scope.hideFriendUserStatsPanelLoadingPoints = false;
 			
 			$http.post($scope.url + '/stats/friendList', $scope.steamId).then(function(response) {
 				if(response.data != "" && response.data != null) {
@@ -425,12 +431,14 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				} else {
 					$scope.hideFriendUserStatsPanelLoadingPoints = true;
 					$scope.hideFriendUserStatsPanelFailButton = false;
+					$scope.replaceFailFriendListDownloadingErrorAlert();
 					$scope.hideFailFriendListDownloadingError = false;
 					console.log('error: failed downloading friend list.');
 				}
 			}).catch(function(response) {
 				$scope.hideFriendUserStatsPanelLoadingPoints = true;
 				$scope.hideFriendUserStatsPanelFailButton = false;
+				$scope.replaceFailFriendListDownloadingErrorAlert();
 				$scope.hideFailFriendListDownloadingError = false;
 				console.log('error: failed downloading friend list.');
 			});
@@ -455,6 +463,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.hideFriendUserStatsPanelLoading = true;
 					$scope.hideFriendUserStatsPanelFailButton = false;
 					$scope.hideFriendUserStatsPanel = false;
+					$scope.replaceFailFriendListDownloadingErrorAlert();
 					$scope.hideFailFriendListDownloadingError = false;
 					console.log('error: failed downloading friend list.');
 				}
@@ -462,6 +471,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.hideFriendUserStatsPanelLoading = true;
 				$scope.hideFriendUserStatsPanelFailButton = false;
 				$scope.hideFriendUserStatsPanel = false;
+				$scope.replaceFailFriendListDownloadingErrorAlert();
 				$scope.hideFailFriendListDownloadingError = false;
 				console.log('error: failed downloading friend list.');
 			});
@@ -1220,13 +1230,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	/*
 	 * Reload Friend / Stranger User inventory.
 	 */
-	$scope.reloadFriendUserInventory = function() {
+	$scope.reloadFriendUserInventory = function(friendUser) {
 		$scope.hideFailFriendUserInventoryDownloadingWarning = true;
-		
-		if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
-			$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
-			$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
-		}
 		
 		$http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId).then(function(response) {
 			if(response.data != "" && response.data != null) {
@@ -1236,7 +1241,13 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
 				$scope.friendUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.friendUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
 			} else {				
-				$scope.hideFailFriendUserInventoryDownloadingWarning = false;
+				if(friendUser) {
+					$scope.replaceFailFriendUserInventoryDownloadingWarningAlertFriend($scope.friendUserStats.userInfo.steamId);
+				} else {
+					$scope.replaceFailFriendUserInventoryDownloadingWarningAlertStranger();
+				}
+				
+				$scope.hideFailFriendUserInventoryDownloadingWarning = false;				
 				throw "failed downloading friend / stranger user inventory.";
 			}
 		}).catch(function(error) {
@@ -1282,12 +1293,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
 				$scope.showFailFriendStatsDownloadingError();				
 				$scope.hideFooterCompare = false;
-				
-				if($scope.removeFailFriendStatsDownloadingErrorBlinking) {
-					$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
-					$scope.removeFailFriendStatsDownloadingErrorBlinking = false;
-				}
-				
 				throw "failed downloading stranger user stats.";
 			}
 		})
@@ -1298,11 +1303,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.replaceFailFriendUserInventoryDownloadingWarningAlertStranger();
 				$scope.hideFailFriendUserInventoryDownloadingWarning = false;
 				console.log('error: failed downloading stranger user inventory.');
-				
-				if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
-					$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
-					$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
-				}
 			}
 			
 			$scope.friendUserWeaponsStatsTemporary = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
@@ -1363,12 +1363,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.changeAnimationOfElementById('#footerFriendStatsCompare', 'fadeOut', 'fadeIn');
 					$scope.showFailFriendStatsDownloadingError();					
 					$scope.hideFooterCompare = false;
-					
-					if($scope.removeFailFriendStatsDownloadingErrorBlinking) {
-						$scope.removeAnimationByElementIdAndAnimationName('#failFriendStatsDownloadingErrorAlert', 'fadeIn', true);
-						$scope.removeFailFriendStatsDownloadingErrorBlinking = false;
-					}
-					
 					throw "failed downloading friend user stats.";
 				}
 			})
@@ -1379,11 +1373,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.replaceFailFriendUserInventoryDownloadingWarningAlertFriend(steamId);
 					$scope.hideFailFriendUserInventoryDownloadingWarning = false;
 					console.log('error: failed downloading friend user inventory.');
-					
-					if($scope.removeFailFriendUserInventoryDownloadingWarningBlinking) {
-						$scope.removeAnimationByElementIdAndAnimationName('#failFriendUserInventoryDownloadingWarningAlert', 'fadeIn', true);
-						$scope.removeFailFriendUserInventoryDownloadingWarningBlinking = false;
-					}
 				}
 				
 				$scope.friendUserWeaponsStatsTemporary = $scope.createWeaponsStats($scope.friendUserStats.userStats.playerstats.stats);	
@@ -1412,8 +1401,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 * Reload Main User inventory.
 	 */
 	$scope.reloadMainUserInventory = function() {
-		$scope.hideFailUserInventoryDownloadingWarning = true;	
-		$scope.removeAnimationByElementIdAndAnimationName('#failUserInventoryDownloadingWarningAlert', 'fadeIn', true);
+		$scope.hideFailUserInventoryDownloadingWarning = true;
 		
 		$http.post($scope.url + '/stats/userInventory', $scope.steamId).then(function(response) {
 			if(response.data != "" && response.data != null) {
@@ -1423,7 +1411,8 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.hideMainUserCollectibleItemsShowcase = false;
 				var skinsFromInventoryWithPrices = $scope.matchPricesToSkins(skinsFromInventory[0]);
 				$scope.mainUserWeaponsStats = $scope.matchSkinsToWeaponsStats($scope.mainUserWeaponsStatsTemporary, skinsFromInventoryWithPrices);
-			} else {				
+			} else {	
+				$scope.replaceFailUserInventoryDownloadingWarningAlert();
 				$scope.hideFailUserInventoryDownloadingWarning = false;
 				throw "failed downloading user inventory.";
 			}
@@ -1437,7 +1426,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.loadMainUserStats = function(statsReload) {
 		if(statsReload) {
-			$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
 			$scope.removeAnimationByElementIdAndAnimationName('#footerMainUserStatsCompare', 'fadeIn', true);
 			$scope.hideFailStatsDownloadingError = true;
 			$scope.hideMainUserStatsGeneralLoading = false;
@@ -1467,6 +1455,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.mainUserInventory = response.data;					
 			} else {
+				$scope.replaceFailUserInventoryDownloadingWarningAlert();
 				$scope.hideFailUserInventoryDownloadingWarning = false;
 				console.log('error: failed downloading user inventory.');
 			}

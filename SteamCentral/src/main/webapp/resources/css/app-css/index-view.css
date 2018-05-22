@@ -6,6 +6,7 @@ body {
   	background: radial-gradient(farthest-corner at 50% 0%, #184453 25%, #1b2838 70%);
 	background-color: #1b2838;
 	background-repeat: no-repeat;
+	overflow-x: hidden;
 }
 
 header .intro-text {
@@ -1088,6 +1089,8 @@ p.csgostats-overall-title-formatter-center {
 	font-size: 12px;
 	text-align: left;
 	line-height: 30px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
@@ -1096,6 +1099,8 @@ p.csgostats-overall-title-formatter-center {
 	font-size: 12px;
 	text-align: right;
 	line-height: 30px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
@@ -1131,6 +1136,8 @@ p.csgostats-overall-title-formatter-center {
 	font-family: "Roboto Condensed Regular";
 	font-size: 12px;
 	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
@@ -1138,7 +1145,31 @@ p.csgostats-overall-title-formatter-center {
 	font-family: "Roboto Condensed Regular";
 	font-size: 12px;
 	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.csgostats-overall-user-info-text-right-username {
+	font-family: "Roboto Condensed Regular";
+	font-size: 12px;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #42dca3;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.csgostats-overall-user-info-text-right-username:hover,
+.csgostats-overall-user-info-text-right-username:focus,
+.csgostats-overall-user-info-text-right-username:active,
+.csgostats-overall-user-info-text-right-username.active {
+    text-decoration: none;
+    color: #1d9b6c;
+    background-color: transparent;
 }
 
 p.text-red {

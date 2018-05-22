@@ -163,10 +163,12 @@
 								</div>
 							</div>
 						</div>
-					</div>							
-					<div data-ng-hide="hideFailStatsDownloadingError" id="failStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<strong>Error:</strong> failed downloading user statistics. <a href="https://steamcommunity.com/profiles/{{ steamId }}/edit/settings" onclick="this.blur();" class="error-alert" target="_blank">Make sure that your Steam profile and inventory privacy settings are set to public</a> (it may take a while when privacy settings will be overridden) and then <a class="error-alert" data-ng-click="loadMainUserStats(true)" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-error-alert"></i></a> to try to download your statistics again.
-					</div>								
+					</div>
+					<div id="failStatsDownloadingErrorAlertOuter">						
+						<div data-ng-hide="hideFailStatsDownloadingError" id="failStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
+							<strong>Error:</strong> failed downloading user statistics. <a href="https://steamcommunity.com/profiles/{{ steamId }}/edit/settings" onclick="this.blur();" class="error-alert" target="_blank">Make sure that your Steam profile and inventory privacy settings are set to public</a> (it may take a while when privacy settings will be overridden) and then <a class="error-alert" data-ng-click="loadMainUserStats(true)" onclick="this.blur();">click here<i class="fas fa-sync-alt reload-icon-error-alert"></i></a> to try to download your statistics again.
+						</div>	
+					</div>					
 					<div data-ng-hide="hideMainUserStatsGeneral" data-ng-cloak id="mainUserStatsGeneralBlinking" class="main-user-stats-general wow fadeIn" data-wow-duration="1.5s" data-wow-delay="1s">
 						<div class="container">
 							<div class="row">
@@ -195,73 +197,73 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
-																		<p class="csgostats-overall-user-info-text-right">
+																	<div class="col-xs-7 col-sm-8 col-md-7 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
+																		<p class="csgostats-overall-user-info-text-right-username">
 																			<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
 																		</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">SteamID:</p>
 																	</div>
-																	<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-7 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userInfo.steamId }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0 && mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans != 0 || mainUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userBansInfo.DaysSinceLastBan }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Community banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
@@ -283,10 +285,10 @@
 															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
 																<img data-ng-src="{{ lastMatchStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
 															</div>
-															<div class="col-xs-7 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<div class="col-xs-6 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-left">{{ lastMatchStats.name }}</p>
 															</div>
-															<div class="col-xs-3 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p data-ng-if="lastMatchStats.statsName == 'last_match_wins'" class="csgostats-overall-stats-text-right" style="color: {{ lastMatchStats.color }};">{{ lastMatchStats.value.toLocaleString() }}</p>
 																<p data-ng-if="lastMatchStats.statsName != 'last_match_wins'" class="csgostats-overall-stats-text-right">{{ lastMatchStats.value.toLocaleString() }}</p>
 															</div>
@@ -307,10 +309,10 @@
 															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
 																<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
 															</div>
-															<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<div class="col-xs-6 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
 															</div>
-															<div class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p data-ng-if="!(overallStats.statsName == 'total_money_earned')" class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 																<p data-ng-if="overallStats.statsName == 'total_money_earned'" class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>
@@ -362,24 +364,24 @@
 								</div>
 							</div>
 						</div>
-					</div>									
-					<div data-ng-hide="hideFailUserInventoryDownloadingWarning" id="failUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<div id="failUserInventoryDownloadingWarningAlertInner">
+					</div>
+					<div id="failUserInventoryDownloadingWarningAlertOuter">							
+						<div data-ng-hide="hideFailUserInventoryDownloadingWarning" id="failUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="0.5s" role="alert">
 							<strong>Warning:</strong> failed downloading user inventory.						
 						</div>
-					</div>									
-					<div data-ng-hide="hideFailSkinsPricesDownloadingWarning" id="failSkinsPricesDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
+					</div>							
+					<div data-ng-hide="hideFailSkinsPricesDownloadingWarning" id="failSkinsPricesDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="0.5s" role="alert">
 						<strong>Warning:</strong> failed downloading skins prices.
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>								
-					<div data-ng-hide="hideFailDefaultWeaponsDownloadingError" id="failDefaultWeaponsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
+					<div data-ng-hide="hideFailDefaultWeaponsDownloadingError" id="failDefaultWeaponsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="0.5s" role="alert">
 						<strong>Error:</strong> failed downloading default weapons info.
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
 							<span aria-hidden="true">&times;</span>
 						</button>
-					</div>					
+					</div>			
 					<div data-ng-hide="hideMainUserStatsWeaponsLoading" data-ng-cloak>
 						<div class="container">
 							<div class="row loading-content-row">
@@ -575,12 +577,17 @@
 								</div>
 							</div>
 						</div>
-					</div>					
-					<div data-ng-hide="hideFailFriendListDownloadingError" id="failFriendListDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class="fas fa-sync-alt reload-icon-error-alert"></i>' button in 'Select Friend To Compare & Search Options' panel.
-					</div>					
-					<div data-ng-hide="hideFailFriendStatsDownloadingError" id="failFriendStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<div id="failFriendStatsDownloadingErrorAlertInner">
+					</div>	
+					<div id="failFriendListDownloadingErrorAlertOuter">				
+						<div data-ng-hide="hideFailFriendListDownloadingError" id="failFriendListDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="1s" role="alert">
+							<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class="fas fa-sync-alt reload-icon-error-alert"></i>' button in 'Select Friend To Compare & Search Options' panel.
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>	
+					</div>
+					<div id="failFriendStatsDownloadingErrorAlertOuter">				
+						<div data-ng-hide="hideFailFriendStatsDownloadingError" id="failFriendStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="2s" role="alert">						
 							<strong>Error:</strong> failed downloading selected user statistics.						
 						</div>
 					</div>
@@ -630,73 +637,73 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
-																		<p class="csgostats-overall-user-info-text-right">
+																	<div class="col-xs-7 col-sm-8 col-md-7 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
+																		<p class="csgostats-overall-user-info-text-right-username">
 																			<a href="http://steamcommunity.com/profiles/{{ mainUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ mainUserStats.userInfo.personaname }}</a>
 																		</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">SteamID:</p>
 																	</div>
-																	<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-7 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userInfo.steamId }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!mainUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfVACBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ mainUserStats.userBansInfo.NumberOfGameBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans == 0 && mainUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.NumberOfGameBans != 0 || mainUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ mainUserStats.userBansInfo.DaysSinceLastBan }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Community banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!mainUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="mainUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
@@ -714,58 +721,58 @@
 															</div>
 														</div>
 														<div class="row row-csgostats-overall-section">
-															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
 															</div>
-															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-gray-stats">
+															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-gray-stats">
 															</div>
 														</div>
 														<div class="row row-csgostats-overall-entry" data-ng-repeat="overallStats in mainUserStatsOverall" data-ng-if="overallStats.value !== null">
 															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
 																<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
 															</div>
-															<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<div class="col-xs-6 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
 															</div>
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value > friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value < friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.value == friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.value == friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.value == friendUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.value == friendUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && !overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && !overallStats.comparable" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && !overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && !overallStats.comparable" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>
 														</div>																					
@@ -789,73 +796,73 @@
 																</div>
 																<div class="row row-csgostats-overall-section"></div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-4 col-md-5 col-lg-4 col-xl-4 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Username:</p>
 																	</div>
-																	<div class="col-xs-7 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
-																		<p class="csgostats-overall-user-info-text-right">
+																	<div class="col-xs-7 col-sm-8 col-md-7 col-lg-8 col-xl-8 col-csgostats-overall-user-info-entry">																	
+																		<p class="csgostats-overall-user-info-text-right-username">
 																			<a href="http://steamcommunity.com/profiles/{{ friendUserStats.userInfo.steamId }}" onclick="this.blur();" target="_blank">{{ friendUserStats.userInfo.personaname }}</a>
 																		</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-4 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-5 col-sm-7 col-md-5 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">SteamID:</p>
 																	</div>
-																	<div class="col-xs-8 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-7 col-sm-5 col-md-7 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ friendUserStats.userInfo.steamId }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">VAC banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!friendUserStats.userBansInfo.VACBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of VAC bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfVACBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ friendUserStats.userBansInfo.NumberOfVACBans }}</p>
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ friendUserStats.userBansInfo.NumberOfVACBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Number of game bans:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans > 0" class="csgostats-overall-user-info-text-right text-red">{{ friendUserStats.userBansInfo.NumberOfGameBans }}</p>
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans == 0" class="csgostats-overall-user-info-text-right text-green">{{ friendUserStats.userBansInfo.NumberOfGameBans }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans == 0 && friendUserStats.userBansInfo.NumberOfVACBans == 0" class="csgostats-overall-user-info-text-left">Days since last ban:</p>
 																		<p data-ng-if="friendUserStats.userBansInfo.NumberOfGameBans != 0 || friendUserStats.userBansInfo.NumberOfVACBans != 0" class="csgostats-overall-user-info-text-left text-red">Days since last ban:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-right">{{ friendUserStats.userBansInfo.DaysSinceLastBan }}</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Community banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="!friendUserStats.userBansInfo.CommunityBanned" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
 																</div>
 																<div class="row row-csgostats-overall-entry">
-																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-9 col-sm-7 col-md-9 col-lg-7 col-xl-7 col-csgostats-overall-user-info-entry">
 																		<p class="csgostats-overall-user-info-text-left">Economy banned:</p>
 																	</div>
-																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
+																	<div class="col-xs-3 col-sm-5 col-md-3 col-lg-5 col-xl-5 col-csgostats-overall-user-info-entry">
 																		<p data-ng-if="friendUserStats.userBansInfo.EconomyBan != 'none'" class="csgostats-overall-user-info-text-right text-red">YES</p>
 																		<p data-ng-if="friendUserStats.userBansInfo.EconomyBan == 'none'" class="csgostats-overall-user-info-text-right text-green">NO</p>
 																	</div>
@@ -873,58 +880,58 @@
 															</div>
 														</div>
 														<div class="row row-csgostats-overall-section">
-															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value > mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
 															</div>
-															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
+															<div data-ng-if="!friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-red-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
+															<div data-ng-if="friendUserStatsOverall[0].reverse && friendUserStatsOverall[0].value < mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-green-stats">
 															</div>
-															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-7 col-xs-5 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-gray-stats">
+															<div data-ng-if="friendUserStatsOverall[0].value == mainUserStatsOverall[0].value" class="col-xs-offset-8 col-xs-4 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-3 col-lg-offset-9 col-lg-3 col-xl-offset-9 col-xl-3 col-csgostats-overall-section-compare-stats background-color-gray-stats">
 															</div>
 														</div>
 														<div class="row row-csgostats-overall-entry" data-ng-repeat="overallStats in friendUserStatsOverall" data-ng-if="overallStats.value !== null">
 															<div class="col-xs-2 col-sm-2 col-md-2 col-xl-2 col-csgostats-overall-stats-entry">
 																<img data-ng-src="{{ overallStats.iconVariable }}" class="csgostats-overall-stats-image"></img>
 															</div>
-															<div class="col-xs-5 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
+															<div class="col-xs-6 col-sm-7 col-md-7 col-xl-7 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-left">{{ overallStats.name }}</p>
 															</div>
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>														
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value > mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && !overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && !overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-red-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.reverse && overallStats.value < mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-green-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>														
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.value == mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && overallStats.comparable && overallStats.value == mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.value == mainUserStatsOverall[$index].value" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && overallStats.comparable && overallStats.value == mainUserStatsOverall[$index].value" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry background-color-gray-stats">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>															
-															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && !overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div data-ng-if="!(overallStats.statsName == 'total_money_earned') && !overallStats.comparable" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}</p>
 															</div>
-															<div data-ng-if="overallStats.statsName == 'total_money_earned' && !overallStats.comparable" class="col-xs-5 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
+															<div data-ng-if="overallStats.statsName == 'total_money_earned' && !overallStats.comparable" class="col-xs-4 col-sm-3 col-md-3 col-xl-3 col-csgostats-overall-stats-entry">
 																<p class="csgostats-overall-stats-text-right">{{ overallStats.value.toLocaleString() }}$</p>
 															</div>
 														</div>																					
@@ -936,12 +943,12 @@
 								</div>
 							</div>
 						</div>
-					</div>		
-					<div data-ng-hide="hideFailFriendUserInventoryDownloadingWarning" id="failFriendUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="1s" role="alert">
-						<div id="failFriendUserInventoryDownloadingWarningAlertInner">
+					</div>
+					<div id="failFriendUserInventoryDownloadingWarningAlertOuter">	
+						<div data-ng-hide="hideFailFriendUserInventoryDownloadingWarning" id="failFriendUserInventoryDownloadingWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="2s" data-wow-delay="0.5s" role="alert">						
 							<strong>Warning:</strong> failed downloading selected user inventory.
 						</div>
-					</div>		
+					</div>	
 					<div data-ng-hide="hideFriendUserStatsWeaponsLoading" data-ng-cloak>
 						<div class="container">
 							<div class="row loading-content-row">

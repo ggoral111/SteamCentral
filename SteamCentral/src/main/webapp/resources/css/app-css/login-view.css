@@ -6,6 +6,7 @@ body {
   	background: radial-gradient(farthest-corner at 50% 0%, #184453 25%, #1b2838 70%);
 	background-color: #1b2838;
 	background-repeat: no-repeat;
+	overflow-x: hidden;
 }
 
 header .intro-text {
