@@ -19,6 +19,19 @@
     
     <mvc:annotation-driven></mvc:annotation-driven>
     
+    <!-- CORS -->
+    
+    <!-- <mvc:cors>
+		<mvc:mapping path="/data/**"
+			allowed-origins="http://localhost:8080"
+			allowed-methods="GET, POST"
+			allowed-headers="Origin, X-Requested-With, Content-Type, Accept"
+			exposed-headers="Origin, Content-Type" allow-credentials="true"
+			max-age="60" />	
+		<mvc:mapping path="/resources/**"
+			allowed-origins="http://localhost:8080" />
+	</mvc:cors> -->
+    
     <!-- Mapping -->
     
     <mvc:resources mapping="/resources/**" location="/resources/" cache-period="31556926"/>

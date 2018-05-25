@@ -26,6 +26,7 @@ public class StatsServiceTest {
 		System.out.println("Testing ended!");
 	}
 	
+	@Ignore
 	@Test
 	public void loadFriendListTest() {
 		Set<SteamUserInfo> friendList = ss.getFriendListFullInfo("76561198078305233");		
@@ -42,10 +43,9 @@ public class StatsServiceTest {
 		}
 	}
 	
-	@Ignore
 	@Test
 	public void getStrangerUserStatsTest() {
-		Object[] statsObject = ss.getStrangerUserStats("76561198078305233");
+		Object[] statsObject = ss.getStrangerUserStats("{ \"steamId\": \"76561198078305233\", \"checkVanityUrl\": false, \"checkDigits\": false }");
 		// assertNotNull(ss.getStrangerUserStats("76561198078305233"));
 		
 		if(statsObject != null) {			

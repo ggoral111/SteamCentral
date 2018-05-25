@@ -1,5 +1,5 @@
 body {
-    width: 100%;
+	width: 100%;
     height: 100%;
     color: #fff;
     background: #1b2838; /* For browsers that do not support gradients */
@@ -7,6 +7,11 @@ body {
 	background-color: #1b2838;
 	background-repeat: no-repeat;
 	overflow-x: hidden;
+}
+
+html {
+	width: 100%;
+    height: 100%;
 }
 
 header .intro-text {
@@ -29,6 +34,7 @@ header .intro-text .intro-heading {
 
 footer {
     color: #fff;
+    padding: 50px 0;
 }
 
 footer h3 {
@@ -236,11 +242,6 @@ p.media-heading.text {
     font-family:'Roboto Thin Italic';
 }
 
-html {
-    width: 100%;
-    height: 100%;
-}
-
 h1,
 h2,
 h3,
@@ -343,10 +344,6 @@ ul.banner-social-buttons {
     ul.banner-social-buttons li:last-child {
         margin-bottom: 0;
     }
-}
-
-footer {
-    padding: 50px 0;
 }
 
 footer p {
