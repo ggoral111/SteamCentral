@@ -118,42 +118,11 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$('body').css({
 			'display' : 'flex',
 			'min-height' : '100vh',
-			'flex-direction' : 'column'			
+			'flex-direction' : 'column'
 		});
 		
 		$('.main-user-stats').css({
-			'width' : '100%',
-			'margin' : '0',
 			'flex' : '1'
-		});
-		
-		$('.main-user-stats-inner').css({
-			'height' : '100%',
-			'width' : '100%',
-			'margin' : '0'
-		});
-	};
-	
-	/*
-	 * Remove footer CSS properties
-	 */
-	$scope.removeFooterCssProperties = function() {
-		$('body').css({
-			'display' : '',
-			'min-height' : '',
-			'flex-direction' : ''			
-		});
-		
-		$('.main-user-stats').css({
-			'width' : '',
-			'margin' : '',
-			'flex' : ''
-		});
-		
-		$('.main-user-stats-inner').css({
-			'height' : '',
-			'width' : '',
-			'margin' : ''
 		});
 	};
 	
@@ -228,10 +197,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		$scope.hideFooter = true;		
 		$scope.hideFooterCompare = false;
 		$scope.hideFriendUserStats = false;
-		
-		if($scope.friendUserStats == null) {
-			$scope.addFooterCssProperties();
-		}
 		
 		if(!$scope.hideFailStatsDownloadingError) {
 			$scope.removeAnimationByElementIdAndAnimationName('#failStatsDownloadingErrorAlert', 'fadeIn', true);
@@ -326,6 +291,14 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$(elementId).css({ 'animation-delay' : '' });
 		}
 	}
+	
+	/*
+	 *  Simply removes animation delay given to specified element
+	 */
+	$scope.removeDelayOfAnimationByElementId = function(elementId) {
+		$(elementId).removeAttr('data-wow-delay');
+		$(elementId).css({ 'animation-delay' : '' });		
+	};
 	
 	/*
 	 * Replace failStatsDownloadingErrorAlert alert
@@ -1332,7 +1305,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			if(response.data != "" && response.data != null) {
 				$scope.friendUserStats = response.data;
 				
-				$scope.removeFooterCssProperties();
 				var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 				$scope.friendUserStatsOverall = overallStatsArray[0];
 				$scope.friendUserStatsLastMatch = overallStatsArray[1];
@@ -1341,7 +1313,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				$scope.hideFriendUserStatsWeaponsLoading = false;
 				return $http.post($scope.url + '/stats/userInventory', $scope.friendUserStats.userInfo.steamId);
 			} else {
-				$scope.addFooterCssProperties();
 				$scope.replaceFailFriendStatsDownloadingErrorAlertStranger();
 				$scope.showFailFriendStatsDownloadingError();				
 				$scope.hideFooterCompare = false;
@@ -1399,7 +1370,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				if(response.data != "" && response.data != null) {
 					$scope.friendUserStats = response.data;
 					
-					$scope.removeFooterCssProperties();
 					$scope.appendUserinfoToFriendStats($scope.friendUserStats.userStats.playerstats.steamID);
 					var overallStatsArray = $scope.createLastMatchStats($scope.friendUserStats);
 					$scope.friendUserStatsOverall = overallStatsArray[0];
@@ -1409,7 +1379,6 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 					$scope.hideFriendUserStatsWeaponsLoading = false;
 					return $http.post($scope.url + '/stats/userInventory', steamId);
 				} else {
-					$scope.addFooterCssProperties();
 					$scope.replaceFailFriendStatsDownloadingErrorAlertFriend(steamId);
 					$scope.showFailFriendStatsDownloadingError();					
 					$scope.hideFooterCompare = false;
@@ -1476,18 +1445,17 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 	 */
 	$scope.loadMainUserStats = function(statsReload) {
 		if(statsReload) {
-			$scope.removeAnimationByElementIdAndAnimationName('#footerMainUserStatsCompare', 'fadeIn', true);
+			$scope.removeDelayOfAnimationByElementId('#footerMainUserStatsCompare');
 			$scope.hideFailStatsDownloadingError = true;
 			$scope.hideMainUserStatsGeneralLoading = false;
 			$scope.hideFooter = true;
-			$scope.removeFooterCssProperties();
 		}
 		
 		$http.post($scope.url + '/stats/strangerUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
 				$scope.mainUserStats = response.data;
-				$scope.removeAnimationByElementIdAndAnimationName('#footerMainUserStatsCompare', 'fadeIn', true);
+				$scope.removeDelayOfAnimationByElementId('#footerMainUserStatsCompare');
 				var overallStatsArray = $scope.createLastMatchStats($scope.mainUserStats);
 				$scope.mainUserStatsOverall = overallStatsArray[0];
 				$scope.mainUserStatsLastMatch = overallStatsArray[1];
@@ -1540,6 +1508,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 				}
 				
 				$scope.showMainUserStatsWeapons();
+				$scope.addFooterCssProperties();
 				$scope.hideFooter = false;
 				
 				if($scope.mainUserInventory == null & $scope.skinsPrices != null && $scope.skinsPrices != null) {					
