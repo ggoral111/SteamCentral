@@ -3,21 +3,25 @@
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
         
 	<!-- Component Scan -->
 	
 	<context:component-scan base-package="com.steamcentral.core" />
+	<context:component-scan base-package="com.steamcentral.hibernate" />
 	<context:component-scan base-package="com.steamcentral.core.service" />	
 	<context:component-scan base-package="com.steamcentral.rest.controller" />
     
-    <mvc:annotation-driven></mvc:annotation-driven>
+    <mvc:annotation-driven />
     
     <!-- CORS -->
     
@@ -43,5 +47,48 @@
 	
 	<bean id="statsService" class="com.steamcentral.core.service.StatsService" />	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+	
+	<!-- DataSource -->
+	
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/steamcentral?verifyServerCertificate=false&amp;useSSL=true&amp;useTimezone=true&amp;serverTimezone=UTC"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="admin"></property>
+    </bean>
+ 
+    <!-- Hibernate SessionFactory -->
+    
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
+    </bean>
+    
+ 	<!-- Transaction -->
+ 	
+ 	<tx:annotation-driven />
+ 	    
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+   
+    <bean id="userDao" class="com.steamcentral.hibernate.dao.implementation.UserDAOImpl">
+	    <constructor-arg>
+	        <ref bean="sessionFactory" />
+	    </constructor-arg>
+	</bean>
+	
+	<bean id="userBansDao" class="com.steamcentral.hibernate.dao.implementation.UserBansDAOImpl">
+	    <constructor-arg>
+	        <ref bean="sessionFactory" />
+	    </constructor-arg>
+	</bean>
+	
+	<bean id="userLastMatchDao" class="com.steamcentral.hibernate.dao.implementation.UserLastMatchDAOImpl">
+	    <constructor-arg>
+	        <ref bean="sessionFactory" />
+	    </constructor-arg>
+	</bean>
 	
 </beans>

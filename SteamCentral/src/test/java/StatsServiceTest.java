@@ -43,6 +43,7 @@ public class StatsServiceTest {
 		}
 	}
 	
+	@Ignore
 	@Test
 	public void getStrangerUserStatsTest() {
 		Object[] statsObject = ss.getStrangerUserStats("{ \"steamId\": \"76561198078305233\", \"checkVanityUrl\": false, \"checkDigits\": false }");

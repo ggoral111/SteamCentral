@@ -15,7 +15,7 @@ var indexController = angular.module('indexController',[]);
 
 indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile', function($scope, $http, $filter, $compile) {
 	$scope.dateCreation = '2018';
-	$scope.steamId = '76561198138283796';
+	$scope.steamId = '76561198078305233';
 	/*$scope.steamId = '76561198078305233';*/
 	/*$scope.steamId = '76561198023414915';*/
 	$scope.url = "/SteamCentral/data";
@@ -768,7 +768,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 		
 		for(var i=0; i<overallStats.length; i++) {
 			if(overallStats[i].name == 'Kill Death Ratio:') {
-				overallStats[i].value = totalKills == 0 ? 0 : (totalKills / totalDeaths).toFixed(2);
+				overallStats[i].value = totalKills == 0 ? 0 : (totalKills / (totalDeaths == 0 ? 1 : totalDeaths)).toFixed(2);
 			} else if(overallStats[i].name == 'Accuracy:') {
 				overallStats[i].value = totalShotsFired == 0 ? 0 : ((totalShotsHit / totalShotsFired) * 100.0).toFixed(2) + '%';
 			} else if(overallStats[i].name == 'Shots per kill:') {
@@ -778,15 +778,15 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			} else if(overallStats[i].name == 'Last two weeks playtime:') {
 				overallStats[i].value = (statsResponse.userInfo.playtimeTwoWeeks / 60).toFixed(1) + 'h';
 			} else if(overallStats[i].name == 'Average Damage per Round:') {
-				overallStats[i].value = totalDamage == 0 ? 0 : (totalDamage / totalRounds).toFixed(2);
+				overallStats[i].value = totalRounds == 0 ? 0 : (totalDamage / totalRounds).toFixed(2);
 			}
 		}
 		
 		for(var i=0; i<lastMatchStats.length; i++) {
 			if(lastMatchStats[i].name == 'Kill Death Ratio:') {
-				lastMatchStats[i].value = lastMatchKills == 0 ? 0 : (lastMatchKills / lastMatchDeaths).toFixed(2);
+				lastMatchStats[i].value = lastMatchKills == 0 ? 0 : (lastMatchKills / (lastMatchDeaths == 0 ? 1 : lastMatchDeaths)).toFixed(2);
 			} else if(lastMatchStats[i].name == 'Average Damage per Round:') {
-				lastMatchStats[i].value = lastMatchDamage == 0 ? 0 : (lastMatchDamage / lastMatchRounds).toFixed(2);
+				lastMatchStats[i].value = lastMatchRounds == 0 ? 0 : (lastMatchDamage / lastMatchRounds).toFixed(2);
 			} else if(lastMatchStats[i].statsName == 'last_match_wins') {
 				if(lastMatchCTWins == lastMatchTWins) {
 					lastMatchStats[i].value = 'TIE';
@@ -1177,7 +1177,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			}
 			
 			weaponsStatsList[i].accuracy = weaponsStatsList[i].totalShots == 0 ? 0 : (((weaponsStatsList[i].totalHits * 1.0) / (weaponsStatsList[i].totalShots * 1.0)) * 100.0).toFixed(2);
-			weaponsStatsList[i].shotsPerKill = weaponsStatsList[i].totalHits == 0 ? 0 : ((weaponsStatsList[i].totalHits * 1.0) / (weaponsStatsList[i].totalKills * 1.0)).toFixed(2);
+			weaponsStatsList[i].shotsPerKill = weaponsStatsList[i].totalKills == 0 ? 0 : ((weaponsStatsList[i].totalHits * 1.0) / (weaponsStatsList[i].totalKills * 1.0)).toFixed(2);
 		}
 				
 		return weaponsStatsList;

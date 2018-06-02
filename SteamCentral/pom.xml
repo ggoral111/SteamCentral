@@ -8,7 +8,7 @@
   <description>SteamCentral</description>
   
   <properties>
-  	<spring-version>5.0.5.RELEASE</spring-version>
+  	<spring-version>5.0.6.RELEASE</spring-version>
   	<spring-security-version>5.0.4.RELEASE</spring-security-version>
   	<jackson-faster-xml-version>2.9.5</jackson-faster-xml-version>
   	<org-json-version>20180130</org-json-version>
@@ -20,6 +20,10 @@
   	<tomcat7-maven-plugin-version>2.2</tomcat7-maven-plugin-version>
   	<hibernate-version>5.2.16.Final</hibernate-version>
   	<mysql-connector-java-version>8.0.11</mysql-connector-java-version>
+  	<!-- <log4j-version>2.11.0</log4j-version> -->
+  	<commons-io-version>2.6</commons-io-version>
+  	<cglib-version>3.2.6</cglib-version>
+  	<slf4j-version>1.7.25</slf4j-version>
   </properties>
   
   <dependencyManagement>
@@ -64,7 +68,19 @@
 	<dependency>
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-webmvc</artifactId>
-	</dependency>  
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-tx</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-jdbc</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-orm</artifactId>
+	</dependency>
   
   	<!-- Spring Security -->
   	
