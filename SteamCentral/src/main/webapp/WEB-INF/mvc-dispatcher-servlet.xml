@@ -91,4 +91,10 @@
 	    </constructor-arg>
 	</bean>
 	
+	<bean id="userStatsDao" class="com.steamcentral.hibernate.dao.implementation.UserStatsDAOImpl">
+	    <constructor-arg>
+	        <ref bean="sessionFactory" />
+	    </constructor-arg>
+	</bean>
+	
 </beans>

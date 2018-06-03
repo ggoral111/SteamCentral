@@ -18,12 +18,6 @@ public class UserBansDAOImpl implements UserBansDAO {
 	public UserBansDAOImpl(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-
-	/*@Override
-	@Transactional
-	public UserBans save(final UserBans userBans) {
-		return (UserBans) sessionFactory.getCurrentSession().save(userBans);
-	}*/
 	
 	@Override
     @Transactional

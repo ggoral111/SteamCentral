@@ -1,0 +1,14 @@
+package com.steamcentral.hibernate.dao;
+
+import java.util.List;
+
+import com.steamcentral.hibernate.pojo.UserStats;
+
+public interface UserStatsDAO {
+	
+	public void save(UserStats userBans);
+	
+	public void deleteAllUserStats(String steamId);
+	
+	public List<UserStats> getAll(String steamId);
+}

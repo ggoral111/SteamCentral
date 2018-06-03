@@ -2,6 +2,8 @@ package com.steamcentral.rest.controller;
 
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.steamcentral.core.model.SteamUserInfo;
 import com.steamcentral.core.service.StatsService;
+import com.steamcentral.hibernate.dao.UserBansDAO;
+import com.steamcentral.hibernate.dao.UserDAO;
+import com.steamcentral.hibernate.dao.UserLastMatchDAO;
+import com.steamcentral.hibernate.dao.UserStatsDAO;
+import com.steamcentral.hibernate.pojo.User;
+import com.steamcentral.hibernate.pojo.UserBans;
+import com.steamcentral.hibernate.pojo.UserLastMatch;
+import com.steamcentral.hibernate.pojo.UserStats;
 
 @RestController
 @RequestMapping("/data")
@@ -26,6 +36,18 @@ public class DataController {
 	
 	@Autowired
 	private StatsService ss;
+	
+	@Autowired
+	private UserDAO userDao;
+	
+	@Autowired
+	private UserBansDAO userBansDao;
+	
+	@Autowired
+	private UserLastMatchDAO userLastMatchDao;
+	
+	@Autowired
+	private UserStatsDAO userStatsDao;
 	
 	@RequestMapping(value = "/stats/friendList", method = RequestMethod.POST)
 	public ResponseEntity<String> getFriendListJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
@@ -47,8 +69,67 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	@RequestMapping(value = "/stats/mainUserStats", method = RequestMethod.POST)
+	public ResponseEntity<String> getMainUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
+		Object[] mainUserStats = ss.getStrangerUserStats(steamId);
+		
+		if(mainUserStats != null) {
+			try {
+				SteamUserInfo sui = (SteamUserInfo) mainUserStats[0];
+				userDao.saveOrUpdate(new User(sui.getSteamId(), sui.getPersonaname(), sui.getAvatarMediumURL(), sui.getAvatarFullURL()));
+				JSONObject userBansObject = new JSONObject((String) mainUserStats[1]);
+				userBansDao.saveOrUpdate(new UserBans(userBansObject.getString("SteamId"), userBansObject.getBoolean("VACBanned"), userBansObject.getString("EconomyBan"), userBansObject.getInt("NumberOfVACBans"), userBansObject.getBoolean("CommunityBanned"), userBansObject.getInt("DaysSinceLastBan"), userBansObject.getInt("NumberOfGameBans")));
+				JSONArray userStatsArray = new JSONObject((String) mainUserStats[2]).getJSONObject("playerstats").getJSONArray("stats");
+				
+				int ctRoundsWin = 0, ttRoundsWin = 0, playerRoundsWin = 0, matchMaxPlayers = 0, kills = 0, deaths = 0, totalDamage = 0, mvp = 0, scorePointResult = 0, totalKills = 0, totalDeaths = 0;
+				
+				for(int i=0; i<userStatsArray.length(); i++) {
+					
+					if(userStatsArray.getJSONObject(i).getString("name").equals("total_kills")) {
+						totalKills = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("total_deaths")) {
+						totalDeaths = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_t_wins")) {
+						ttRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_ct_wins")) {
+						ctRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_wins")) {
+						playerRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_max_players")) {
+						matchMaxPlayers = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_kills")) {
+						kills = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_deaths")) {
+						deaths = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_mvps")) {
+						mvp = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_damage")) {
+						totalDamage = userStatsArray.getJSONObject(i).getInt("value");
+					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_contribution_score")) {
+						scorePointResult = userStatsArray.getJSONObject(i).getInt("value");
+					}
+				}
+				
+				userLastMatchDao.saveOrUpdate(new UserLastMatch(sui.getSteamId(), ctRoundsWin, ttRoundsWin, playerRoundsWin, matchMaxPlayers, kills, deaths, totalDamage, mvp, scorePointResult));
+				userStatsDao.save(new UserStats(sui.getSteamId(), totalKills, totalDeaths, userStatsArray.toString()));
+				
+				ObjectWriter ow = new ObjectMapper().writer();
+				String userInfoJSON = ow.writeValueAsString(mainUserStats[0]);
+				String mainUserStatsJSON = "{ \"userInfo\": " + userInfoJSON + ", \"userBansInfo\": " + mainUserStats[1] + ", \"userStats\": " + mainUserStats[2] + " }";
+				HttpHeaders responseHeaders = new HttpHeaders();
+				responseHeaders.add("Content-Type", "application/json; charset=utf-8");
+				
+				return new ResponseEntity<String>(mainUserStatsJSON, responseHeaders, HttpStatus.OK);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+	}
+	
 	@RequestMapping(value = "/stats/strangerUserStats", method = RequestMethod.POST)
-	public ResponseEntity<String> getStrangerStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<String> getStrangerUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		Object[] strangerUserStats = ss.getStrangerUserStats(steamId);
 		
 		if(strangerUserStats != null) {
@@ -69,7 +150,7 @@ public class DataController {
 	}
 	
 	@RequestMapping(value = "/stats/userStats", method = RequestMethod.POST)
-	public ResponseEntity<String> getStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<String> getUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		Object[] userStatsWithBans = ss.getUserStatsWithBans(steamId);
 		
 		if(userStatsWithBans != null) {

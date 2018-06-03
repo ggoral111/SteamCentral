@@ -15,4 +15,6 @@ public interface UserLastMatchDAO {
 	public List<UserLastMatch> getAll();
 
 	public List<UserLastMatch> getTopPlayers(int maxPlayers, int days);
+
+	public List<UserLastMatch> getTopPlayersDependingOnMatchType(int days, int maxPlayers, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch);
 }

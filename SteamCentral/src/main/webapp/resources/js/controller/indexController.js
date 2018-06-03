@@ -1451,7 +1451,7 @@ indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile
 			$scope.hideFooter = true;
 		}
 		
-		$http.post($scope.url + '/stats/strangerUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
+		$http.post($scope.url + '/stats/mainUserStats', '{ "steamId": "' + $scope.steamId + '", "checkVanityUrl": false, "checkDigits": false }')
 		.then(function(response) {
 			if(response.data != "" && response.data != null) {
 				$scope.mainUserStats = response.data;

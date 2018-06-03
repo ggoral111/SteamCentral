@@ -76,7 +76,9 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayers).getResultList();		
 	}
 	
-	public List<UserLastMatch> getTopPlayersDependingOnRounds(int days, int maxPlayers, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch) {
+	@Override
+	@Transactional
+	public List<UserLastMatch> getTopPlayersDependingOnMatchType(int days, int maxPlayers, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch) {
 		// Deathmatch: minRoundsRange = 1 , maxRoundsRange = 1 , minRoundsToEndMatch = 1 , maxPlayersInMatch = 20
 		// Matchmaking: minRoundsRange = 16 , maxRoundsRange = 30, minRoundsToEndMatch = 15, maxPlayersInMatch = 10
 		// Wingman: minRoundsRange = 9 , maxRoundsRange = 16, minRoundsToEndMatch = 8, maxPlayersInMatch = 4
@@ -93,7 +95,7 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 		cal.add(Calendar.DATE, -days);
 		
 		query.select(userLastMatchRoot);
-		query.where(builder.and(builder.between(userLastMatchRoot.<Date>get("LastUpdate"), cal.getTime(), LastUpdateDate), builder.between(sum, minRoundsRange, maxRoundsRange), builder.or(builder.equal(userLastMatchRoot.<Integer>get("CTRoundsWin"), minRoundsToEndMatch), builder.equal(userLastMatchRoot.<Integer>get("TTRoundsWin"), minRoundsToEndMatch)), builder.lessThanOrEqualTo(userLastMatchRoot.<Integer>get("TTRoundsWin"), maxPlayersInMatch)));
+		query.where(builder.and(builder.between(userLastMatchRoot.<Date>get("LastUpdate"), cal.getTime(), LastUpdateDate), builder.between(sum, minRoundsRange, maxRoundsRange), builder.or(builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("CTRoundsWin"), minRoundsToEndMatch), builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("TTRoundsWin"), minRoundsToEndMatch)), builder.lessThanOrEqualTo(userLastMatchRoot.<Integer>get("MatchMaxPlayers"), maxPlayersInMatch)));
 		query.orderBy(builder.desc(userLastMatchRoot.<Integer>get("ScorePointResult")));
 		
 		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayers).getResultList();	
