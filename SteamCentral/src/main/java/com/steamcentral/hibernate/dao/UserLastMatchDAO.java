@@ -11,8 +11,6 @@ public interface UserLastMatchDAO {
 	public void delete(String steamId);
 	
 	public UserLastMatch get(String steamId);
-	
-	public List<UserLastMatch> getAll();
 
 	public List<UserLastMatch> getTopPlayers(int maxPlayers, int days);
 

@@ -1,5 +1,7 @@
 package com.steamcentral.hibernate.pojo;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,6 +32,9 @@ public class UserBans {
 	
 	@Column(name = "NumberOfGameBans")
 	private int mumberOfGameBans;
+	
+	@Column(name = "LastUpdate")
+	private LocalDateTime lastUpdate;
 	
 	public UserBans() {
 		
@@ -105,6 +110,15 @@ public class UserBans {
 
 	public UserBans setMumberOfGameBans(int mumberOfGameBans) {
 		this.mumberOfGameBans = mumberOfGameBans;
+		return this;
+	}
+
+	public LocalDateTime getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public UserBans setLastUpdate(LocalDateTime lastUpdate) {
+		this.lastUpdate = lastUpdate;
 		return this;
 	}
 	

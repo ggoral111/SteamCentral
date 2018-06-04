@@ -15,8 +15,8 @@ var indexController = angular.module('indexController',[]);
 
 indexController.controller('indexCtrl', ['$scope', '$http', '$filter', '$compile', function($scope, $http, $filter, $compile) {
 	$scope.dateCreation = '2018';
+	/*$scope.steamId = '76561198138283796';*/
 	$scope.steamId = '76561198078305233';
-	/*$scope.steamId = '76561198078305233';*/
 	/*$scope.steamId = '76561198023414915';*/
 	$scope.url = "/SteamCentral/data";
 	$scope.imageUrl = 'https://steamcommunity-a.akamaihd.net/economy/image/';

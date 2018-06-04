@@ -1,5 +1,7 @@
 package com.steamcentral.hibernate.pojo;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,6 +36,9 @@ public class UserStats {
 	@Type(type = "json")
 	@Column(name = "Stats", columnDefinition = "json")
 	private String stats;
+	
+	@Column(name = "LastUpdate")
+	private LocalDateTime lastUpdate;
 
 	public UserStats() {
 		
@@ -49,12 +54,12 @@ public class UserStats {
 	public int getId() {
 		return id;
 	}
-
+	
 	public UserStats setId(int id) {
 		this.id = id;
 		return this;
 	}
-
+	
 	public String getSteamId() {
 		return steamId;
 	}
@@ -91,4 +96,13 @@ public class UserStats {
 		return this;
 	}
 
+	public LocalDateTime getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public UserStats setLastUpdate(LocalDateTime lastUpdate) {
+		this.lastUpdate = lastUpdate;
+		return this;
+	}
+	
 }

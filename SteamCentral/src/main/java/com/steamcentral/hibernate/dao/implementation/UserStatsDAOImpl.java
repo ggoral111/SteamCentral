@@ -1,6 +1,7 @@
 package com.steamcentral.hibernate.dao.implementation;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,6 +19,14 @@ import com.steamcentral.hibernate.pojo.UserStats;
 @Repository
 public class UserStatsDAOImpl implements UserStatsDAO {
 
+	private final static int USERSTATS_MAX_ROWS_SIZE;
+	private final static int USERSTATS_MIN_NUMBER_OF_DAYS_BETWEEN_INSERT;
+	
+	static {
+		USERSTATS_MAX_ROWS_SIZE = 30;
+		USERSTATS_MIN_NUMBER_OF_DAYS_BETWEEN_INSERT = 1;
+	}
+	
 	@Autowired
     private SessionFactory sessionFactory;
 	
@@ -28,13 +37,35 @@ public class UserStatsDAOImpl implements UserStatsDAO {
 	@Override
 	@Transactional
 	public void save(final UserStats userStats) {
-		sessionFactory.getCurrentSession().save(userStats);
+		List<UserStats> userStatsList = getAll(userStats.getSteamId());
+		
+		if(!userStatsList.isEmpty()) {
+			boolean readyToSave = false;			
+			LocalDateTime LastUpdateDate = userStatsList.get(userStatsList.size() - 1).getLastUpdate();
+			LocalDateTime UpdateDateToCompare = LastUpdateDate.minus(USERSTATS_MIN_NUMBER_OF_DAYS_BETWEEN_INSERT, ChronoUnit.DAYS);
+			
+			if((LastUpdateDate.compareTo(UpdateDateToCompare) == -1 || LastUpdateDate.compareTo(UpdateDateToCompare) == 0) && userStatsList.get(userStatsList.size() - 1).getTotalKills() != userStats.getTotalKills() && userStatsList.get(userStatsList.size() - 1).getTotalDeaths() != userStats.getTotalDeaths()) {
+				readyToSave = true;
+			}
+			
+			if(readyToSave) {
+				if(userStatsList.size() == USERSTATS_MAX_ROWS_SIZE) {
+					sessionFactory.getCurrentSession().flush();
+					sessionFactory.getCurrentSession().clear();
+					sessionFactory.getCurrentSession().delete(new UserStats().setId(userStatsList.get(0).getId()));	
+				}
+				
+				sessionFactory.getCurrentSession().save(userStats);
+			}
+		} else {
+			sessionFactory.getCurrentSession().save(userStats);
+		}		
 	}
 	
 	@Override
 	@Transactional
 	public void deleteAllUserStats(String steamId) {
-		sessionFactory.getCurrentSession().createQuery("delete from userstats where SteamId = '" + steamId + "'").executeUpdate();
+		sessionFactory.getCurrentSession().createQuery("delete from UserStats where steamId = '" + steamId + "'").executeUpdate();
 	}
 
 	@Override
@@ -44,8 +75,8 @@ public class UserStatsDAOImpl implements UserStatsDAO {
 		CriteriaQuery<UserStats> query = builder.createQuery(UserStats.class);
 		Root<UserStats> userStatsRoot = query.from(UserStats.class);
 		query.select(userStatsRoot);
-		query.where(builder.equal(userStatsRoot.<String>get("SteamId"), steamId));
-		query.orderBy(builder.asc(userStatsRoot.<Date>get("LastUpdate")));
+		query.where(builder.equal(userStatsRoot.<String>get("steamId"), steamId));
+		query.orderBy(builder.asc(userStatsRoot.<LocalDateTime>get("lastUpdate")));
 				
 		return sessionFactory.getCurrentSession().createQuery(query).getResultList();	
 	}

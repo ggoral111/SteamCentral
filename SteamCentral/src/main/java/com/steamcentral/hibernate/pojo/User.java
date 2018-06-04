@@ -1,5 +1,7 @@
 package com.steamcentral.hibernate.pojo;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,6 +23,12 @@ public class User {
 	
 	@Column(name = "AvatarFullURL")
 	private String avatarFullURL;
+	
+	@Column(name = "LastUpdate")
+	private LocalDateTime lastUpdate;
+	
+	@Column(name = "CreationDate")
+	private LocalDateTime creationDate;
 	
 	public User() {
 		
@@ -69,4 +77,22 @@ public class User {
 		return this;
 	}
 
+	public LocalDateTime getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public User setLastUpdate(LocalDateTime lastUpdate) {
+		this.lastUpdate = lastUpdate;
+		return this;
+	}
+
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public User setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
 }

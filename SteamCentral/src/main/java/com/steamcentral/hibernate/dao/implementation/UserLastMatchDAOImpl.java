@@ -1,7 +1,7 @@
 package com.steamcentral.hibernate.dao.implementation;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -32,14 +32,12 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 	public void saveOrUpdate(UserLastMatch userLastMatch) {
 		sessionFactory.getCurrentSession().saveOrUpdate(userLastMatch);		
 	}
-
-
+	
 	@Override
 	@Transactional
 	public void delete(String steamId) {
 		sessionFactory.getCurrentSession().delete(new UserLastMatch().setSteamId(steamId));		
 	}
-
 
 	@Override
 	@Transactional
@@ -49,36 +47,22 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 	
 	@Override
 	@Transactional
-	public List<UserLastMatch> getAll() {
-		CriteriaQuery<UserLastMatch> query = sessionFactory.getCurrentSession().getCriteriaBuilder().createQuery(UserLastMatch.class);
-		Root<UserLastMatch> userLastMatchRoot = query.from(UserLastMatch.class);
-		query.select(userLastMatchRoot);
-		
-		return sessionFactory.getCurrentSession().createQuery(query).getResultList();
-	}
-	
-	@Override
-	@Transactional
-	public List<UserLastMatch> getTopPlayers(int maxPlayers, int days) {
+	public List<UserLastMatch> getTopPlayers(int maxPlayersMatches, int days) {
 		CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
 		CriteriaQuery<UserLastMatch> query = builder.createQuery(UserLastMatch.class);
 		Root<UserLastMatch> userLastMatchRoot = query.from(UserLastMatch.class);
-		
-		Date LastUpdateDate = new Date();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(LastUpdateDate);
-		cal.add(Calendar.DATE, -days);
+		LocalDateTime LastUpdateDate = LocalDateTime.now();
 		
 		query.select(userLastMatchRoot);
-		query.where(builder.between(userLastMatchRoot.<Date>get("LastUpdate"), cal.getTime(), LastUpdateDate));
-		query.orderBy(builder.desc(userLastMatchRoot.<Integer>get("ScorePointResult")));
+		query.where(builder.between(userLastMatchRoot.<LocalDateTime>get("lastUpdate"), LastUpdateDate.minus(days, ChronoUnit.DAYS), LastUpdateDate));
+		query.orderBy(builder.desc(userLastMatchRoot.<Integer>get("scorePointResult")));
 		
-		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayers).getResultList();		
+		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayersMatches).getResultList();		
 	}
 	
 	@Override
 	@Transactional
-	public List<UserLastMatch> getTopPlayersDependingOnMatchType(int days, int maxPlayers, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch) {
+	public List<UserLastMatch> getTopPlayersDependingOnMatchType(int days, int maxPlayersMatches, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch) {
 		// Deathmatch: minRoundsRange = 1 , maxRoundsRange = 1 , minRoundsToEndMatch = 1 , maxPlayersInMatch = 20
 		// Matchmaking: minRoundsRange = 16 , maxRoundsRange = 30, minRoundsToEndMatch = 15, maxPlayersInMatch = 10
 		// Wingman: minRoundsRange = 9 , maxRoundsRange = 16, minRoundsToEndMatch = 8, maxPlayersInMatch = 4
@@ -87,18 +71,14 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 		CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
 		CriteriaQuery<UserLastMatch> query = builder.createQuery(UserLastMatch.class);
 		Root<UserLastMatch> userLastMatchRoot = query.from(UserLastMatch.class);
-		Expression<Integer> sum = builder.sum(userLastMatchRoot.<Integer>get("CTRoundsWin"), userLastMatchRoot.<Integer>get("TTRoundsWin"));
-		
-		Date LastUpdateDate = new Date();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(LastUpdateDate);
-		cal.add(Calendar.DATE, -days);
+		Expression<Integer> sum = builder.sum(userLastMatchRoot.<Integer>get("ctRoundsWin"), userLastMatchRoot.<Integer>get("ttRoundsWin"));
+		LocalDateTime LastUpdateDate = LocalDateTime.now();
 		
 		query.select(userLastMatchRoot);
-		query.where(builder.and(builder.between(userLastMatchRoot.<Date>get("LastUpdate"), cal.getTime(), LastUpdateDate), builder.between(sum, minRoundsRange, maxRoundsRange), builder.or(builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("CTRoundsWin"), minRoundsToEndMatch), builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("TTRoundsWin"), minRoundsToEndMatch)), builder.lessThanOrEqualTo(userLastMatchRoot.<Integer>get("MatchMaxPlayers"), maxPlayersInMatch)));
-		query.orderBy(builder.desc(userLastMatchRoot.<Integer>get("ScorePointResult")));
+		query.where(builder.and(builder.between(userLastMatchRoot.<LocalDateTime>get("lastUpdate"), LastUpdateDate.minus(days, ChronoUnit.DAYS), LastUpdateDate), builder.between(sum, minRoundsRange, maxRoundsRange), builder.or(builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("ctRoundsWin"), minRoundsToEndMatch), builder.greaterThanOrEqualTo(userLastMatchRoot.<Integer>get("ttRoundsWin"), minRoundsToEndMatch)), builder.lessThanOrEqualTo(userLastMatchRoot.<Integer>get("matchMaxPlayers"), maxPlayersInMatch)));
+		query.orderBy(builder.desc(userLastMatchRoot.<Integer>get("scorePointResult")));
 		
-		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayers).getResultList();	
+		return sessionFactory.getCurrentSession().createQuery(query).setMaxResults(maxPlayersMatches).getResultList();
 	}
 
 }

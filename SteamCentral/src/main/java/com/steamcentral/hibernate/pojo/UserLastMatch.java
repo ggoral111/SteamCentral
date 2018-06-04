@@ -1,5 +1,7 @@
 package com.steamcentral.hibernate.pojo;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -39,6 +41,9 @@ public class UserLastMatch {
 	
 	@Column(name = "ScorePointResult")
 	private int scorePointResult;
+	
+	@Column(name = "LastUpdate")
+	private LocalDateTime lastUpdate;
 	
 	public UserLastMatch() {
 		
@@ -144,6 +149,15 @@ public class UserLastMatch {
 
 	public UserLastMatch setScorePointResult(int scorePointResult) {
 		this.scorePointResult = scorePointResult;
+		return this;
+	}
+
+	public LocalDateTime getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public UserLastMatch setLastUpdate(LocalDateTime lastUpdate) {
+		this.lastUpdate = lastUpdate;
 		return this;
 	}
 	

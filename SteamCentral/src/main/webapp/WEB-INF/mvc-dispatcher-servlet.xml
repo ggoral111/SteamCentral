@@ -52,7 +52,7 @@
 	
     <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
-        <property name="url" value="jdbc:mysql://localhost:3306/steamcentral?verifyServerCertificate=false&amp;useSSL=true&amp;useTimezone=true&amp;serverTimezone=UTC"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/steamcentral?verifyServerCertificate=false&amp;useSSL=true&amp;useTimezone=true&amp;serverTimezone=Europe/Warsaw"></property>
         <property name="username" value="root"></property>
         <property name="password" value="admin"></property>
     </bean>
