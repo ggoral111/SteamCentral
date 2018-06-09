@@ -31,8 +31,7 @@
 		<link href="${fontawesomeCss}" type="text/css" rel="stylesheet" />
 		<link href="${animateCss}" rel="stylesheet" />
 		
-		<spring:url value="/resources/media/steamcentralicon_large.png" var="steamcentral_iconPng" />
-		<spring:url value="/resources/media/steamwhiteicon.png" var="steamwhiteiconPng" />		
+		<spring:url value="/resources/media/steamcentralicon_large.png" var="steamcentral_iconPng" />	
 	</head>
 	<body data-ng-app="indexController" data-ng-controller="indexCtrl" class="no-js" id="removeBlinking">
 		<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
@@ -47,6 +46,13 @@
 	                </a>
 	            </div>           
 	            <div class="collapse navbar-collapse navbar-main-collapse">
+	            	<ul class="nav navbar-nav navbar-left">
+	                    <li>
+		                    <a class="page-scroll" href="#charts">
+		  						<button onclick="location.href='/SteamCentral/charts'" class="btn btn-inverse-left dropdown-toggle" type="button" onclick="this.blur();">Charts</button>
+							</a>
+						</li>
+	                </ul>
 	                <ul class="nav navbar-nav navbar-right">
 	                    <li>
 		                    <a class="page-scroll" href="#logout">
@@ -71,7 +77,7 @@
 							<a href="" data-ng-click="showMainUserStats()" class="nav-tab-text-formatter">Your statistics</a>
 						</li>
 						<li data-ng-hide="hideNavTabCompareOption" data-ng-cloak>
-							<a href="" data-ng-click="showFriendUserStats(); loadFriendList()" class="nav-tab-text-formatter">Compare with friends & users</a>
+							<a href="" data-ng-click="showFriendUserStats(); loadFriendList()" class="nav-tab-text-formatter">Compare with friends &amp; users</a>
 						</li>
 					</ul>				
 					<div data-ng-hide="hideMainUserStats" data-ng-cloak class="wow fadeIn" data-wow-duration="1s">
@@ -79,7 +85,7 @@
 						    <div class="panel panel-default main-user-stats-sort-panel">
 								<div class="panel-heading main-user-stats-sort-panel" role="tab" data-toggle="collapse" data-target="#mainUserStatsSortPanelCollapse" aria-expanded="true" aria-controls="mainUserStatsSortPanelCollapse">
 									<h4 class="panel-title main-user-stats-sort-panel">
-								    	Sort & Search Options
+								    	Sort &amp; Search Options
 								    </h4>      				        
 								</div>
 								<div id="mainUserStatsSortPanelCollapse" class="panel-collapse collapse" role="tabpanel">
@@ -480,7 +486,6 @@
 							<div class="container">
 								<div class="row loading-content-row-smaller">
 									<div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
-										<!-- <p class="loading-content-p wow fadeIn" data-wow-duration="2s" data-wow-delay="1.5s">Loading...</p> -->
 										<div id="loading">
 											<div id="loading-center">
 												<div id="loading-center-absolute">
@@ -499,7 +504,7 @@
 						    <div class="panel panel-default main-user-stats-sort-panel">
 								<div class="panel-heading main-user-stats-sort-panel" role="tab" data-toggle="collapse" data-target="#friendUserStatsSortPanelCollapse" aria-expanded="true" aria-controls="friendUserStatsSortPanelCollapse">
 									<h4 class="panel-title main-user-stats-sort-panel">
-								    	Select Friend To Compare & Search Options
+								    	Select Friend To Compare &amp; Search Options
 								    </h4>      				        
 								</div>
 								<div id="friendUserStatsSortPanelCollapse" class="panel-collapse collapse in" role="tabpanel">
@@ -581,7 +586,7 @@
 						</div>	
 						<div id="failFriendListDownloadingErrorAlertOuter">				
 							<div data-ng-hide="hideFailFriendListDownloadingError" id="failFriendListDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="1s" role="alert">
-								<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class="fas fa-sync-alt reload-icon-error-alert"></i>' button in 'Select Friend To Compare & Search Options' panel.
+								<strong>Error:</strong> failed downloading friend list. Try to download friend list again by clicking 'Reload friend list<i class="fas fa-sync-alt reload-icon-error-alert"></i>' button in 'Select Friend To Compare &amp; Search Options' panel.
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
 									<span aria-hidden="true">&times;</span>
 								</button>

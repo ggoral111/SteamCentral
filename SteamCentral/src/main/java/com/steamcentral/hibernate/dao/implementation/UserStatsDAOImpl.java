@@ -41,10 +41,10 @@ public class UserStatsDAOImpl implements UserStatsDAO {
 		
 		if(!userStatsList.isEmpty()) {
 			boolean readyToSave = false;			
-			LocalDateTime LastUpdateDate = userStatsList.get(userStatsList.size() - 1).getLastUpdate();
-			LocalDateTime UpdateDateToCompare = LastUpdateDate.minus(USERSTATS_MIN_NUMBER_OF_DAYS_BETWEEN_INSERT, ChronoUnit.DAYS);
+			LocalDateTime LastUpdateDate = userStatsList.get(userStatsList.size() - 1).getCreationDate();
+			LocalDateTime UpdateDateToCompare = LocalDateTime.now().minus(USERSTATS_MIN_NUMBER_OF_DAYS_BETWEEN_INSERT, ChronoUnit.DAYS);
 			
-			if((LastUpdateDate.compareTo(UpdateDateToCompare) == -1 || LastUpdateDate.compareTo(UpdateDateToCompare) == 0) && userStatsList.get(userStatsList.size() - 1).getTotalKills() != userStats.getTotalKills() && userStatsList.get(userStatsList.size() - 1).getTotalDeaths() != userStats.getTotalDeaths()) {
+			if(LastUpdateDate.compareTo(UpdateDateToCompare) <= 0 && userStatsList.get(userStatsList.size() - 1).getTotalKills() != userStats.getTotalKills() && userStatsList.get(userStatsList.size() - 1).getTotalDeaths() != userStats.getTotalDeaths()) {
 				readyToSave = true;
 			}
 			
@@ -76,7 +76,7 @@ public class UserStatsDAOImpl implements UserStatsDAO {
 		Root<UserStats> userStatsRoot = query.from(UserStats.class);
 		query.select(userStatsRoot);
 		query.where(builder.equal(userStatsRoot.<String>get("steamId"), steamId));
-		query.orderBy(builder.asc(userStatsRoot.<LocalDateTime>get("lastUpdate")));
+		query.orderBy(builder.asc(userStatsRoot.<LocalDateTime>get("creationDate")));
 				
 		return sessionFactory.getCurrentSession().createQuery(query).getResultList();	
 	}

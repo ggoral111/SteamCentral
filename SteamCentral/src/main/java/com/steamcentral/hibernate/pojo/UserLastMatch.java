@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 @Entity(name = "UserLastMatch")
 @Table(name = "userlastmatch")
 public class UserLastMatch {
@@ -43,6 +47,8 @@ public class UserLastMatch {
 	private int scorePointResult;
 	
 	@Column(name = "LastUpdate")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime lastUpdate;
 	
 	public UserLastMatch() {

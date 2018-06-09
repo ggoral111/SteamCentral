@@ -1,5 +1,6 @@
 package com.steamcentral.rest.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -201,6 +202,26 @@ public class DataController {
 			responseHeaders.add("Content-Type", "application/json; charset=utf-8");
 			
 			return new ResponseEntity<String>(skinsPricesJSON, responseHeaders, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+	}
+	
+	@RequestMapping(value = "/stats/userStatsDataForCharts", method = RequestMethod.POST)
+	public ResponseEntity<String> getUserStatsDataForChartsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
+		List<UserStats> userStatsList = userStatsDao.getAll(steamId);
+				
+		if(userStatsList != null) {
+			try {
+				ObjectWriter ow = new ObjectMapper().writer();
+				String userStatsListJSON = ow.writeValueAsString(userStatsList);				
+				HttpHeaders responseHeaders = new HttpHeaders();
+				responseHeaders.add("Content-Type", "application/json; charset=utf-8");
+				
+				return new ResponseEntity<String>(userStatsListJSON, responseHeaders, HttpStatus.OK);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);

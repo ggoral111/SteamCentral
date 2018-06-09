@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 @Entity(name = "UserStats")
@@ -37,8 +40,10 @@ public class UserStats {
 	@Column(name = "Stats", columnDefinition = "json")
 	private String stats;
 	
-	@Column(name = "LastUpdate")
-	private LocalDateTime lastUpdate;
+	@Column(name = "CreationDate")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime creationDate;
 
 	public UserStats() {
 		
@@ -96,12 +101,12 @@ public class UserStats {
 		return this;
 	}
 
-	public LocalDateTime getLastUpdate() {
-		return lastUpdate;
+	public LocalDateTime getCreationDate() {
+		return creationDate;
 	}
 
-	public UserStats setLastUpdate(LocalDateTime lastUpdate) {
-		this.lastUpdate = lastUpdate;
+	public UserStats setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
 		return this;
 	}
 	

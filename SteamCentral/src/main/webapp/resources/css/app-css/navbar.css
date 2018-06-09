@@ -161,6 +161,7 @@ button.btn.btn-inverse.dropdown-toggle {
 
 button.btn.btn-inverse-left.dropdown-toggle {
 	font-family: 'Skarpa Regular';
+	letter-spacing: 1px;
 	font-size: 14px;
 	margin-top: -1px;
 	text-transform: uppercase;	

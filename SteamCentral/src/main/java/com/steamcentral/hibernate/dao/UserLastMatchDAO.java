@@ -6,7 +6,7 @@ import com.steamcentral.hibernate.pojo.UserLastMatch;
 
 public interface UserLastMatchDAO {
 
-	public void saveOrUpdate(UserLastMatch user);
+	public void saveOrUpdate(UserLastMatch userLastMatch);
 	
 	public void delete(String steamId);
 	

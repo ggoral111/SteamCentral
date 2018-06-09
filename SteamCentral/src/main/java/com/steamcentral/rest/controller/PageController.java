@@ -16,4 +16,9 @@ public class PageController {
 	public ModelAndView getLoginPage() {
 		return new ModelAndView("login");		
 	}
+	
+	@RequestMapping("/charts")
+	public ModelAndView getChartsPage() {
+		return new ModelAndView("charts");		
+	}
 }
