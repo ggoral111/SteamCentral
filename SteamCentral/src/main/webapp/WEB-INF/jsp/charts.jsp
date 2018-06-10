@@ -63,8 +63,6 @@
 	            </div>
 	        </div>
 	    </nav>
-	    
-	    
 		<div class="charts-stats">
 			<div class="charts-stats-inner">		
 				<div class="container charts-stats-container">				
@@ -136,15 +134,15 @@
 							</div>							      
 						</div>     
 					</div>					
-					<div>
-						<!-- CHART -->
-						<p style="font-size: 10px; color: white;">{{ userStats }}</p>
+					<div class="row" >
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+							<div id="chartContainer" class="chart-container-main-settings"></div>
+						</div>
+						<!-- <p style="font-size: 10px; color: white;">{{ userStats }}</p> -->
 					</div>
 				</div>
 			</div>
 		</div>
-		
-		
 		<footer class="text-center main-user-footer wow fadeIn" data-wow-duration="2s" data-wow-delay="1s">
 		   <div class="footer-above">
 		      <div class="container">
@@ -188,6 +186,11 @@
 		<spring:url value="/resources/js/jquery-3.3.1.min.js" var="jqueryJs" />	
 		<spring:url value="/resources/js/angular.js" var="angularJs" />	
 		<spring:url value="/resources/js/highcharts.js" var="highchartsJs" />	
+		<spring:url value="/resources/js/no-data-to-display.js" var="highchartsNoDataJs" />			
+		<spring:url value="/resources/js/export-data.js" var="highchartsExportDataJs" />	
+		<spring:url value="/resources/js/exporting.js" var="highchartsExportingJs" />			
+		<spring:url value="/resources/js/moment-with-locales.min.js" var="momentWithLocalesJs" />	
+		<spring:url value="/resources/js/moment-timezone-with-data.min.js" var="momentTimezoneJs" />	
 		<spring:url value="/resources/js/controller/chartsController.js" var="chartsControllerJs" />
 		<spring:url value="/resources/js/bootstrap.js" var="bootstrapJs" />
 		<spring:url value="/resources/js/jquery.easing.min.js" var="jqueryeasingminJs" />
@@ -196,7 +199,12 @@
 		
 		<script src="${jqueryJs}"></script>		
 		<script src="${angularJs}"></script>	
-		<script src="${highchartsJs}"></script>	
+		<script src="${highchartsJs}"></script>
+		<script src="${highchartsNoDataJs}"></script>
+		<script src="${highchartsExportDataJs}"></script>
+		<script src="${highchartsExportingJs}"></script>		
+		<script src="${momentWithLocalesJs}"></script>
+		<script src="${momentTimezoneJs}"></script>
 		<script src="${chartsControllerJs}"></script>
 		<script src="${bootstrapJs}"></script>
 		<script src="${jqueryeasingminJs}"></script>

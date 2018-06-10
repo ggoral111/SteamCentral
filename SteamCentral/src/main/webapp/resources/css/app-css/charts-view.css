@@ -7,12 +7,12 @@ body {
 	background-color: #1b2838;
 	background-repeat: no-repeat;
 	overflow-x: hidden;
-	/* -webkit-touch-callout: none;
+	-webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;	 */
+    user-select: none;
 }
 
 html {
@@ -606,6 +606,58 @@ a.error-alert.active {
 
 .combobox-calculated-data {
 	margin-bottom: 10px;
+}
+
+.chart-container-main-settings {
+	height: 700px;
+	margin-top: 50px;
+	margin-bottom: 10px;
+	padding-left: 16px;
+	padding-right: 15px;
+}
+
+/* ------------------------------HIGHCHARTS TABLE-----------------------------------*/
+
+.highcharts-data-table table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    background: white;
+    min-width: 100%;
+    margin-top: 10px;
+    font-family: "Oswald ExtraLight";
+    font-size: 12px;
+    color: black;
+}
+
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+    border: 1px solid silver;
+    padding: 0.5em;
+    font-weight: normal;
+}
+
+.highcharts-data-table table > thead > tr > th {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.highcharts-data-table table > caption {
+	font-size: 14px;
+	color: white;
+}
+
+.highcharts-data-table tr:nth-child(even), .highcharts-data-table thead tr {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #eff;
+}
+
+.highcharts-data-table caption {
+    border-bottom: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
 }
 
 /* ------------------------------LOADING ANIMATION-----------------------------------*/
