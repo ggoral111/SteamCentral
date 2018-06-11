@@ -14,7 +14,7 @@
 		<script>
 		  WebFont.load({
 		    custom: {
-		      families: ['kremlin', 'Skarpa Regular', 'Roboto Condensed Light', 'Roboto Condensed Light Italic', 'Roboto Condensed Regular', 'Roboto Light', 'Roboto Thin', 'Roboto Thin Italic', 'Roboto Light', 'Roboto Condensed Bold', 'Roboto Medium', 'Oswald ExtraLight']
+		      families: ['kremlin', 'Skarpa Regular', 'Roboto Condensed Light', 'Roboto Condensed Light Italic', 'Roboto Condensed Regular', 'Roboto Light', 'Roboto Thin', 'Roboto Thin Italic', 'Roboto Light', 'Roboto Condensed Bold', 'Roboto Medium', 'Oswald ExtraLight', 'Oswald Light']
 		    }
 		  });
 		</script>
@@ -134,11 +134,16 @@
 							</div>							      
 						</div>     
 					</div>					
-					<div class="row" >
+					<div class="row">
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 							<div id="chartContainer" class="chart-container-main-settings"></div>
 						</div>
 						<!-- <p style="font-size: 10px; color: white;">{{ userStats }}</p> -->
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+							<div id="tableContainer" class="highcharts-data-table"></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -188,6 +193,7 @@
 		<spring:url value="/resources/js/highcharts.js" var="highchartsJs" />	
 		<spring:url value="/resources/js/no-data-to-display.js" var="highchartsNoDataJs" />			
 		<spring:url value="/resources/js/export-data.js" var="highchartsExportDataJs" />	
+		<spring:url value="/resources/js/export-csv.js" var="highchartsExportCsvJs" />
 		<spring:url value="/resources/js/exporting.js" var="highchartsExportingJs" />			
 		<spring:url value="/resources/js/moment-with-locales.min.js" var="momentWithLocalesJs" />	
 		<spring:url value="/resources/js/moment-timezone-with-data.min.js" var="momentTimezoneJs" />	
@@ -202,6 +208,7 @@
 		<script src="${highchartsJs}"></script>
 		<script src="${highchartsNoDataJs}"></script>
 		<script src="${highchartsExportDataJs}"></script>
+		<script src="${highchartsExportCsvJs}"></script>
 		<script src="${highchartsExportingJs}"></script>		
 		<script src="${momentWithLocalesJs}"></script>
 		<script src="${momentTimezoneJs}"></script>

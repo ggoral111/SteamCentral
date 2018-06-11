@@ -34,47 +34,84 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 	};
 	
 	/*
+	 * Draw the table with the selected data
+	 */
+	$scope.drawDataTable = function(data, title, leftColTitle, rightColTitle) {
+		document.getElementById("tableContainer").style["margin-top"] = "50px";
+				
+		var table = document.createElement("table");
+		table.setAttribute("id", "dataTable");	    
+	    
+	    var caption = document.createElement("caption");
+	    caption.setAttribute("class", "highcharts-table-caption");	    
+	    var captionTitle = document.createTextNode(title);
+	    caption.appendChild(captionTitle);	    
+	    table.appendChild(caption);
+	    
+	    var tableHead = document.createElement("thead");
+	    var tableR = document.createElement("tr");
+	    tableHead.appendChild(tableR);
+	    
+	    var tableHLeft = document.createElement("th");
+	    tableHLeft.setAttribute("class", "text");
+	    tableHLeft.setAttribute("scope", "col");
+	    var tableHLeftTitle = document.createTextNode(leftColTitle);
+	    tableHLeft.appendChild(tableHLeftTitle);	
+	    
+	    var tableHRight = document.createElement("th");
+	    tableHRight.setAttribute("class", "text");
+	    tableHRight.setAttribute("scope", "col");
+	    var tableHRightTitle = document.createTextNode(rightColTitle);
+	    tableHRight.appendChild(tableHRightTitle);
+	    
+	    tableR.appendChild(tableHLeft);
+	    tableR.appendChild(tableHRight);	    
+	    table.appendChild(tableHead);
+	    
+	    var tableBody = document.createElement("tbody");
+	    var options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+	    
+	    for(var i=0; i<data.length; i++) {
+	    	var tableRElement = document.createElement("tr");
+	    	
+	    	var tableHElement = document.createElement("th");
+	    	tableHElement.setAttribute("class", "text");
+	    	tableHElement.setAttribute("scope", "row");
+	    	var tableHElementData = document.createTextNode(new Date(data[i][0]).toLocaleDateString("en-GB", options));
+	    	tableHElement.appendChild(tableHElementData);
+	    	
+	    	var tableDElement = document.createElement("td");
+	    	tableDElement.setAttribute("class", "number");
+	    	var tableDElementData = document.createTextNode(data[i][1]);
+	    	tableDElement.appendChild(tableDElementData);
+	    	
+	    	tableRElement.appendChild(tableHElement);
+	    	tableRElement.appendChild(tableDElement);
+	    	tableBody.appendChild(tableRElement);
+	    }
+	    
+	    table.appendChild(tableBody);
+	    document.getElementById('tableContainer').appendChild(table);
+	};
+	
+	/*
 	 * Set chart parameters to display
 	 */
 	$scope.setChart = function(chartData, title, xAxisText, yAxisText, legendPointName) {
-		
-		/*(function (H) {
-	        H.wrap(H.Chart.prototype, 'showResetZoom', function (proceed) {
-	            proceed.apply(this, [].slice.call(arguments, 1));
-
-	            var chart = this,
-	                btn = this.resetZoomButton,
-	                rect = btn.box.element.attributes;
-	            
-	            //btn.theme.title = 'kutas';
-	            chart.renderer.image(
-	                'http://highcharts.com/demo/gfx/sun.png',
-	                -4, 0, 30, 30)
-	                .add(btn);
-	            $.each(rect, function (i, a) {
-	                if (a.name == 'width') {
-	                    a.value = "30";
-	                } else if (a.name == 'height') {
-	                    a.value = "30";
-	                }
-	            });
-	        });
-	    }(Highcharts));*/
-		
 		Highcharts.chart('chartContainer', {
             chart: {
             	backgroundColor: 'rgba(255, 255, 255, 0)',
-                zoomType: 'xy',                
+                zoomType: 'xy', 
+                pinchType: 'xy',
                 resetZoomButton: {
 	                position: {
 		                align: "right",
-		                verticalAlign: "top",
-		                x: 0,
-		                y: -50
+		                verticalAlign: "top"
 	                },
 	                theme: {
 	                	title: '',        
-	                    r: 2
+	                    r: 2,
+	                    height: 13
 	                }
                 }
             },
@@ -93,8 +130,8 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                     second: '%H:%M:%S',
                     minute: '%H:%M',
                     hour: '%H:%M',
-                    day: '%e. %b',
-                    /*day: '%e/%m',*/
+                    /*day: '%e. %b',*/
+                    day: '%e/%m',
                     week: '%e. %b',
                     month: '%b \'%y',
                     year: '%Y'
@@ -121,8 +158,8 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                     second: '%H:%M:%S',
                     minute: '%H:%M',
                     hour: '%H:%M',
-                    day: '%e. %b',
-                    /*day: '%e/%m',*/
+                    /*day: '%e. %b',*/
+                    day: '%e/%m',
                     week: '%e. %b',
                     month: '%b \'%y',
                     year: '%Y'
@@ -148,8 +185,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                 },
                 itemHoverStyle: {
                 	color: '#f2f2f2'
-                }/*,
-                symbolHeight: 10*/
+                }
             },
             plotOptions: {
                 area: {
@@ -162,7 +198,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                             y2: 1
                         },
                         stops: [
-                            [0, Highcharts.getOptions().colors[5]], // 5
+                            [0, Highcharts.getOptions().colors[5]],
                             [1, Highcharts.Color(Highcharts.getOptions().colors[5]).setOpacity(0).get('rgba')]
                         ]
                     },
@@ -189,7 +225,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
             	enabled: false
             },
             time: {
-            	timezone: 'Europe/Warsaw',
+            	/*timezone: 'Europe/Warsaw', When this option is enabled points on a chart are not following formatting rules*/
             	useUTC: true
             },
             data: {
@@ -197,9 +233,44 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
             },
             exporting: {
             	buttons: {
-            		
+            		contextButton: {
+            			symbol: "menu",
+            			symbolStroke: "#FFFFFF",
+            			y: 0,
+            			menuItems: [
+            				'downloadPNG',
+            				'downloadJPEG',
+            				'downloadSVG',
+            				{
+                            	textKey: 'downloadXLS',
+                                onclick: function () {
+                                    this.downloadXLS();
+                                }
+                            }, 
+                            {
+                                textKey: 'downloadCSV',
+                                onclick: function () {
+                                    this.downloadCSV();
+                                }
+                            }
+            			],
+            			theme: {
+            				fill: "rgba(255, 255, 255, 0)",
+            				states: {
+        	                	hover: {
+        	                        fill: "rgba(255, 255, 255, 0)"
+        	                    },
+        	                    select: {
+        	                        fill: "rgba(255, 255, 255, 0.4)"
+        	                    }
+            				 }
+            			}
+            		}
             	},
-            	showTable: true
+            	filename: 'SteamCentralChart_' + title.replace(/ /g, '_'),
+            	printMaxWidth: 1920,
+            	scale: 1,
+            	showTable: false /* conflicts with data exporting javascript files */
             },
             series: [{
                 type: 'area',
@@ -209,7 +280,6 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                 	duration: 1000
                 },
                 boostThreshold: 0,
-                /*color: 'green',*/
                 tooltip: {
                 	dateTimeLabelFormats: {
                 		millisecond:"%A, %b %e, %H:%M:%S.%L",
@@ -227,7 +297,36 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                 data: chartData
             }],
             lang: {
-                noData: 'There is no available statistics data gathered for your profile yet'
+                noData: 'There is no available statistics data gathered for your profile yet',
+                contextButtonTitle: '',
+                downloadPNG: 'Download PNG',
+                downloadJPEG: 'Download JPEG',
+                downloadSVG: 'Download SVG',
+                downloadCSV: 'Download CSV',
+                downloadXLS: 'Download XLS'
+            },
+            navigation: {
+                menuStyle: {
+                	boxShadow: null
+                },
+                menuItemStyle: {
+                	paddingLeft: '20px',
+                	paddingRight: '20px',
+                    fontSize: '12px',
+                    fontFamily: 'Oswald ExtraLight',
+                    color: '#4f4f4f'
+                },
+                menuItemHoverStyle: {
+                    background: '#a6a6a6',
+                    color: '#ffffff',
+                    transition: 'all 0.3s ease-in-out'
+                },
+                buttonOptions: {
+                	fontFamily: 'Oswald ExtraLight',
+                	theme: {
+                		fontFamily: 'Oswald ExtraLight'
+                    }
+                }
             },
             noData: {
                 style: {
@@ -266,7 +365,16 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 						}
 						
 						$scope.setChart(shortArray, 'USD to EUR exchange rate over time', 'datetime', 'Exchange rate', 'USD to EUR');
+						
+						if(shortArray != "" && shortArray != null) {
+							var elementToRemove = document.getElementById("dataTable");
 							
+							if(elementToRemove != null) {
+								elementToRemove.remove();
+							}
+							
+							$scope.drawDataTable(shortArray, 'USD to EUR exchange rate over time', 'DateTime', 'USD to EUR');
+						}
 					} else {				
 						throw "chart test failed.";
 					}
