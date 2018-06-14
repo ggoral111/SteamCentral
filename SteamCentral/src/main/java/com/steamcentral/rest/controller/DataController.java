@@ -1,5 +1,7 @@
 package com.steamcentral.rest.controller;
 
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -84,8 +86,7 @@ public class DataController {
 				
 				int ctRoundsWin = 0, ttRoundsWin = 0, playerRoundsWin = 0, matchMaxPlayers = 0, kills = 0, deaths = 0, totalDamage = 0, mvp = 0, scorePointResult = 0, totalKills = 0, totalDeaths = 0;
 				
-				for(int i=0; i<userStatsArray.length(); i++) {
-					
+				for(int i=0; i<userStatsArray.length(); i++) {					
 					if(userStatsArray.getJSONObject(i).getString("name").equals("total_kills")) {
 						totalKills = userStatsArray.getJSONObject(i).getInt("value");
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("total_deaths")) {
@@ -210,11 +211,16 @@ public class DataController {
 	@RequestMapping(value = "/stats/userStatsDataForCharts", method = RequestMethod.POST)
 	public ResponseEntity<String> getUserStatsDataForChartsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		List<UserStats> userStatsList = userStatsDao.getAll(steamId);
+		List<UserStats> userStatsEpochList = new ArrayList<>();
+		
+		for(UserStats us : userStatsList) {
+			userStatsEpochList.add(new UserStats(us.getId(), us.getSteamId(), us.getStats(), us.getCreationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+		}
 				
-		if(userStatsList != null) {
+		if(userStatsEpochList != null) {
 			try {
 				ObjectWriter ow = new ObjectMapper().writer();
-				String userStatsListJSON = ow.writeValueAsString(userStatsList);				
+				String userStatsListJSON = ow.writeValueAsString(userStatsEpochList);				
 				HttpHeaders responseHeaders = new HttpHeaders();
 				responseHeaders.add("Content-Type", "application/json; charset=utf-8");
 				

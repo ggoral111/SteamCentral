@@ -14,9 +14,334 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 	$scope.url = "/SteamCentral/data";
 	
 	$scope.userStats = null;
+	$scope.statsNameList = null;
+	$scope.tableCaptionTitle = null;
+	$scope.tableLeftColTitle = null;
+	$scope.tableRightColTitle = null;
+	$scope.tableData = null;
 	
-	$scope.hideChartsPanelLoading = true;
-	$scope.hideChartsPanel = false;
+	$scope.hideChartsPanelLoading = false;
+	$scope.hideChartsPanel = true;
+	$scope.hideDataTable = true;
+	$scope.hideFooter = true;
+	
+	$scope.hideSetAllRequiredOptionsWarningAlert = true;
+	$scope.hideFailStatsDownloadingError = true;
+	
+	$scope.calculatedData = [
+		{
+			name: 'Accuracy (%) [Daily]',
+			value: ['total_shots_hit', 'total_shots_fired'],
+			total: false
+		},
+		{
+			name: 'Accuracy (%) [Total]',
+			value: ['total_shots_hit', 'total_shots_fired'],
+			total: true
+		},
+		{
+			name: 'Average Damage per Round (ADR) [Daily]',
+			value: ['total_damage_done', 'total_rounds_played'],
+			total: false
+		},
+		{
+			name: 'Average Damage per Round (ADR) [Total]',
+			value: ['total_damage_done', 'total_rounds_played'],
+			total: true
+		},
+		{
+			name: 'Kill Death Ratio (KDR) [Daily]',
+			value: ['total_kills', 'total_deaths'],
+			total: false
+		},
+		{
+			name: 'Kill Death Ratio (KDR) [Total]',
+			value: ['total_kills', 'total_deaths'],
+			total: true
+		},
+		{
+			name: 'MVP / Payed Rounds Ratio [Daily]',
+			value: ['total_mvps', 'total_rounds_played'],
+			total: false
+		},
+		{
+			name: 'MVP / Payed Rounds Ratio [Total]',
+			value: ['total_mvps', 'total_rounds_played'],
+			total: true
+		},
+		{
+			name: 'Shots per Kill [Daily]',
+			value: ['total_shots_hit', 'total_kills'],
+			total: false
+		},
+		{
+			name: 'Shots per Kill [Total]',
+			value: ['total_shots_hit', 'total_kills'],
+			total: true
+		}
+	];
+	
+	$scope.statsNameReplacements = [
+		{
+			containedString: 'hkp2000',
+			replacement: 'USP-S / P2000'
+		},
+		{
+			containedString: 'elite',
+			replacement: 'Dual Berettas'
+		},
+		{
+			containedString: 'deagle',
+			replacement: 'Desert Eagle / R8 Revolver'
+		},
+		{
+			containedString: 'galilar',
+			replacement: 'Galil AR'
+		},
+		{
+			containedString: 'm4a1',
+			replacement: 'M4A1-S / M4A4'
+		},
+		{
+			containedString: 'sg556',
+			replacement: 'SG 553'
+		},
+		{
+			containedString: 'fiveseven',
+			replacement: 'Five-SeveN / CZ75-Auto'
+		},
+		{
+			containedString: 'tec9',
+			replacement: 'Tec-9 / CZ75-Auto'
+		}
+	];
+	
+	/*
+	 * Replace failStatsDownloadingErrorAlert alert
+	 */
+	$scope.replaceFailStatsDownloadingErrorAlert = function() {
+		$("#failStatsDownloadingErrorAlert").remove();
+		var $textElement = $('<div data-ng-hide="hideFailStatsDownloadingError" id="failStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="1s" role="alert"><strong>Error:</strong> failed downloading statistics from server. <a class="error-alert" data-ng-click="loadUserStats()" onclick="this.blur();">Click here<i class="fas fa-sync-alt reload-icon-error-alert"></i></a> to try to download your statistics again.</div>').appendTo("#failStatsDownloadingErrorAlertOuter");
+		$compile($textElement)($scope);
+	};
+	
+	/*
+	 * Replace setAllRequiredOptionsWarningAlert alert
+	 */
+	$scope.replaceSetAllRequiredOptionsWarningAlert = function(warningValues) {
+		$("#setAllRequiredOptionsWarningAlert").remove();
+		var $textElement = $("<div data-ng-hide='hideSetAllRequiredOptionsWarningAlert' id='setAllRequiredOptionsWarningAlert' data-ng-cloak class='alert alert-custom alert-warning alert-dismissible fade in wow fadeIn' data-wow-duration='1s' role='alert'><strong>Warning:</strong> " + warningValues + " not filled properly. Please select all required values from drop-down lists and try again by clicking 'Create chart <i class='fas fa-chart-line reload-icon-warning-alert'></i>' button.<button type='button' class='close' data-dismiss='alert' aria-label='Close' onclick='this.blur();'><span aria-hidden='true'>&times;</span></button></div>").appendTo("#setAllRequiredOptionsWarningAlertOuter");				
+		$compile($textElement)($scope);
+	};
+	
+	/*
+	 * Create list of available stats for drop-down lists
+	 */
+	$scope.createListOfStats = function(statsList) {
+		var statsListArray = new Array();
+		
+		for(var i=0; i<statsList.length; i++) {
+			if(!statsList[i].name.includes('GI.lesson')) {			
+				var statsItem = {};
+				var tempName = statsList[i].name;
+				
+				for(var j=0;j<$scope.statsNameReplacements.length; j++) {
+					if(statsList[i].name.includes($scope.statsNameReplacements[j].containedString)) {
+						tempName = statsList[i].name.replace($scope.statsNameReplacements[j].containedString, $scope.statsNameReplacements[j].replacement);
+						break;
+					}
+				}
+				
+				statsItem['name'] = $scope.createReadableTextFromStringOfChars(tempName);
+				statsItem['value'] = statsList[i].name;	
+				statsListArray.push(statsItem);
+			}
+		}
+		
+		$scope.statsNameList = statsListArray.sort((a, b) => (a.name > b.name) - (a.name < b.name));
+	};
+	
+	/*
+	 * Prepare data to show it in a chart
+	 */
+	$scope.prepareDataForChart = function(selectedItem) {
+		if(selectedItem != null) {
+			var preparedDataArray = new Array();
+			
+			for(var i=0; i<$scope.userStats.length; i++) {
+				var statsData = $scope.userStats[i].stats;
+				var dayStatsDataArray = new Array();
+				
+				for(var j=0; j<statsData.length; j++) {
+					for(var k=0; k<selectedItem.value.length; k++) {
+						if(statsData[j].name == selectedItem.value[k]) {
+							dayStatsDataArray.push(statsData[j]);
+						}
+					}
+				}
+				
+				var orderedStatsValuesArray = new Array();
+				
+				for(var j=0; j<selectedItem.value.length; j++) {
+					for(var k=0; k<dayStatsDataArray.length; k++) {
+						if(selectedItem.value[j] == dayStatsDataArray[k].name) {
+							orderedStatsValuesArray.push(dayStatsDataArray[k].value);
+						}
+					}
+				}
+				
+				var dailyStatsArray = new Array();
+				
+				if(selectedItem.total) {
+					dailyStatsArray.push($scope.userStats[i].creationDateEpoch, orderedStatsValuesArray[0] == 0 || orderedStatsValuesArray[1] == 0 ? 0 : Math.round((orderedStatsValuesArray[0] / orderedStatsValuesArray[1]) * 1e2) / 1e2);
+				} else {
+					dailyStatsArray.push($scope.userStats[i].creationDateEpoch, orderedStatsValuesArray);
+				}
+				
+				preparedDataArray.push(dailyStatsArray);
+			}
+			
+			if(!selectedItem.total) {
+				var preparedDailyDataArray = new Array();
+				
+				for(var i=0; i<preparedDataArray.length; i++) {
+					var tempDailyArray = new Array();
+					
+					if(i == 0) {
+						tempDailyArray.push(preparedDataArray[i][0], preparedDataArray[i][1][0] == 0 || preparedDataArray[i][1][1] == 0 ? 0 : Math.round((preparedDataArray[i][1][0] / preparedDataArray[i][1][1]) * 1e2) / 1e2);
+					} else {
+						var firstValueDifference = preparedDataArray[i][1][0] - preparedDataArray[i-1][1][0];
+						var secondValueDifference = preparedDataArray[i][1][1] - preparedDataArray[i-1][1][1];
+						
+						tempDailyArray.push(preparedDataArray[i][0], firstValueDifference == 0 || secondValueDifference == 0 ? 0 : Math.round((firstValueDifference / secondValueDifference) * 1e2) / 1e2);
+					}
+					
+					preparedDailyDataArray.push(tempDailyArray);
+				}
+				
+				return preparedDailyDataArray;
+			}
+			
+			return preparedDataArray;
+		}		
+	};
+	
+	$scope.statsFunctionDependencies = [
+		{
+			name: 'Accuracy (%)',
+			values: ['total_hits', 'total_shots']
+		},
+		{
+			name: 'Shots per Kill',
+			values: ['total_hits', 'total_kills']
+		}
+	];
+	
+	/*
+	 * Format name for custom chart
+	 */
+	$scope.formatChartName = function(valueX, valueY) {
+		var valueXsplitted = valueX.value.split('_');
+		var valueYsplitted = valueY.value.split('_');
+		
+		if(valueXsplitted[valueXsplitted.length - 1] == valueYsplitted[valueYsplitted.length - 1]) {
+			var dependencyFound = false;
+			var dependencyName = null;
+			var valueXconcat = valueXsplitted.slice(0, -1).join('_');
+			var valueYconcat = valueYsplitted.slice(0, -1).join('_');
+			
+			for(var i=0; i<$scope.statsFunctionDependencies.length; i++) {
+				if(valueXconcat == $scope.statsFunctionDependencies[i].values[0] && valueYconcat == $scope.statsFunctionDependencies[i].values[1]) {
+					dependencyName = $scope.statsFunctionDependencies[i].name;
+					dependencyFound = true;
+					break;
+				}
+			}
+			
+			if(dependencyFound) {
+				return dependencyName + ' [' + $scope.capitalizeFistLetterOfWord(valueXsplitted[valueXsplitted.length - 1]) + ']';
+			}
+		} 
+		
+		return valueX.name + ' / ' + valueY.name;
+	};
+	
+	/*
+	 * Create custom chart form user input
+	 */
+	$scope.createCustomChart = function() {
+		$scope.hideSetAllRequiredOptionsWarningAlert = true;
+		
+		if($scope.selectedItemChartsStatsValueX != null && $scope.selectedItemChartsStatsValueY != null && $scope.customStatsTypeFilter != null) {
+			$("#calculatedDataSelect").val("");
+			var chartsStatsValueX = JSON.parse($scope.selectedItemChartsStatsValueX);
+			var chartsStatsValueY = JSON.parse($scope.selectedItemChartsStatsValueY);
+			var itemName = $scope.formatChartName(chartsStatsValueX, chartsStatsValueY);
+			
+			if($scope.customStatsTypeFilter) {
+				itemName += ' [Total]';
+			} else {
+				itemName += ' [Daily]';
+			}
+			
+			var selectedItem = { name: itemName, value: [chartsStatsValueX.value, chartsStatsValueY.value], total: $scope.customStatsTypeFilter };
+			$scope.populateChartWithData(selectedItem, false);
+		} else {
+			var valueXError = false;
+			var valueYError = false;
+			var warningMessage = "";
+			
+			if($scope.selectedItemChartsStatsValueX == null) {
+				valueXError = true;
+			} 
+			
+			if($scope.selectedItemChartsStatsValueY == null) {
+				valueYError = true;
+			}
+			
+			if(valueXError && valueYError) {
+				warningMessage = "values: 'Value X' and 'Value Y' are";
+			} else if(valueXError) {
+				warningMessage = "value: 'Value X' is";
+			} else {
+				warningMessage = "value: 'Value Y' is";
+			}
+						
+			$scope.replaceSetAllRequiredOptionsWarningAlert(warningMessage);
+			$scope.hideSetAllRequiredOptionsWarningAlert = false;
+		}
+	};
+	
+	/*
+	 * Populate table with data
+	 */
+	$scope.populateTableWithData = function(captionTitle, leftColTitle, rightColTitle, dataToPopulateTable) {
+		$scope.tableCaptionTitle = captionTitle;
+		$scope.tableLeftColTitle = leftColTitle;
+		$scope.tableRightColTitle = rightColTitle;
+		$scope.tableData = dataToPopulateTable;
+	};
+	
+	/*
+	 * Populate chart with data
+	 */
+	$scope.populateChartWithData = function(selectedItem, parseItem) {
+		if(selectedItem != null) {
+			if(parseItem) {
+				$("#valueXSelect").val("");
+				$("#valueYSelect").val("");
+				$scope.selectedItemChartsStatsValueX = null;
+				$scope.selectedItemChartsStatsValueY = null;
+				selectedItem = JSON.parse(selectedItem);
+			}
+			
+			var preparedData = $scope.prepareDataForChart(selectedItem);
+			var point = $scope.createReadableTextFromStringOfChars(selectedItem.value[0]) + ' to ' + $scope.createReadableTextFromStringOfChars(selectedItem.value[1]);
+			var title = point + ' ratio over time';		
+			$scope.setChart(preparedData, title, 'datetime', selectedItem.name, point);
+			$scope.populateTableWithData(title, 'DateTime', selectedItem.name, preparedData);
+		}
+	};
 	
 	/*
 	 * Add footer CSS properties
@@ -34,64 +359,79 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 	};
 	
 	/*
-	 * Draw the table with the selected data
+	 * Format data to readable string
 	 */
-	$scope.drawDataTable = function(data, title, leftColTitle, rightColTitle) {
-		document.getElementById("tableContainer").style["margin-top"] = "50px";
+	$scope.formatDateForTable = function(data) {
+		var options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+		return new Date(data).toLocaleDateString("en-GB", options);
+	};
+	
+	/*
+	 * Create readable text from String of Chars
+	 */
+	$scope.createReadableTextFromStringOfChars = function(stringToFix) {
+		var title = stringToFix.split('_');
+		
+		for(var i=0; i<title.length; i++) {
+			title[i] = $scope.capitalizeFistLetterOfWord(title[i]);
+		}
+		
+		title = title.join(' ');
+		
+		return title;
+	};
+	
+	/*
+	 * Capitalize the first letter of word
+	 */
+	$scope.capitalizeFistLetterOfWord = function(wordToCapitalize) {
+		return wordToCapitalize.charAt(0).toUpperCase() + wordToCapitalize.slice(1);
+	}
+	
+	/*
+	 * Load user stats from database
+	 */
+	$scope.loadUserStats = function() {
+		$scope.hideChartsPanelLoading = false;
+		$scope.hideFailStatsDownloadingError = true;
+		$scope.hideFooter = true;
+		
+		$http.post($scope.url + '/stats/userStatsDataForCharts', $scope.steamId)
+		.then(function(response) {
+			if(response.data != "" && response.data != null) {
+				for(var i=0; i<response.data.length; i++) {
+					response.data[i].stats = JSON.parse(response.data[i].stats);
+				}
 				
-		var table = document.createElement("table");
-		table.setAttribute("id", "dataTable");	    
-	    
-	    var caption = document.createElement("caption");
-	    caption.setAttribute("class", "highcharts-table-caption");	    
-	    var captionTitle = document.createTextNode(title);
-	    caption.appendChild(captionTitle);	    
-	    table.appendChild(caption);
-	    
-	    var tableHead = document.createElement("thead");
-	    var tableR = document.createElement("tr");
-	    tableHead.appendChild(tableR);
-	    
-	    var tableHLeft = document.createElement("th");
-	    tableHLeft.setAttribute("class", "text");
-	    tableHLeft.setAttribute("scope", "col");
-	    var tableHLeftTitle = document.createTextNode(leftColTitle);
-	    tableHLeft.appendChild(tableHLeftTitle);	
-	    
-	    var tableHRight = document.createElement("th");
-	    tableHRight.setAttribute("class", "text");
-	    tableHRight.setAttribute("scope", "col");
-	    var tableHRightTitle = document.createTextNode(rightColTitle);
-	    tableHRight.appendChild(tableHRightTitle);
-	    
-	    tableR.appendChild(tableHLeft);
-	    tableR.appendChild(tableHRight);	    
-	    table.appendChild(tableHead);
-	    
-	    var tableBody = document.createElement("tbody");
-	    var options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
-	    
-	    for(var i=0; i<data.length; i++) {
-	    	var tableRElement = document.createElement("tr");
-	    	
-	    	var tableHElement = document.createElement("th");
-	    	tableHElement.setAttribute("class", "text");
-	    	tableHElement.setAttribute("scope", "row");
-	    	var tableHElementData = document.createTextNode(new Date(data[i][0]).toLocaleDateString("en-GB", options));
-	    	tableHElement.appendChild(tableHElementData);
-	    	
-	    	var tableDElement = document.createElement("td");
-	    	tableDElement.setAttribute("class", "number");
-	    	var tableDElementData = document.createTextNode(data[i][1]);
-	    	tableDElement.appendChild(tableDElementData);
-	    	
-	    	tableRElement.appendChild(tableHElement);
-	    	tableRElement.appendChild(tableDElement);
-	    	tableBody.appendChild(tableRElement);
-	    }
-	    
-	    table.appendChild(tableBody);
-	    document.getElementById('tableContainer').appendChild(table);
+				$scope.userStats = response.data;
+				var selectedItem = { name: 'Kill Death Ratio (KDR) [Daily]', value: ['total_kills', 'total_deaths'], total: false };
+				var readyDataForChart = $scope.prepareDataForChart(selectedItem);				
+
+				if(readyDataForChart != "" && readyDataForChart != null && readyDataForChart.length > 0) {	
+					$scope.hideChartsPanelLoading = true;
+					$scope.hideChartsPanel = false;
+					$scope.hideFooter = false;
+					$('#calculatedDataSelect option[label="Kill Death Ratio (KDR) [Daily]"]').prop('selected', true);
+					$scope.customStatsTypeFilter = 1;
+					$scope.createListOfStats($scope.userStats[0].stats);
+					var point = $scope.createReadableTextFromStringOfChars(selectedItem.value[0]) + ' to ' + $scope.createReadableTextFromStringOfChars(selectedItem.value[1]);
+					var title = point + ' ratio over time';
+					$scope.setChart(readyDataForChart, title, 'datetime', selectedItem.name, point);
+					document.getElementById("tableContainer").style["margin-top"] = "50px";
+					$scope.populateTableWithData(title, 'DateTime', selectedItem.name, readyDataForChart);
+					$scope.hideDataTable = false;
+				}		
+			} else {				
+				throw "failed downloading user stats from database.";
+			}
+		})
+		.catch(function(error) {
+			$scope.replaceFailStatsDownloadingErrorAlert();
+			$scope.hideChartsPanelLoading = true;
+			$scope.hideFailStatsDownloadingError = false;
+			$scope.hideFooter = false;
+			console.log('error: ' + error);
+		});	
 	};
 	
 	/*
@@ -109,7 +449,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 		                verticalAlign: "top"
 	                },
 	                theme: {
-	                	title: '',        
+	                	title: '',
 	                    r: 2,
 	                    height: 13
 	                }
@@ -225,11 +565,8 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
             	enabled: false
             },
             time: {
-            	/*timezone: 'Europe/Warsaw', When this option is enabled points on a chart are not following formatting rules*/
+            	timezone: 'Europe/Warsaw',
             	useUTC: true
-            },
-            data: {
-            	/*parseDate: 'tutaj funkcja, ktora zwraca: A callback function to parse string representations of dates into JavaScript timestamps. Should return an integer timestamp on success.'*/
             },
             exporting: {
             	buttons: {
@@ -270,7 +607,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
             	filename: 'SteamCentralChart_' + title.replace(/ /g, '_'),
             	printMaxWidth: 1920,
             	scale: 1,
-            	showTable: false /* conflicts with data exporting javascript files */
+            	showTable: false
             },
             series: [{
                 type: 'area',
@@ -281,16 +618,7 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
                 },
                 boostThreshold: 0,
                 tooltip: {
-                	dateTimeLabelFormats: {
-                		millisecond:"%A, %b %e, %H:%M:%S.%L",
-                	    second:"%A, %b %e, %H:%M:%S",
-                	    minute:"%A, %b %e, %H:%M",
-                	    hour:"%A, %b %e, %H:%M",
-                	    day:"%A, %e/%m/%Y",
-                	    week:"Week from %A, %b %e, %Y",
-                	    month:"%B %Y",
-                	    year:"%Y"
-                	},
+                	xDateFormat: '%A, %e/%m/%Y %H:%M',
                 	headerFormat: '<span style="font-size: 13px; font-family: Oswald ExtraLight;">{point.key}</span><br/>',
                 	pointFormat: '<span style="color:{point.color}; font-size: 18px;">\u25CF</span> <span style="font-size: 13px; font-family: Oswald ExtraLight"> {series.name}: </span><span style="font-size: 13px; font-family: Oswald ExtraLight; font-weight: bold;">{point.y}</span><br/>'
                 },
@@ -338,61 +666,6 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
             }
         });
 	};	
-	
-	/*
-	 * Load user stats from database
-	 */
-	$scope.loadUserStats = function() {
-		$http.post($scope.url + '/stats/userStatsDataForCharts', $scope.steamId)
-		.then(function(response) {
-			if(response.data != "" && response.data != null) {
-				for(var i=0; i<response.data.length; i++) {
-					response.data[i].stats = JSON.parse(response.data[i].stats);
-				}
-				
-				$scope.userStats = response.data;
-				
-				// template check
-				
-				$http.get('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json')
-				.then(function(response) {
-					if(response.data != "" && response.data != null) {
-						
-						var shortArray = new Array();
-						
-						for(var i=5; i<35; i++) {
-							shortArray.push(response.data[i]);
-						}
-						
-						$scope.setChart(shortArray, 'USD to EUR exchange rate over time', 'datetime', 'Exchange rate', 'USD to EUR');
-						
-						if(shortArray != "" && shortArray != null) {
-							var elementToRemove = document.getElementById("dataTable");
-							
-							if(elementToRemove != null) {
-								elementToRemove.remove();
-							}
-							
-							$scope.drawDataTable(shortArray, 'USD to EUR exchange rate over time', 'DateTime', 'USD to EUR');
-						}
-					} else {				
-						throw "chart test failed.";
-					}
-				})
-				.catch(function(error) {
-					console.log('error: ' + error);
-				});
-				
-				// end of template check
-				
-			} else {				
-				throw "failed downloading user stats from database.";
-			}
-		})
-		.catch(function(error) {
-			console.log('error: ' + error);
-		});	
-	};
 	
 	/*
 	 * Load content after redirecting to charts page

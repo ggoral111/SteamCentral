@@ -68,7 +68,7 @@
 				<div class="container charts-stats-container">				
 					<div class="row">
 			            <div class="col-sm-12 col-md-12 col-lg-12">
-			                <h1 class="page-header page-header-stats wow fadeInDown" data-wow-duration="2s">CS:GO Statistics Charts<small class="page-header-small-padding-left">With in-depth analysis</small>
+			                <h1 class="page-header page-header-stats wow fadeInDown" data-wow-duration="1s">CS:GO Statistics Charts<small class="page-header-small-padding-left">With in-depth analysis</small>
 			                </h1>
 			            </div>
 			        </div>
@@ -89,8 +89,13 @@
 								</div>
 							</div>
 						</div>
-					</div>	        	        						
-					<div data-ng-hide="hideChartsPanel" data-ng-cloak class="panel-group charts-stats-sort-panel wow fadeIn" data-wow-duration="2s" data-wow-delay="1s">					    
+					</div>
+					<div id="failStatsDownloadingErrorAlertOuter">						
+						<div data-ng-hide="hideFailStatsDownloadingError" id="failStatsDownloadingErrorAlert" data-ng-cloak class="alert alert-custom alert-danger alert-dismissible fade in wow fadeIn" data-wow-duration="1s" role="alert">
+							<strong>Error:</strong> failed downloading statistics from server. <a class="error-alert" data-ng-click="loadUserStats()" onclick="this.blur();">Click here<i class="fas fa-sync-alt reload-icon-error-alert"></i></a> to try to download your statistics again.
+						</div>
+					</div>   	        						
+					<div data-ng-hide="hideChartsPanel" data-ng-cloak class="panel-group charts-stats-sort-panel wow fadeIn" data-wow-duration="1s">					    
 					    <div class="panel panel-default charts-stats-sort-panel">
 							<div class="panel-heading charts-stats-sort-panel" role="tab" data-toggle="collapse" data-target="#chartsStatsSortPanelCollapse" aria-expanded="true" aria-controls="chartsStatsSortPanelCollapse">
 								<h4 class="panel-title charts-stats-sort-panel">
@@ -100,55 +105,106 @@
 							<div id="chartsStatsSortPanelCollapse" class="panel-collapse collapse in" role="tabpanel">
 								<div class="panel-body charts-stats-sort-panel">
 									<div class="row">
-										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 combobox-calculated-data">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 											<div class="input-group">
 										      	<span class="input-group-addon addon-format">Calculated data</span>
-												<select class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsCalculatedData" data-ng-change="">
+												<select id="calculatedDataSelect" class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsCalculatedData" data-ng-change="populateChartWithData(selectedItemChartsStatsCalculatedData, true)">
 													<option value="" disabled="disabled" selected="selected" hidden="hidden">Select calculated data...</option>
-													<option data-ng-repeat="friend in friendList" value="{{ friend.steamId }}">{{ friend.personaname }}</option>
+													<option data-ng-repeat="calcData in calculatedData" label="{{ calcData.name }}" value="{{ calcData }}">{{ calcData.name }}</option>
 												</select>
 											</div>
 										</div>
-									</div>								
+									</div>		
+									<div class="row">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+											<hr class="hr-charts-stats-panel-separator">
+										</div>
+									</div>						
 									<div class="row">
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 combobox-axis-x">
 										    <div class="input-group">
-										      	<span class="input-group-addon addon-format">Axis X</span>
-										      	<select class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsAxisX" data-ng-change="">
+										      	<span class="input-group-addon addon-format">Value X</span>
+										      	<select id="valueXSelect" class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsValueX">
 													<option value="" disabled="disabled" selected="selected" hidden="hidden">Select data for axis X...</option>
-													<option data-ng-repeat="friend in friendList" value="{{ friend.steamId }}">{{ friend.personaname }}</option>
+													<option data-ng-repeat="statName in statsNameList" label="{{ statName.name }}" value="{{ statName }}">{{ statName.name }}</option>
 												</select>
 										    </div> 
 										</div>
 										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 											<div class="input-group">
-										      	<span class="input-group-addon addon-format">Axis Y</span>
-										      	<select class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsAxisY" data-ng-change="">
+										      	<span class="input-group-addon addon-format">Value Y</span>
+										      	<select id="valueYSelect" class="form-control search-in-stats" data-ng-model="selectedItemChartsStatsValueY">
 													<option value="" disabled="disabled" selected="selected" hidden="hidden">Select data for axis Y...</option>
-													<option data-ng-repeat="friend in friendList" value="{{ friend.steamId }}">{{ friend.personaname }}</option>
+													<option data-ng-repeat="statName in statsNameList" label="{{ statName.name }}" value="{{ statName }}">{{ statName.name }}</option>
 												</select>
 										    </div>
 										</div>
-									</div>       	        			        	
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+											<div class="custom-checkbox">
+												<div class="custom-checkbox-default">
+										            <input type="checkbox" data-ng-true-value="1" data-ng-false-value="0" data-ng-model="customStatsTypeFilter" name="checkbox" id="checkbox1"/>
+										            <label for="checkbox1">Show total statistics</label>
+										        </div>
+									        </div>
+										</div>
+										<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+											<div class="custom-checkbox">
+												<div class="custom-checkbox-default">
+										            <input type="checkbox" data-ng-true-value="0" data-ng-false-value="1" data-ng-model="customStatsTypeFilter" name="checkbox" id="checkbox2"/>
+										            <label for="checkbox2">Show daily statistics</label>
+										        </div>
+									        </div>
+										</div>
+										<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+											<span class="input-group-btn">
+												<button data-ng-click="createCustomChart()" onclick="this.blur();" class="btn btn-default fail-button" type="button">Create chart<i class="fas fa-chart-line chart-icon-margin"></i></button>
+											</span>
+										</div>
+									</div>      	        			        	
 								</div>
 							</div>							      
 						</div>     
-					</div>					
+					</div>				
+					<div id="setAllRequiredOptionsWarningAlertOuter">							
+						<div data-ng-hide="hideSetAllRequiredOptionsWarningAlert" id="setAllRequiredOptionsWarningAlert" data-ng-cloak class="alert alert-custom alert-warning alert-dismissible fade in wow fadeIn" data-wow-duration="1s" role="alert">
+							<strong>Warning:</strong> values are not filled properly. Please select all required values from drop-down lists and try again by clicking 'Create chart <i class='fas fa-chart-line reload-icon-warning-alert'></i>' button.
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.blur();">
+								<span aria-hidden="true">&times;</span>
+							</button>				
+						</div>
+					</div>	
 					<div class="row">
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 							<div id="chartContainer" class="chart-container-main-settings"></div>
 						</div>
-						<!-- <p style="font-size: 10px; color: white;">{{ userStats }}</p> -->
 					</div>
 					<div class="row">
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-							<div id="tableContainer" class="highcharts-data-table"></div>
+							<div data-ng-hide="hideDataTable" data-ng-cloak id="tableContainer" class="highcharts-data-table wow fadeIn" data-wow-duration="3s">
+								<table>
+									<caption class="highcharts-table-caption">{{ tableCaptionTitle }}</caption>
+									<thead>
+										<tr>
+											<th class="text" scope="col">{{ tableLeftColTitle }}</th>
+											<th class="text" scope="col">{{ tableRightColTitle }}</th>
+										</tr>
+									</thead>
+									<tbody data-ng-repeat="data in tableData">
+										<tr>
+											<th class="text" scope="row">{{ formatDateForTable(data[0]) }}</th>
+											<td class="number">{{ data[1] }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<footer class="text-center main-user-footer wow fadeIn" data-wow-duration="2s" data-wow-delay="1s">
+		<footer data-ng-hide="hideFooter" data-ng-cloak class="text-center main-user-footer wow fadeIn" data-wow-duration="1s">
 		   <div class="footer-above">
 		      <div class="container">
 		         <div class="row">

@@ -604,8 +604,12 @@ a.error-alert.active {
 	font-family: "Oswald ExtraLight";
 }
 
-.combobox-calculated-data {
-	margin-bottom: 10px;
+.hr-charts-stats-panel-separator {
+	margin-top: 10px;
+    margin-bottom: 10px;
+	border: 0; 
+	height: 1px; 
+	background-image: linear-gradient(to right, rgba(204, 204, 204, 0.3), rgba(204, 204, 204, 0.75), rgba(204, 204, 204, 0.3));
 }
 
 .chart-container-main-settings {
@@ -613,6 +617,34 @@ a.error-alert.active {
 	margin-top: 50px;	
 	padding-left: 16px;
 	padding-right: 15px;
+}
+
+.btn.btn-default.fail-button {
+	border-radius: 3px;
+	font-family: "Oswald ExtraLight";
+	-webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    width: 100%;
+    margin-top: 10px;
+    background-color: #eeeeee;
+}
+
+.btn.btn-default.fail-button:hover {
+	background-color: #d9d9d9;
+}
+
+.chart-icon-margin {
+	margin-left: 5px;
+	color: #797979;
+}
+
+.loading-content-row-smaller {
+    height: 270px;
+    line-height: 270px;
+    margin-top: 115px;
+    text-align: center;
+    background: transparent;    
 }
 
 /* ------------------------------HIGHCHARTS TABLE-----------------------------------*/
@@ -695,10 +727,6 @@ a.error-alert.active {
 
 /* ------------------------------LOADING ANIMATION-----------------------------------*/
 
-#loading {
-
-}
-
 #loading-center {
 	width: 100%;
 	height: 100%;
@@ -777,6 +805,126 @@ a.error-alert.active {
 		-webkit-transform: rotate(360deg) scale(0.8); 
 		transform: rotate(360deg) scale(0.8); 
 	}
+}
+
+/* ------------------------------CUSTOM CHECKBOXES--------------------------------- */
+
+.custom-checkbox div {
+  clear: both;
+  overflow: hidden;
+}
+
+.custom-checkbox label {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4;
+  font-weight: normal;
+  font-family: "Oswald ExtraLight";
+}
+
+.custom-checkbox input[type="radio"]:empty,
+.custom-checkbox input[type="checkbox"]:empty {
+  display: none;
+}
+
+.custom-checkbox input[type="radio"]:empty ~ label,
+.custom-checkbox input[type="checkbox"]:empty ~ label {
+  position: relative;
+  line-height: 32px;
+  text-indent: 3.25em;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  cursor: pointer;
+  color: #C4C4C4;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.custom-checkbox input[type="radio"]:empty ~ label:before,
+.custom-checkbox input[type="checkbox"]:empty ~ label:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  width: 2.5em;
+  background: #D1D3D4;
+  border-radius: 3px 0 0 3px;
+}
+
+.custom-checkbox input[type="radio"]:hover:not(:checked) ~ label,
+.custom-checkbox input[type="checkbox"]:hover:not(:checked) ~ label {
+  color: #888;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out; 
+}
+
+.custom-checkbox input[type="radio"]:hover:not(:checked) ~ label:before,
+.custom-checkbox input[type="checkbox"]:hover:not(:checked) ~ label:before {
+  content: '\2714';
+  text-indent: .9em;
+  color: #C2C2C2;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+.custom-checkbox input[type="radio"]:checked ~ label,
+.custom-checkbox input[type="checkbox"]:checked ~ label {
+  color: #777;
+}
+
+.custom-checkbox input[type="radio"]:checked ~ label:before,
+.custom-checkbox input[type="checkbox"]:checked ~ label:before {
+  content: '\2714';
+  text-indent: .9em;
+  color: #333;
+  background-color: #ccc;
+}
+
+.custom-checkbox input[type="radio"]:focus ~ label:before,
+.custom-checkbox input[type="checkbox"]:focus ~ label:before {
+  box-shadow: 0 0 0 3px #999;
+}
+
+.custom-checkbox-default input[type="radio"]:checked ~ label:before,
+.custom-checkbox-default input[type="checkbox"]:checked ~ label:before {
+  color: #333;
+  background-color: #ccc;
+}
+
+.custom-checkbox-primary input[type="radio"]:checked ~ label:before,
+.custom-checkbox-primary input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #337ab7;
+}
+
+.custom-checkbox-success input[type="radio"]:checked ~ label:before,
+.custom-checkbox-success input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #5cb85c;
+}
+
+.custom-checkbox-danger input[type="radio"]:checked ~ label:before,
+.custom-checkbox-danger input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #d9534f;
+}
+
+.custom-checkbox-warning input[type="radio"]:checked ~ label:before,
+.custom-checkbox-warning input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #f0ad4e;
+}
+
+.custom-checkbox-info input[type="radio"]:checked ~ label:before,
+.custom-checkbox-info input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #5bc0de;
 }
 
 /* ------------------------------REMOVE JS BLINKING--------------------------------- */

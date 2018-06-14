@@ -44,7 +44,9 @@ public class UserStats {
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime creationDate;
-
+	
+	transient private long creationDateEpoch;
+	
 	public UserStats() {
 		
 	}
@@ -54,6 +56,13 @@ public class UserStats {
 		this.totalKills = totalKills;
 		this.totalDeaths = totalDeaths;
 		this.stats = stats;
+	}
+	
+	public UserStats(int id, String steamId, String stats, long creationDateEpoch) {
+		this.id = id;
+		this.steamId = steamId;
+		this.stats = stats;
+		this.creationDateEpoch = creationDateEpoch;
 	}
 
 	public int getId() {
@@ -86,7 +95,7 @@ public class UserStats {
 	public int getTotalDeaths() {
 		return totalDeaths;
 	}
-
+	
 	public UserStats setTotalDeaths(int totalDeaths) {
 		this.totalDeaths = totalDeaths;
 		return this;
@@ -107,6 +116,15 @@ public class UserStats {
 
 	public UserStats setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
+		return this;
+	}
+
+	public long getCreationDateEpoch() {
+		return creationDateEpoch;
+	}
+
+	public UserStats setCreationDateEpoch(long creationDateEpoch) {
+		this.creationDateEpoch = creationDateEpoch;
 		return this;
 	}
 	
