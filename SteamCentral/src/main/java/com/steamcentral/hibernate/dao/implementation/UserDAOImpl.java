@@ -12,7 +12,7 @@ import com.steamcentral.hibernate.pojo.User;
 /**
  * Implementation of UserDAO interface.
  * 
- * @author Kuba
+ * @author Jakub Podgórski
  *
  */
 @Repository
