@@ -50,6 +50,16 @@ chartsController.controller('chartsCtrl', ['$scope', '$http', '$filter', '$compi
 			total: true
 		},
 		{
+			name: 'Headshot (%) [Daily]',
+			value: ['total_kills_headshot', 'total_kills'],
+			total: false
+		},
+		{
+			name: 'Headshot (%) [Total]',
+			value: ['total_kills_headshot', 'total_kills'],
+			total: true
+		},
+		{
 			name: 'Kill Death Ratio (KDR) [Daily]',
 			value: ['total_kills', 'total_deaths'],
 			total: false

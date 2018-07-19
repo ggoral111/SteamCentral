@@ -4,9 +4,9 @@ import com.steamcentral.hibernate.pojo.User;
 
 public interface UserDAO {
 	
-	public void saveOrUpdate(User user);
+	void saveOrUpdate(User user);
 	
-	public void delete(String steamId);
+	void delete(String steamId);
 	
-	public User get(String steamId);
+	User get(String steamId);
 }

@@ -9,6 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.steamcentral.hibernate.dao.UserDAO;
 import com.steamcentral.hibernate.pojo.User;
 
+/**
+ * Implementation of UserDAO interface.
+ * 
+ * @author Kuba
+ *
+ */
 @Repository
 public class UserDAOImpl implements UserDAO {
 

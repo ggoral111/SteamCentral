@@ -14,8 +14,21 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
+/**
+ * Simple interface which implements all kinds of default methods connected with file operations.
+ * Supports multi-threaded operations on files with locks usage.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 public interface FileOperations {
 	
+	/**
+	 * File write without file lock.
+	 * 
+	 * @param path the path to file which should be read.
+	 * @param content the content to save in file.
+	 */
 	default void writeFile(String path, String content) {
 		try(Writer writer = new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8)) {
 			writer.write(content);
@@ -27,6 +40,12 @@ public interface FileOperations {
 		}
 	}
 	
+	/**
+	 * File read without file lock.
+	 * 
+	 * @param path the path to file which should be read.
+	 * @return the file content or null value when an error occurred.
+	 */
 	default String readFile(String path) {
 		try(Scanner sc = new Scanner(new File(path), "UTF-8")) {
 			return sc.useDelimiter("\\Z").next();
@@ -37,19 +56,29 @@ public interface FileOperations {
 		return null;
 	}
 	
+	/**
+	 * File write with file lock.
+	 * 
+	 * @param path the path to file which should be read.
+	 * @param content the content to save in file.
+	 */
 	default void writeFileWithLock(String path, String content) {
         ByteBuffer buffer = ByteBuffer.wrap(content.getBytes(Charset.forName("UTF-8")));
         
-        try {
-	        FileChannel fileChannel = FileChannel.open(Paths.get(path), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        try(FileChannel fileChannel = FileChannel.open(Paths.get(path), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {   
 	        fileChannel.lock();
 	        fileChannel.write(buffer);
-	        fileChannel.close();
         } catch (IOException e) {
 			e.printStackTrace();
 		}
     }
 	
+	/**
+	 * File read with file lock.
+	 * 
+	 * @param path the path to file which should be read.
+	 * @return the content to save in file.
+	 */
 	default String readFileWithLock(String path) {
 		try(FileChannel fileChannel = FileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
 			fileChannel.lock(0, Long.MAX_VALUE, true);

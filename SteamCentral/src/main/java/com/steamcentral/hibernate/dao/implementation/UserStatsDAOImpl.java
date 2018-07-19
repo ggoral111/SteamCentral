@@ -16,6 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.steamcentral.hibernate.dao.UserStatsDAO;
 import com.steamcentral.hibernate.pojo.UserStats;
 
+/**
+ * Implementation of UserStatsDAO interface.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Repository
 public class UserStatsDAOImpl implements UserStatsDAO {
 

@@ -2,6 +2,13 @@ package com.steamcentral.core.model;
 
 import java.util.Objects;
 
+/**
+ * Simply stores crucial information about Steam user.
+ * Mainly used by {@link com.steamcentral.core.service.StatsService}
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 public class SteamUserInfo implements Comparable<SteamUserInfo> {
 	
 	private String steamId, personaname, avatarMediumURL, avatarFullURL;

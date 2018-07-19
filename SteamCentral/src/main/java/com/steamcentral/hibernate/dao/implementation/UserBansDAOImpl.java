@@ -9,6 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.steamcentral.hibernate.dao.UserBansDAO;
 import com.steamcentral.hibernate.pojo.UserBans;
 
+/**
+ * Implementation of UserBansDAO interface.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Repository
 public class UserBansDAOImpl implements UserBansDAO {
 

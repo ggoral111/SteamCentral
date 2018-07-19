@@ -25,6 +25,13 @@ import com.steamcentral.core.model.HttpConnection;
 import com.steamcentral.core.model.SteamHelper;
 import com.steamcentral.core.model.SteamUserInfo;
 
+/**
+ * Service which is core of all operations between application server and Valve servers.
+ * Also includes connection between <b>csgobackpack.net</b> server with an API usage.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 public class StatsService implements HttpConnection, FileOperations {
 	
 	private final static String TIMESTAMP_PATH, PRICES_FILE_PATH, DEFAULT_WEAPONS_FILE_PATH, CSGO_BACKPACK_URL, CSGO_STATS_URL, STEAM_FRIENDLIST_URL, STEAM_GAME_OWNED_URL, STEAM_PLAYER_SUMMARIES_URL, STEAM_RESOLVE_VANITY_URL, STEAM_PLAYER_BANS_URL;
@@ -53,6 +60,9 @@ public class StatsService implements HttpConnection, FileOperations {
 	private final DateFormat timestampFormatter;
 	private String marketPrices, defaultWeapons;
 
+	/**
+	 * Constructor of StatsService. Initializes the necessary initial values for variables.
+	 */
 	public StatsService() {
 		this.csgoBackpackTimebreakInMinutes = CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES;
 		this.firstTimePricesLoad = true;
@@ -63,15 +73,27 @@ public class StatsService implements HttpConnection, FileOperations {
 		this.defaultWeapons = null;
 	}
 		
+	/**
+	 * Gets default weapons data in JSON format from file.
+	 * 
+	 * @return the content of file with default weapons data written in JSON format.
+	 */
 	public String getDefaultWeapons() {
 		if(firstTimeDefaultWeaponsLoad) {
-			defaultWeapons = readFile(DEFAULT_WEAPONS_FILE_PATH);
+			defaultWeapons = readFileWithLock(DEFAULT_WEAPONS_FILE_PATH);
 			firstTimeDefaultWeaponsLoad = false;
 		}
 		
 		return defaultWeapons;
 	}
 	
+	/**
+	 * Gets Steam user information without previous knowledge about Steam user ID.
+	 * Firstly checks if Steam user profile is valid and then grabs information about Steam user bans.
+	 * 
+	 * @param userInfo the string of characters which contains information about user and the method of processing entered user profile information. 
+	 * @return the Object array which contains {@link com.steamcentral.core.model.SteamUserInfo} object at first index, Steam user information about bans (written in JSON format) at second index and statistics of a Steam user from Counter-Strike: Global Offensive game (written in JSON format) at third index if all information was successfully obtained, null otherwise.
+	 */
 	public Object[] getStrangerUserStats(String userInfo) {
 		JSONObject userInfoObject = new JSONObject(userInfo);
 		String steamId = userInfoObject.getString("steamId");
@@ -79,16 +101,16 @@ public class StatsService implements HttpConnection, FileOperations {
 		if(userInfoObject.getBoolean("checkVanityUrl")) {
 			String vanityResponse = getHttpContent(STEAM_RESOLVE_VANITY_URL + steamId);
 			
-			if(isJSON(vanityResponse)) {
-				JSONObject vanityResponseObject = new JSONObject(vanityResponse);
+			if(!isJSON(vanityResponse)) {
+				return null;
+			}
+			
+			JSONObject vanityResponseObject = new JSONObject(vanityResponse);
+			
+			if(vanityResponseObject.getJSONObject("response").getInt("success") == 1) {
+				steamId = vanityResponseObject.getJSONObject("response").getString("steamid");
+			} else if(vanityResponseObject.getJSONObject("response").getInt("success") != 1 && userInfoObject.getBoolean("checkDigits")) {
 				
-				if(vanityResponseObject.getJSONObject("response").getInt("success") == 1) {
-					steamId = vanityResponseObject.getJSONObject("response").getString("steamid");
-				} else if(vanityResponseObject.getJSONObject("response").getInt("success") != 1 && userInfoObject.getBoolean("checkDigits")) {
-					
-				} else {
-					return null;
-				}
 			} else {
 				return null;
 			}
@@ -119,6 +141,12 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	/**
+	 * Gets user inventory in JSON format from Valve servers.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return the equivalent of Steam user inventory written in JSON format if obtained string of characters is valid, null otherwise.
+	 */
 	public String getUserInventory(String steamId) {
 		String csgoInventory = getHttpContent("https://steamcommunity.com/profiles/" + steamId + "/inventory/json/730/2");
 		
@@ -129,7 +157,13 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
-	public String getUserStats(String steamId) {				
+	/**
+	 * Gets statistics of a Steam user from Counter-Strike: Global Offensive game.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return Counter-Strike: Global Offensive statistics of given user written in JSON format if obtained string of characters is valid, null otherwise.
+	 */
+	private String getUserStats(String steamId) {				
 		String csgoStats = getHttpContent(CSGO_STATS_URL + steamId);
 		
 		if(isJSON(csgoStats)) {
@@ -139,7 +173,13 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
-	public Object[] getUserStatsWithBans(String steamId) {				
+	/**
+	 * Gets statistics of a Steam user from Counter-Strike: Global Offensive game with user bans information included.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return the array of two Strings where the former value includes user bans information and the latter includes Counter-Strike: Global Offensive statistics of given user written in JSON format. Returns valid array of strings if obtained strings of characters is valid, null otherwise.
+	 */
+	public String[] getUserStatsWithBans(String steamId) {				
 		String csgoStats = getUserStats(steamId);
 		
 		if(csgoStats != null) {
@@ -149,7 +189,7 @@ public class StatsService implements HttpConnection, FileOperations {
 				JSONArray playersArray = new JSONObject(steamBansInfo).getJSONArray("players");
 				
 				if(playersArray.length() > 0) {
-					return new Object[] {playersArray.getJSONObject(0).toString(), csgoStats};
+					return new String[] {playersArray.getJSONObject(0).toString(), csgoStats};
 				}	
 			}					
 		}
@@ -157,6 +197,12 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	/**
+	 * Gets the information about owning a game by given Steam user. In this case the Counter-Strike: Global Offensive game having will be checked.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return new {@link com.steamcentral.core.model.SteamUserInfo} object with game playtime included if game exists on Steam user account, null otherwise.
+	 */
 	private SteamUserInfo getGameOwnedInfo(String steamId) {
 		String userGameInfo = getHttpContent(STEAM_GAME_OWNED_URL + steamId + "&appids_filter[0]=730");
 		
@@ -177,6 +223,13 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	/**
+	 * Gets full Steam user info from Valve servers and merges it with previously created {@link com.steamcentral.core.model.SteamUserInfo} object.
+	 * Info includes real name (nickname) of player profile, URL links to player avatar resource.
+	 * 
+	 * @param userInfo {@link com.steamcentral.core.model.SteamUserInfo} object with game playtime included.
+	 * @return {@link com.steamcentral.core.model.SteamUserInfo} object with game playtime included, real name (nickname) of player profile and URL links to player avatar resource if obtained string of characters in JSON format is valid, null otherwise.
+	 */
 	private SteamUserInfo getFullUserInfo(SteamUserInfo userInfo) {
 		String fullUserInfo = getHttpContent(STEAM_PLAYER_SUMMARIES_URL + userInfo.getSteamId());
 		
@@ -188,6 +241,14 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	/**
+	 * Gets detailed info about user friends from Steam user's friend list (friends which own Counter-Strike: Global Offensive game) in JSON format from Valve servers.
+	 * Requests to Valve servers are split into groups due to max limit of 100 Steam users per one request.
+	 * Requests are executed with use of multiple threads which number can changed by setting static {@link StatsService#PROCESSORS_NUMBER} field to desired value.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return unmodifiable TreeSet<SteamUserInfo> which contains detailed friend list info of given Steam user if all of the operations gone well and ExecutorService shuts down correctly, null otherwise.
+	 */
 	public Set<SteamUserInfo> getFriendListFullInfo(String steamId) {
 		Set<SteamUserInfo> friendListSet = getFriendList(steamId);
 		
@@ -239,12 +300,20 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 	
+	/**
+	 * Gets Steam user friend list (friends who own Counter-Strike: Global Offensive game) in JSON format from Valve servers.
+	 * Requests to check the possession of the game are executed with use of multiple threads which number can changed by setting static {@link StatsService#PROCESSORS_NUMBER} field to desired value.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @return Set<SteamUserInfo> which contains info about friends of Steam user who own Counter-Strike: Global Offensive game.
+	 */
 	private Set<SteamUserInfo> getFriendList(String steamId) {
 		String friendList = getHttpContent(STEAM_FRIENDLIST_URL + steamId + "&relationship=friend");
 		
 		if(isJSON(friendList)) {
 			JSONArray friendListArray = new JSONObject(friendList).getJSONObject("friendslist").getJSONArray("friends");
 			Set<SteamUserInfo> friendListSet = new HashSet<>();
+			// Set<SteamUserInfo> friendListSet = Collections.newSetFromMap(new ConcurrentHashMap<SteamUserInfo, Boolean>());
 			ExecutorService friendsThreadPool = Executors.newFixedThreadPool(PROCESSORS_NUMBER);
 					
 			for(int i=0; i<friendListArray.length(); i++) {
@@ -276,6 +345,14 @@ public class StatsService implements HttpConnection, FileOperations {
 		return null;
 	}
 
+	/**
+	 * Gets actual prices of Counter-Strike: Global Offensive game weapons skins from Steam Marketplace.
+	 * Requires connection with <b>csgobackpack.net</b> API. If it fails the latest downloaded prices will be loaded from local file.
+	 * Delay between next price checking can be changed by setting static {@link StatsService#CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES} field to desired value (value is expressed in minutes).
+	 * Delay between next price checking when the error occurred can be changed by setting static {@link StatsService#CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES} field to desired value (value is expressed in minutes).
+	 * 
+	 * @return list of all marketable items from Counter-Strike: Global Offensive game written in JSON format.
+	 */
 	public String getSkinsPrices() {
 		boolean timestampExpired;
 					
@@ -323,17 +400,22 @@ public class StatsService implements HttpConnection, FileOperations {
 		return marketPrices;
 	}
 
+	/**
+	 * Checks if the specified waiting time has expired and program is ready to download updated Steam Marketplace prices.
+	 * 
+	 * @param lastUpdate the date of last prices update of weapons skins from Counter-Strike: Global Offensive game.
+	 * @return true if last update date is after fixed amount of time, false otherwise.
+	 */
 	private boolean checkTimestamp(Date lastUpdate) {
 		try {
-			Date tenMinutes = new Date(System.currentTimeMillis() - 1000 * 60 * csgoBackpackTimebreakInMinutes);
-			return lastUpdate.before(tenMinutes);
+			return lastUpdate.before(new Date(System.currentTimeMillis() - 1000 * 60 * csgoBackpackTimebreakInMinutes));
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 
 		return false;
 	}
-
+	
 	@Override
 	public boolean isValidJSON(String jsonString) {
 		try {
@@ -352,7 +434,7 @@ public class StatsService implements HttpConnection, FileOperations {
 
 		return true;
 	}
-
+	
 	@Override
 	public boolean isJSON(String jsonString) {
 		try {

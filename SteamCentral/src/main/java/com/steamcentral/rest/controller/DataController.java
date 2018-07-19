@@ -153,7 +153,7 @@ public class DataController {
 	
 	@RequestMapping(value = "/stats/userStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
-		Object[] userStatsWithBans = ss.getUserStatsWithBans(steamId);
+		String[] userStatsWithBans = ss.getUserStatsWithBans(steamId);
 		
 		if(userStatsWithBans != null) {
 			String userStatsJSON = "{ \"userBansInfo\": " + userStatsWithBans[0] + ", \"userStats\": " + userStatsWithBans[1] + " }";	

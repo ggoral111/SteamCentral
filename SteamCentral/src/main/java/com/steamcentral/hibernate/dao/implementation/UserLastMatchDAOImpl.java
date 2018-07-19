@@ -17,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.steamcentral.hibernate.dao.UserLastMatchDAO;
 import com.steamcentral.hibernate.pojo.UserLastMatch;
 
+/**
+ * Implementation of UserLastMatchDAO interface.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Repository
 public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 

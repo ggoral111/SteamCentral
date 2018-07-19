@@ -21,4 +21,5 @@ public class PageController {
 	public ModelAndView getChartsPage() {
 		return new ModelAndView("charts");		
 	}
+	
 }

@@ -8,8 +8,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Simple interface which implements default method of web resource download.
+ * Contains methods signatures of validating {@link java.lang.String} type variable in JSON format - all of them should be implemented by user.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 public interface HttpConnection {
 
+	/**
+	 * Connects to web source via given URL address and downloads given resource. 
+	 * If HTTP response code: 301, 302, 303 occurs method reconnects and downloads content from changed location.
+	 * 
+	 * @param url the URL address of web content to download.
+	 * @return downloaded web content.
+	 */
 	default String getHttpContent(String url) {
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -53,7 +67,19 @@ public interface HttpConnection {
 		return null;
 	}
 	
+	/**
+	 * This method formulates the check of String value obtained from web source which should contains 'success' object and be proper string of characters in JSON format.
+	 * 
+	 * @param jsonString the string of characters to check.
+	 * @return true if given string of characters contains 'success' object set to true, false otherwise.
+	 */
 	boolean isValidJSON(String jsonString);
 	
+	/**
+	 * This method formulates the check of String value which should be one of the admissible types in JSON format (JSONArray, JSONObject).
+	 * 
+	 * @param jsonString the string of characters to check.
+	 * @return true if given string of characters is one of the JSON types, false otherwise.
+	 */
 	boolean isJSON(String jsonString);
 }
