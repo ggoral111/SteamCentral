@@ -53,7 +53,7 @@ public class StatsService implements HttpConnection, FileOperations {
 		CSGO_BACKPACK_NORMAL_TIMEBREAK_MINUTES = 240;
 		CSGO_BACKPACK_ERROR_TIMEBREAK_MINUTES = 5;
 	}
-
+	
 	private int csgoBackpackTimebreakInMinutes;
 	private boolean firstTimePricesLoad, firstTimeDefaultWeaponsLoad;
 	private Date marketPricesTimestamp;

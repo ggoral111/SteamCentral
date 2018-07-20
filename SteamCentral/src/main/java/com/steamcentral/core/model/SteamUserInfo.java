@@ -14,6 +14,13 @@ public class SteamUserInfo implements Comparable<SteamUserInfo> {
 	private String steamId, personaname, avatarMediumURL, avatarFullURL;
 	private long playtimeTwoWeeks, playtimeForever;
 
+	/**
+	 * Constructor of SteamUserInfo. Creates {@link com.steamcentral.core.model.SteamUserInfo} object with set of parameters described below.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param playtimeTwoWeeks the Counter-Strike: Global Offensive game time for the last two weeks.
+	 * @param playtimeForever the total Counter-Strike: Global Offensive game time.
+	 */
 	public SteamUserInfo(String steamId, long playtimeTwoWeeks, long playtimeForever) {
 		this.steamId = steamId;
 		this.playtimeTwoWeeks = playtimeTwoWeeks;

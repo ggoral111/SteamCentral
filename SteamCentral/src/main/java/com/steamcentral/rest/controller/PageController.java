@@ -4,6 +4,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Class which controls page requests mapping.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Controller
 public class PageController {
 	

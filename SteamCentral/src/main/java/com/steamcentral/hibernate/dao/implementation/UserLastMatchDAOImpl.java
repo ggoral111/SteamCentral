@@ -69,11 +69,6 @@ public class UserLastMatchDAOImpl implements UserLastMatchDAO {
 	@Override
 	@Transactional
 	public List<UserLastMatch> getTopPlayersDependingOnMatchType(int days, int maxPlayersMatches, int minRoundsRange, int maxRoundsRange, int minRoundsToEndMatch, int maxPlayersInMatch) {
-		// Deathmatch: minRoundsRange = 1 , maxRoundsRange = 1 , minRoundsToEndMatch = 1 , maxPlayersInMatch = 20
-		// Matchmaking: minRoundsRange = 16 , maxRoundsRange = 30, minRoundsToEndMatch = 15, maxPlayersInMatch = 10
-		// Wingman: minRoundsRange = 9 , maxRoundsRange = 16, minRoundsToEndMatch = 8, maxPlayersInMatch = 4
-		// Casual: minRoundsRange = 8 , maxRoundsRange = 15, minRoundsToEndMatch = 8, maxPlayersInMatch = 20
-		
 		CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
 		CriteriaQuery<UserLastMatch> query = builder.createQuery(UserLastMatch.class);
 		Root<UserLastMatch> userLastMatchRoot = query.from(UserLastMatch.class);

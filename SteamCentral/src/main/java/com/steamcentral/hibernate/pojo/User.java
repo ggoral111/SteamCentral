@@ -11,6 +11,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+/**
+ * Plain Old Java Object User class implementation that maps its attributes with the corresponding columns of the relational database.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Entity(name = "User")
 @Table(name = "user")
 public class User {
@@ -38,10 +44,21 @@ public class User {
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime creationDate;
 	
+	/**
+	 * Default constructor of User. Creates {@link com.steamcentral.hibernate.pojo.User} object.
+	 */
 	public User() {
 		
 	}
 
+	/**
+	 * Constructor of User. Creates {@link com.steamcentral.hibernate.pojo.User} object with set of parameters described below.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param personaname the nickname of Steam user.
+	 * @param avatarMediumURL the URL address to medium size user avatar.
+	 * @param avatarFullURL the URL address to full size user avatar.
+	 */
 	public User(String steamId, String personaname, String avatarMediumURL, String avatarFullURL) {
 		this.steamId = steamId;
 		this.personaname = personaname;

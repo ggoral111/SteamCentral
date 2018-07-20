@@ -11,6 +11,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+/**
+ * Plain Old Java Object UserLastMatch class implementation that maps its attributes with the corresponding columns of the relational database.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Entity(name = "UserLastMatch")
 @Table(name = "userlastmatch")
 public class UserLastMatch {
@@ -51,10 +57,27 @@ public class UserLastMatch {
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime lastUpdate;
 	
+	/**
+	 * Default constructor of UserLastMatch. Creates {@link com.steamcentral.hibernate.pojo.UserLastMatch} object.
+	 */
 	public UserLastMatch() {
 		
 	}
 
+	/**
+	 * Constructor of UserLastMatch. Creates {@link com.steamcentral.hibernate.pojo.UserLastMatch} object with set of parameters described below.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ctRoundsWin the integer variable which stores information about amount of rounds which Counter-Terrorists won in last match.
+	 * @param ttRoundsWin the integer variable which stores information about amount of rounds which Terrorists won in last match.
+	 * @param playerRoundsWin the integer variable which stores information about amount of rounds which player' team won.
+	 * @param matchMaxPlayers the integer variable which stores information about maximum amount of players who joined last match.
+	 * @param kills the integer variable which stores information about amount of  kills made by player in last match.
+	 * @param deaths the integer variable which stores information about amount of deaths of player in last match.
+	 * @param totalDamage the integer variable which stores information about total damage made by player in last match.
+	 * @param mvp the integer variable which stores information about amount of gained MVP stars by a player in last match.
+	 * @param scorePointResult the integer variable which stores information about amount of earned score point result by a player in last match.
+	 */
 	public UserLastMatch(String steamId, int ctRoundsWin, int ttRoundsWin, int playerRoundsWin, int matchMaxPlayers, int kills, int deaths, int totalDamage, int mvp, int scorePointResult) {
 		this.steamId = steamId;
 		this.ctRoundsWin = ctRoundsWin;

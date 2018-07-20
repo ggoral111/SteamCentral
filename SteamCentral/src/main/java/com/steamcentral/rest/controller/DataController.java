@@ -32,6 +32,12 @@ import com.steamcentral.hibernate.pojo.UserBans;
 import com.steamcentral.hibernate.pojo.UserLastMatch;
 import com.steamcentral.hibernate.pojo.UserStats;
 
+/**
+ * Class which controls all application front-end data requests (GET, POST) and returns processed data in JSON format.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @RestController
 @RequestMapping("/data")
 @EnableWebMvc
@@ -72,6 +78,13 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param steamId
+	 * @param ucBuilder
+	 * @return
+	 */
 	@RequestMapping(value = "/stats/mainUserStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getMainUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		Object[] mainUserStats = ss.getStrangerUserStats(steamId);

@@ -11,6 +11,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+/**
+ * Plain Old Java Object UserBans class implementation that maps its attributes with the corresponding columns of the relational database.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Entity(name = "UserBans")
 @Table(name = "userbans")
 public class UserBans {
@@ -42,10 +48,24 @@ public class UserBans {
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime lastUpdate;
 	
+	/**
+	 * Default constructor of UserBans. Creates {@link com.steamcentral.hibernate.pojo.UserBans} object.
+	 */
 	public UserBans() {
 		
 	}
 
+	/**
+	 * Constructor of UserBans. Creates {@link com.steamcentral.hibernate.pojo.UserBans} object with set of parameters described below.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param vacBanned the boolean variable which indicates that user is currently banned by Valve Anti-Cheat (VAC).
+	 * @param economyBan the String variable which indicates that user is currently economy banned.
+	 * @param numberOfVACBans the integer variable which stores information about amount of VAC bans gained by user.
+	 * @param communityBanned the boolean variable which indicates that user is currently community banned.
+	 * @param daysSinceLastBan the integer variable which stores information about amount of days since last ban.
+	 * @param mumberOfGameBans the integer variable which stores information about amount of game bans gained by user.
+	 */
 	public UserBans(String steamId, boolean vacBanned, String economyBan, int numberOfVACBans, boolean communityBanned, int daysSinceLastBan, int mumberOfGameBans) {
 		this.steamId = steamId;
 		this.vacBanned = vacBanned;

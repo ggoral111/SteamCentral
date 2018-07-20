@@ -17,6 +17,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
+/**
+ * Plain Old Java Object UserStats class implementation that maps its attributes with the corresponding columns of the relational database.
+ * 
+ * @author Jakub Podgórski
+ *
+ */
 @Entity(name = "UserStats")
 @Table(name = "userstats")
 @TypeDef(name = "json", typeClass = JsonStringType.class)
@@ -47,10 +53,21 @@ public class UserStats {
 	
 	transient private long creationDateEpoch;
 	
+	/**
+	 * Default constructor of UserStats. Creates {@link com.steamcentral.hibernate.pojo.UserStats} object.
+	 */
 	public UserStats() {
 		
 	}
 
+	/**
+	 * Constructor of UserStats. Creates {@link com.steamcentral.hibernate.pojo.UserStats} object with set of parameters described below.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param totalKills the integer variable which stores information about total amount of kills made by Steam user in Counter-Strike: Global Offensive game.
+	 * @param totalDeaths the integer variable which stores information about total amount of deaths of Steam user in Counter-Strike: Global Offensive game.
+	 * @param stats the actual copy of Steam user statistics from Counter-Strike: Global Offensive game obtained from Valve servers (stored in JSON format).
+	 */
 	public UserStats(String steamId, int totalKills, int totalDeaths, String stats) {
 		this.steamId = steamId;
 		this.totalKills = totalKills;
