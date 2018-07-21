@@ -58,6 +58,14 @@ public class DataController {
 	@Autowired
 	private UserStatsDAO userStatsDao;
 	
+	/**
+	 * Gets friend list of application main user which contains friends that owns a copy of Counter-Strike: Global Offensive game.
+	 * Requires Steam user ID from the application front-end POST data request.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which contains friend list of application main user if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/friendList", method = RequestMethod.POST)
 	public ResponseEntity<String> getFriendListJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		Set<SteamUserInfo> friendList = ss.getFriendListFullInfo(steamId);
@@ -79,11 +87,13 @@ public class DataController {
 	}
 	
 	/**
+	 * Gets data for application main user which contains information about Steam user, Steam user bans and Steam user statistics from Counter-Strike: Global Offensive game.
+	 * Requires Steam user ID from the application front-end POST data request.
+	 * Connects to database in order to add all necessary user data.
 	 * 
-	 * 
-	 * @param steamId
-	 * @param ucBuilder
-	 * @return
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which contains information about Steam user, Steam user bans and Steam user statistics from Counter-Strike: Global Offensive game if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
 	 */
 	@RequestMapping(value = "/stats/mainUserStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getMainUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
@@ -97,7 +107,9 @@ public class DataController {
 				userBansDao.saveOrUpdate(new UserBans(userBansObject.getString("SteamId"), userBansObject.getBoolean("VACBanned"), userBansObject.getString("EconomyBan"), userBansObject.getInt("NumberOfVACBans"), userBansObject.getBoolean("CommunityBanned"), userBansObject.getInt("DaysSinceLastBan"), userBansObject.getInt("NumberOfGameBans")));
 				JSONArray userStatsArray = new JSONObject((String) mainUserStats[2]).getJSONObject("playerstats").getJSONArray("stats");
 				
-				int ctRoundsWin = 0, ttRoundsWin = 0, playerRoundsWin = 0, matchMaxPlayers = 0, kills = 0, deaths = 0, totalDamage = 0, mvp = 0, scorePointResult = 0, totalKills = 0, totalDeaths = 0;
+				int totalKills = 0, totalDeaths = 0;
+				UserLastMatch ulm = new UserLastMatch();
+				ulm.setSteamId(sui.getSteamId());
 				
 				for(int i=0; i<userStatsArray.length(); i++) {					
 					if(userStatsArray.getJSONObject(i).getString("name").equals("total_kills")) {
@@ -105,27 +117,27 @@ public class DataController {
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("total_deaths")) {
 						totalDeaths = userStatsArray.getJSONObject(i).getInt("value");
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_t_wins")) {
-						ttRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setTtRoundsWin(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_ct_wins")) {
-						ctRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setCtRoundsWin(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_wins")) {
-						playerRoundsWin = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setPlayerRoundsWin(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_max_players")) {
-						matchMaxPlayers = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setMatchMaxPlayers(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_kills")) {
-						kills = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setKills(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_deaths")) {
-						deaths = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setDeaths(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_mvps")) {
-						mvp = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setMvp(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_damage")) {
-						totalDamage = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setTotalDamage(userStatsArray.getJSONObject(i).getInt("value"));
 					} else if(userStatsArray.getJSONObject(i).getString("name").equals("last_match_contribution_score")) {
-						scorePointResult = userStatsArray.getJSONObject(i).getInt("value");
+						ulm.setScorePointResult(userStatsArray.getJSONObject(i).getInt("value"));
 					}
 				}
 				
-				userLastMatchDao.saveOrUpdate(new UserLastMatch(sui.getSteamId(), ctRoundsWin, ttRoundsWin, playerRoundsWin, matchMaxPlayers, kills, deaths, totalDamage, mvp, scorePointResult));
+				userLastMatchDao.saveOrUpdate(ulm);
 				userStatsDao.save(new UserStats(sui.getSteamId(), totalKills, totalDeaths, userStatsArray.toString()));
 				
 				ObjectWriter ow = new ObjectMapper().writer();
@@ -143,6 +155,14 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets data for application stranger user (friend of main user) which contains information about Steam user, Steam user bans and Steam user statistics from Counter-Strike: Global Offensive game.
+	 * Requires Steam user ID from the application front-end POST data request.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which contains information about Steam user, Steam user bans and Steam user statistics from Counter-Strike: Global Offensive game if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/strangerUserStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getStrangerUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		Object[] strangerUserStats = ss.getStrangerUserStats(steamId);
@@ -164,6 +184,14 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets user statistics from Counter-Strike: Global Offensive game and information about Steam user bans.
+	 * Requires Steam user ID from the application front-end POST data request.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which contains information about Steam user bans and Steam user statistics from Counter-Strike: Global Offensive game if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/userStats", method = RequestMethod.POST)
 	public ResponseEntity<String> getUserStatsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		String[] userStatsWithBans = ss.getUserStatsWithBans(steamId);
@@ -179,6 +207,13 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets Steam user inventory in JSON format from Valve servers.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which is the equivalent of Steam user inventory if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/userInventory", method = RequestMethod.POST)
 	public ResponseEntity<String> getUserInventoryJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		String userInventoryJSON = ss.getUserInventory(steamId);
@@ -193,6 +228,11 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets default weapons data in JSON format from file.
+	 * 
+	 * @return the ResponseEntity object in JSON format which is the content of file with default weapons data if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/defaultWeapons", method = RequestMethod.GET)
 	public ResponseEntity<String> getDefaultWeaponsJSON() {
 		String defaultWeaponsJSON = ss.getDefaultWeapons();
@@ -207,6 +247,12 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets actual prices of Counter-Strike: Global Offensive game weapons skins from Steam Marketplace in JSON format.
+	 * Requires connection with <b>csgobackpack.net</b> API. If it fails the latest downloaded prices will be loaded from local file. 
+	 * 
+	 * @return the ResponseEntity object in JSON format which contains list of all marketable items from Counter-Strike: Global Offensive game if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/skinsPrices", method = RequestMethod.GET)
 	public ResponseEntity<String> getSkinsPricesJSON() {
 		String skinsPricesJSON = ss.getSkinsPrices();
@@ -221,6 +267,14 @@ public class DataController {
 		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 	
+	/**
+	 * Gets data for application main user which contains all collected statistics of Steam user from Counter-Strike: Global Offensive game from last 30 database entries.
+	 * Connects to database in order to obtain all necessary user data.
+	 * 
+	 * @param steamId the unique string of numbers which represents Steam user profile.
+	 * @param ucBuilder ucBuilder the instance of UriComponentsBuilder which helps to create UriComponents instances.
+	 * @return the ResponseEntity object in JSON format which contains list of statistics of Steam user from Counter-Strike: Global Offensive game from last 30 database entries if all operations will passed successfully, otherwise HTTP NO_CONTENT status will be returned.
+	 */
 	@RequestMapping(value = "/stats/userStatsDataForCharts", method = RequestMethod.POST)
 	public ResponseEntity<String> getUserStatsDataForChartsJSON(@RequestBody String steamId, UriComponentsBuilder ucBuilder) {
 		List<UserStats> userStatsList = userStatsDao.getAll(steamId);
