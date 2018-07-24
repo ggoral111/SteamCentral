@@ -25,14 +25,14 @@ By generating real-time charts from the collected <b>Steam</b> user statistics s
 # Used frameworks and technologies
 <ul>
   <li>Java 8</li>
-  <li><a href="https://spring.io/">Spring Framework</a></li>
-  <li><a href="https://github.com/FasterXML/jackson">FasterXML/jackson</a></li>
-  <li><a href="http://hibernate.org/">Hibernate</a></li>
-  <li><a href="https://angularjs.org/">AngularJS</a></li>
-  <li><a href="https://jquery.com/">JQuery</a></li>
-  <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
-  <li><a href="https://github.com/matthieua/WOW">WOW.js</a></li>
-  <li><a href="https://www.highcharts.com/">Highcharts</a></li>  
+  <li><a href="https://spring.io/" target="_blank">Spring Framework</a></li>
+  <li><a href="https://github.com/FasterXML/jackson" target="_blank">FasterXML/jackson</a></li>
+  <li><a href="http://hibernate.org/" target="_blank">Hibernate</a></li>
+  <li><a href="https://angularjs.org/" target="_blank">AngularJS</a></li>
+  <li><a href="https://jquery.com/" target="_blank">JQuery</a></li>
+  <li><a href="https://getbootstrap.com/" target="_blank">Bootstrap</a></li>
+  <li><a href="https://github.com/matthieua/WOW" target="_blank">WOW.js</a></li>
+  <li><a href="https://www.highcharts.com/" target="_blank">Highcharts</a></li>  
 </ul>
 
 # Contact
@@ -41,4 +41,4 @@ You can contact me by sending an e-mail: <a href="mailto:jkb.podgorski93@gmail.c
 # License
 © 2018 Jakub Podgórski
 
-For any part of this work for which the license is applicable, this work is licensed under the <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Attribution-NonCommercial-NoDerivatives 4.0 International</a> license.
+For any part of this work for which the license is applicable, this work is licensed under the <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Attribution-NonCommercial-NoDerivatives 4.0 International</a> license.
