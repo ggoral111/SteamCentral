@@ -10,6 +10,17 @@ User are able to compare their statistics with any friend who has a copy of <b>C
 By generating real-time charts from the collected <b>Steam</b> user statistics stored in the database, user has the possibility of in-depth analysis of personal data creating various combinations associated with its daily or total progress in the game.
 
 # Video presentation
+<ul>
+  <li><b>SteamCentral beta video presentation in 4K resoultion (click on thumbnail to watch video):</b></li>
+</ul>
+
+[![SteamCentral Beta 4K](http://www.g0ral.cba.pl/images/thumbnails/SteamCentral4Kv2.png)](https://www.youtube.com/watch?v=NKEFRZv8uDs)
+
+<ul>
+  <li><b>SteamCentral beta video presentation in 1080p resoultion (click on thumbnail to watch video):</b></li>
+</ul>
+
+[![SteamCentral Beta 1080p](http://www.g0ral.cba.pl/images/thumbnails/SteamCentral1080p.png)](https://www.youtube.com/watch?v=fgX0d54UPdM)
 
 # Used frameworks and technologies
 <ul>
